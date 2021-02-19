@@ -2,10 +2,10 @@ const express = require('express');
 
 const app = express();
 
-app.get('/api/test', (req, res) =>{
+app.get('/test', (req, res) =>{
     res.status(200).send({
         success:'true',
-        message:'api test passed'
+        message:'api test endpoint'
     })    
 });
 
