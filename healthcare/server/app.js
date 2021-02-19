@@ -9,6 +9,10 @@ app.get('/test', (req, res) =>{
     })    
 });
 
+app.post('/register', (req, res) =>{
+
+});
+
 const PORT = 5000;
 
 app.listen(PORT, () => {
