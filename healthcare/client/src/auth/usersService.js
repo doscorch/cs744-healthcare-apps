@@ -1,6 +1,6 @@
 
 import { ERROR } from "../errorHandling";
-import client from "../apiClient";
+import client from "../serviceClient/apiClient";
 
 const users = {};
 // call api to register user
@@ -67,6 +67,6 @@ export const loginUser = async (username, password) => {
 
 // logout user on client
 export const logout = async () => {
-    return await client.logout();
+    return await client.post('/auth/logout');
 }
 

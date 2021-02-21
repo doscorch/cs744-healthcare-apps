@@ -1,5 +1,4 @@
-import reducers from ".";
-
+import tokenManager from "../../serviceClient/authToken";
 const STORAGE_KEY = "user";
 const init = () => {
     let saved = sessionStorage.getItem(STORAGE_KEY);
@@ -16,6 +15,7 @@ const reduce = (state, action) => {
             };
         }
         case "LOGOUT": {
+            tokenManager.set(null);
             return {
 
             };
