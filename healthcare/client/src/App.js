@@ -21,8 +21,8 @@ class App extends React.Component {
     this.props.history.push('/');
   }
   render() {
-    const hasUser = Boolean(this.props.user._id);
-    const isAdmin = this.props.user.userRole === "admin";
+    const hasUser = Boolean(this.props.user.user_id);
+    const isAdmin = this.props.user.user_type === "admin";
     return (
       <div>
         <Navbar sticky="top" bg="dark" variant="dark" expand="lg" style={{ marginBottom: "10px" }}>
@@ -33,9 +33,9 @@ class App extends React.Component {
               {/* {isAdmin ? <Nav.Link as={Link} to="/user-manager">Manage Users</Nav.Link> : ""} */}
             </Nav>
             <Nav>
-              {/* {hasUser ? <Nav.Link as={Link} to="/" onClick={this.clickLogout}><i className="fas fa-sign-out-alt"></i> Logout</Nav.Link> : ""} */}
-              {/* {hasUser ? <Nav.Link as={Link} to="/account"><i className="fas fa-user"></i> {this.props.user.username}</Nav.Link> : ""} */}
-              {/* {!hasUser ? <Nav.Link as={Link} to="/login"><i className="fas fa-sign-in-alt"></i> Login</Nav.Link> : ""} */}
+              {hasUser ? <Nav.Link as={Link} to="/" onClick={this.clickLogout}><i className="fas fa-sign-out-alt"></i> Logout</Nav.Link> : ""}
+              {hasUser ? <Nav.Link as={Link} to="/account"><i className="fas fa-user"></i> {this.props.user.username}</Nav.Link> : ""}
+              {!hasUser ? <Nav.Link as={Link} to="/login"><i className="fas fa-sign-in-alt"></i> Login</Nav.Link> : ""}
             </Nav>
           </Navbar.Collapse>
         </Navbar>

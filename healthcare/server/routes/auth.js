@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const _userService = require('../services/users-service');
+const Token = require('../models/authToken');
 
 // auth status
 router.get('/status', function (req, res, next) {
@@ -25,6 +26,7 @@ router.post('/login', function (req, res, next) {
         return;
     }
     _userService.getUserByCredentials(req.body, function (err, user) {
+        console.log("user")
         console.log(user);
         if (err) {
             res.status('500').send(new Error('no user in db'));
@@ -39,13 +41,13 @@ router.post('/login', function (req, res, next) {
                 res.status('400').send(new Error('invalid username or password'));
                 return;
             }
-            if (!user.enabled) {
-                res.status('403').send(new Error('User disbled, contact an administrator for assistance'));
-                return;
-            }
+            // if (!user.enabled) {
+            //     res.status('403').send(new Error('User disbled, contact an administrator for assistance'));
+            //     return;
+            // }
             delete user.password;
             req.session.user = user;
-            let csrf = new CSRF().value;
+            let csrf = new Token().value;
             req.session.csrf = csrf;
             res.setHeader('x-csrf', csrf);
             res.send({ data: user });

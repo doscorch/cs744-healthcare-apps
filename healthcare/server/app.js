@@ -20,7 +20,9 @@ app.use(session({
 }));
 
 const cors = require('cors');
-app.use(cors());
+app.use(cors({
+    exposedHeaders: 'x-csrf'
+}));
 
 app.get('/test', (req, res) => {
     res.status(200).send({

@@ -33,11 +33,16 @@ const api = {
             body: JSON.stringify(data),
         }).then(res => {
             const resTok = res.headers.get(tokenHeader);
+            console.log(resTok);
             if (resTok) {
                 token = resTok;
                 sessionStorage.setItem(tokenHeader, token);
             }
+
             return res.json();
+        }).then(json => {
+            console.log(json);
+            return json
         }).catch(err => {
             console.log(err);
         });
