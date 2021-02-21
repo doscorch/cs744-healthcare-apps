@@ -10,7 +10,7 @@ import Alert from '@material-ui/lab/Alert';
 
 import { getUser, loginUser } from './usersService';
 import { connect } from 'react-redux';
-import { app_login } from '../redux/actions/userActions'
+import { app_login } from '../redux/actions/userActions';
 
 class Login extends React.Component {
     state = {
