@@ -1,4 +1,4 @@
-const users = require('../models/user');
+const users = require('./dbmodels/user');
 
 function createUser(user, cb) {
     users.create({ ...user })
@@ -13,7 +13,7 @@ function updateUser(user, cb) {
 module.exports.updateUser = updateUser;
 
 function getUserByUsername(username, cb) {
-    users.findAll({ where: { username: username } }).then(users => cb(null, users.length ? users.first() : null))
+    users.findAll({ where: { username: username } }).then(users => cb(null, users.length ? users[0].dataValues : null))
 }
 module.exports.getUserByUsername = getUserByUsername;
 
@@ -25,6 +25,6 @@ function getAllUsers(cb) {
 module.exports.getAllUsers = getAllUsers;
 
 function getUserById(id, cb) {
-    users.findAll({ where: { user_id: id } }).then(users => cb(null, users.length ? users.first() : null))
+    users.findAll({ where: { user_id: id } }).then(users => cb(null, users.length ? users[0].dataValues : null))
 }
 module.exports.getUserById = getUserById;

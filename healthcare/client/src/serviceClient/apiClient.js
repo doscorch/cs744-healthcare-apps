@@ -1,5 +1,6 @@
 const tokenHeader = "x-csrf";
 const serviceUri = "http://localhost:5000";
+const tokenManager = require('./authToken');
 const api = {
     get: (path) => {
         let token = sessionStorage.getItem(tokenHeader);
@@ -14,9 +15,11 @@ const api = {
             const resTok = res.headers.get(tokenHeader);
             if (resTok) {
                 token = resTok;
-                sessionStorage.setItem(tokenHeader, token);
+                tokenManager.set(token);
             }
             return res.json();
+        }).then(json => {
+            return json
         }).catch(err => {
             console.log(err);
         });
@@ -35,9 +38,12 @@ const api = {
             const resTok = res.headers.get(tokenHeader);
             if (resTok) {
                 token = resTok;
-                sessionStorage.setItem(tokenHeader, token);
+                tokenManager.set(token);
             }
+
             return res.json();
+        }).then(json => {
+            return json
         }).catch(err => {
             console.log(err);
         });

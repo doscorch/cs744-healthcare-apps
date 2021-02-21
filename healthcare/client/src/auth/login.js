@@ -8,7 +8,7 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Alert from '@material-ui/lab/Alert';
 
-import { getUser, loginUser } from './usersService';
+import { loginUser } from './usersService';
 import { connect } from 'react-redux';
 import { app_login } from '../redux/actions/userActions';
 
@@ -23,11 +23,12 @@ class Login extends React.Component {
         e.preventDefault();
         // log the user in and go home
         let res = await loginUser(this.state.username, this.state.password);
+        console.log(res)
         if (res.msg) {
             this.setState({ error: res.msg });
         }
         else {
-            this.props.app_login(res.data);
+            this.props.app_login(res.user);
             this.props.history.push('/');
         }
     }

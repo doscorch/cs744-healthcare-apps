@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-var _userRepository = require('../data-repositories/users-repository');
+const _userRepository = require('../data-repositories/users-repository');
 
 // create user
 function createUser(user, cb) {

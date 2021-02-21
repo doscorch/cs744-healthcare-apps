@@ -1,12 +1,12 @@
 
 import { ERROR } from "../errorHandling";
-import client from "../apiClient";
+import client from "../serviceClient/apiClient";
 
 const users = {};
 // call api to register user
-export const registerUser = async (username, password, firstName, lastName, 
-    user_type, security_answer_1, security_answer_2, security_answer_3, 
-    security_question_1, security_question_2,security_question_3, 
+export const registerUser = async (username, password, firstName, lastName,
+    user_type, security_answer_1, security_answer_2, security_answer_3,
+    security_question_1, security_question_2, security_question_3,
     address, date_of_birth, license_number) => {
     return await users.create({ "username": username, "password": password, "firstName": firstName, "lastName": lastName, userRole: "patient" }, {});
 }
@@ -62,10 +62,10 @@ export const loginUser = async (username, password) => {
                 error: false,
             }
         } else {
-            return client.post('/auth/login', { username, password }).then(user => {
+            return client.post('/auth/login', { username, password }).then(res => {
                 return {
-                    user: user,
-                    error: false,
+                    user: res.data,
+                    msg: null,
                 }
             })
         }
@@ -80,6 +80,6 @@ export const loginUser = async (username, password) => {
 
 // logout user on client
 export const logout = async () => {
-    return await client.logout();
+    return await client.post('/auth/logout');
 }
 
