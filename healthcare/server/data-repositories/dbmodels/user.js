@@ -39,21 +39,21 @@ const User = sequelize.define('User', {
     tableName: 'user'
 });
 
-Promise
-    .all([
-        User.sync({ force: true }),
-    ]).then(_ => {
-        bcrypt.hash("password", saltRounds, function (err, hash) {
-            const user = User.create({
-                username: 'admin',
-                password: hash,
-                first_name: "first",
-                last_name: "last",
-                user_status: 1,
-                user_type: 1,
-            });
-        })
-    });
+// Promise
+//     .all([
+//         User.sync({ force: true }),
+//     ]).then(_ => {
+//         bcrypt.hash("password", saltRounds, function (err, hash) {
+//             const user = User.create({
+//                 username: 'admin',
+//                 password: hash,
+//                 first_name: "first",
+//                 last_name: "last",
+//                 user_status: 1,
+//                 user_type: 1,
+//             });
+//         })
+//     });
 
 
 module.exports = User;
