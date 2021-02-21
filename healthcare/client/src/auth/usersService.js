@@ -1,9 +1,8 @@
 
 import { ERROR } from "../errorHandling";
-import client from "../feathersClient";
+import client from "../apiClient";
 
-const users = client.service('users');
-
+const users = {};
 // call api to register user
 export const registerUser = async (username, password, firstName, lastName, 
     user_type, security_answer_1, security_answer_2, security_answer_3, 
@@ -19,6 +18,9 @@ export const getUsers = async () => {
 
 // call api to register user by username
 export const getUser = async (username) => {
+    client.get(`/users/${username}`).then(user => {
+        return user;
+    })
     return users.find({
         query: {
             username: username
@@ -47,15 +49,12 @@ export const loginUser = async (username, password) => {
                 error: false,
             }
         } else {
-            let auth = await client.authenticate({
-                strategy: 'local',
-                username: username,
-                password: password,
-            });
-            return {
-                user: auth.user,
-                error: false,
-            }
+            return client.post('/auth/login', { username, password }).then(user => {
+                return {
+                    user: user,
+                    error: false,
+                }
+            })
         }
     } catch (error) {
         console.log(error);

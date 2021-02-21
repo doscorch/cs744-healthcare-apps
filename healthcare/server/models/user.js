@@ -1,12 +1,12 @@
 class User {
     constructor() {
-        this.id = null;
+        this.user_id = null;
         this.username = null;
         this.password = null;
-        this.firstName = null
-        this.lastName = null;
-        this.enabled = null;
-        this.type = null;
+        this.first_name = null
+        this.last_name = null;
+        this.user_type = null;
+        this.user_status = null;
     }
 };
 

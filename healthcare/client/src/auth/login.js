@@ -21,25 +21,14 @@ class Login extends React.Component {
 
     login = async (e) => {
         e.preventDefault();
-        // get user from db
-        let user = await getUser(this.state.username);
-        if (!user) {
-            this.setState({ error: "invalid login" });
-        }
-        else if (!(user.isActive || typeof user.isActive === "undefined")) {
-            // inactive users cant login!
-            this.setState({ error: "This account is no longer active. Contact staff." });
+        // log the user in and go home
+        let res = await loginUser(this.state.username, this.state.password);
+        if (res.msg) {
+            this.setState({ error: res.msg });
         }
         else {
-            // log the user in and go home
-            let res = await loginUser(this.state.username, this.state.password);
-            if (res.error) {
-                this.setState({ error: res.error });
-            }
-            else {
-                this.props.app_login(res.user);
-                this.props.history.push('/');
-            }
+            this.props.app_login(res.data);
+            this.props.history.push('/');
         }
     }
 

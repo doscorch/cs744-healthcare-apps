@@ -7,7 +7,7 @@ router.get('/status', function (req, res, next) {
     let user = req.session.user;
     let status = user ? true : false;
     if (user) {
-        _userService.getUserById(user.id, function (err, userUpdated) {
+        _userService.getUserById(user.user_id, function (err, userUpdated) {
             req.session.user = userUpdated;
             res.send({ status: status, user: userUpdated });
             return;
@@ -25,6 +25,7 @@ router.post('/login', function (req, res, next) {
         return;
     }
     _userService.getUserByCredentials(req.body, function (err, user) {
+        console.log(user);
         if (err) {
             res.status('500').send(new Error('no user in db'));
             return;
@@ -47,7 +48,7 @@ router.post('/login', function (req, res, next) {
             let csrf = new CSRF().value;
             req.session.csrf = csrf;
             res.setHeader('x-csrf', csrf);
-            res.send(user);
+            res.send({ data: user });
             return;
         });
     });
