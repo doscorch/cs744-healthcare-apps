@@ -23,9 +23,6 @@ module.exports.updateUser = updateUser;
 // getUserByCredentials used for login.. compare password with bcyrpted password
 function getUserByCredentials(form, cb) {
     _userRepository.getUserByUsername(form.username, (err, user) => {
-        console.log("here!!!!!!!!!!");
-        console.log(user);
-
         if (err) throw err;
         bcrypt.compare(form.password, user.password, function (err, res) {
             if (err) throw err;
