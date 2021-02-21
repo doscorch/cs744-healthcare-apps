@@ -4,7 +4,7 @@ var _userRepository = require('../data-repositories/users-repository');
 
 // create user
 function createUser(user, cb) {
-    delete user.id;
+    delete user.user_id;
     bcrypt.hash(user.password, saltRounds, function (err, hash) {
         if (err) throw err;
         user.password = hash;
@@ -23,6 +23,9 @@ module.exports.updateUser = updateUser;
 // getUserByCredentials used for login.. compare password with bcyrpted password
 function getUserByCredentials(form, cb) {
     _userRepository.getUserByUsername(form.username, (err, user) => {
+        console.log("here!!!!!!!!!!");
+        console.log(user);
+
         if (err) throw err;
         bcrypt.compare(form.password, user.password, function (err, res) {
             if (err) throw err;
