@@ -18,6 +18,8 @@ const api = {
                 tokenManager.set(token);
             }
             return res.json();
+        }).then(json => {
+            return json
         }).catch(err => {
             console.log(err);
         });
@@ -34,7 +36,6 @@ const api = {
             body: JSON.stringify(data),
         }).then(res => {
             const resTok = res.headers.get(tokenHeader);
-            console.log(resTok);
             if (resTok) {
                 token = resTok;
                 tokenManager.set(token);
@@ -42,7 +43,6 @@ const api = {
 
             return res.json();
         }).then(json => {
-            console.log(json);
             return json
         }).catch(err => {
             console.log(err);
