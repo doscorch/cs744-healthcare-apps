@@ -5,7 +5,10 @@ import client from "../feathersClient";
 const users = client.service('users');
 
 // call api to register user
-export const registerUser = async (username, password, firstName, lastName) => {
+export const registerUser = async (username, password, firstName, lastName, 
+    user_type, security_answer_1, security_answer_2, security_answer_3, 
+    security_question_1, security_question_2,security_question_3, 
+    address, date_of_birth, license_number) => {
     return await users.create({ "username": username, "password": password, "firstName": firstName, "lastName": lastName, userRole: "patient" }, {});
 }
 
