@@ -24,7 +24,7 @@ async function createUser(user, cb) {
 
         // TODO: change this later probably. idk how to use sequelize
         await sequelize.query(
-            'INSERT INTO `User` (username, password, first_name, last_name, user_status, user_type) values (?, ?, ?, ?, 1, 1)',
+            'INSERT INTO `user` (username, password, first_name, last_name, user_status, user_type) values (?, ?, ?, ?, 1, 1)',
             { 
                 replacements:  [
                     user.username, 
