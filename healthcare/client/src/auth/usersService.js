@@ -4,11 +4,54 @@ import client from "../serviceClient/apiClient";
 
 const users = {};
 // call api to register user
+
+/**
+ * 
+ * @param {String} username 
+ * @param {String} password 
+ * @param {String} firstName - TODO: refactor name
+ * @param {String} lastName - TODO: refactor name
+ * @param {String} user_type - admin, patient, physician only 
+ * @param {String} security_answer_1 
+ * @param {String} security_answer_2 
+ * @param {String} security_answer_3 
+ * @param {Integer} security_question_1 
+ * @param {Integer} security_question_2 
+ * @param {Integer} security_question_3 
+ * @param {String} address 
+ * @param {String} date_of_birth 
+ * @param {String} license_number
+ * 
+ * @return {object} - contains msg property. If msg is null, there was a success. If msg is not null, it contains an error message
+ */
 export const registerUser = async (username, password, firstName, lastName,
     user_type, security_answer_1, security_answer_2, security_answer_3,
     security_question_1, security_question_2, security_question_3,
     address, date_of_birth, license_number) => {
-    return await users.create({ "username": username, "password": password, "firstName": firstName, "lastName": lastName, userRole: "patient" }, {});
+        let args = {
+            username,
+            password,
+            firstName,
+            lastName,
+            user_type,
+
+            security_question_1,
+            security_answer_1,
+            security_question_2,
+            security_answer_2,
+            security_question_3,
+            security_answer_3,
+
+            address,
+            date_of_birth,
+            license_number
+        };
+
+        return client.post('/auth/register', args ).then(res => {
+            return {
+                msg: res.msg,
+            };
+        });
 }
 
 // call api to get users

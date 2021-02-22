@@ -37,23 +37,100 @@ export default class Register extends React.Component {
         ...initState
     }
 
+    /**
+     * Called when the User clicks on the register button. Posts to server/auth/register
+     * 
+     * @param {*} e 
+     * @author Sahee Thao
+     * @date 02/21/2021
+     */
     registerUser = async (e) => {
+
         e.preventDefault();
         // error handling
+        if (!this.state.first_name) {
+            this.setState({ error: "Please provide a first name" });
+            return;
+        }
+        if (!this.state.last_name) {
+            this.setState({ error: "Please provide a last name" });
+            return;
+        }
         if (!this.state.username) {
-            this.setState({ error: "please provide username" })
+            this.setState({ error: "Please provide a username" });
             return;
         }
         if (!this.state.password) {
-            this.setState({ error: "please provide password" })
+            this.setState({ error: "Please provide a password" });
             return;
         }
 
+        if (!this.state.user_type) {
+            this.setState({ error: 'Please select a user type'});
+            return;
+        }
+
+        if (this.state.user_type === 'patient') {
+            if (!this.state.address) {
+                this.setState({ error: 'Please provide an address'});
+                return;
+            }
+            // TODO: GUI bug related to date selector
+            if (!this.state.date_of_birth) {
+                this.setState({ error: 'Please provide a date of birth'});
+                return;
+            }
+        } else if (this.state.user_type === 'physician') {
+            if (!this.state.license_number) {
+                this.setState({ error: 'Please provide a license number'});
+                return;
+            }
+        } else {
+            // is admin
+        }
+
+        if (!this.state.security_question_1) {
+            this.setState({ error: 'Please select a security question 1'});
+            return;
+        }
+
+        if (!this.state.security_answer_1) {
+            this.setState({ error: 'Please provide a security answer 1'});
+            return;
+        }
+
+        if (!this.state.security_question_2) {
+            this.setState({ error: 'Please select a security question 2'});
+            return;
+        }
+
+        if (!this.state.security_answer_2) {
+            this.setState({ error: 'Please provide a security answer 2'});
+            return;
+        }
+
+        if (!this.state.security_question_3) {
+            this.setState({ error: 'Please select a security question 3'});
+            return;
+        }
+
+        if (!this.state.security_answer_3) {
+            this.setState({ error: 'Please provide a security answer 3'});
+            return;
+        }
+
+
+
         // register user
-        await registerUser(this.state.username, this.state.password, this.state.first_name, this.state.last_name, this.state.user_type, 
+        let res = await registerUser(this.state.username, this.state.password, this.state.first_name, this.state.last_name, this.state.user_type, 
             this.state.security_answer_1, this.state.security_answer_2, this.state.security_answer_3, this.state.security_question_1, 
             this.state.security_question_2,this.state.security_question_3, this.state.address, this.state.date_of_birth, this.state.license_number)
-        this.setState({ ...initState, success: "user successfully created.. please login" });
+        
+        if (res.msg == null) {
+            this.setState({ ...initState, success: "User successfully created! Please login." });
+        } else {
+            this.setState({error: res.msg});
+        }
     }
 
     changeForm = (e) => {
@@ -103,6 +180,7 @@ export default class Register extends React.Component {
                                     id="first_name"
                                     label="First Name"
                                     autoFocus
+                                    required
                                     value={this.state.first_name}
                                     onChange={this.changeForm}
                                 />
@@ -187,6 +265,7 @@ export default class Register extends React.Component {
                                         format="MM/dd/yyyy"
                                         margin="normal"
                                         id="date-of-birth"
+                                        name="date_of_birth"
                                         label="Date of Birth"
                                         value={this.state.date_of_birth}
                                         InputLabelProps={{
