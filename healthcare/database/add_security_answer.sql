@@ -5,7 +5,6 @@ CREATE TABLE security_answer(
     question_id INT NOT NULL,
     user_id INT NOT NULL,
     answer: VARCHAR(600) NOT NULL,
-    PRIMARY KEY ( answer_id )
     CONSTRAINT fk_question
     FOREIGN KEY ( question_id )
         REFERENCES security_question(question_id),
