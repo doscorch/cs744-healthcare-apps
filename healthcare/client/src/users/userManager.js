@@ -2,6 +2,7 @@ import * as React from 'react';
 import MaterialTable from 'material-table';
 import { Select, MenuItem } from '@material-ui/core'
 import { getUsers, patchUser } from '../auth/usersService';
+import { UserType, UserStatus } from '../models/user';
 
 export default class UserManager extends React.Component {
     state = {
@@ -34,36 +35,39 @@ export default class UserManager extends React.Component {
                 columns={[
                     // { title: 'Id', field: '_id' },
                     { title: 'Username', field: 'username', editable: false },
-                    { title: 'First Name', field: 'firstName' },
-                    { title: 'Last Name', field: 'lastName' },
+                    { title: 'First Name', field: 'first_name' },
+                    { title: 'Last Name', field: 'last_name' },
                     {
-                        title: 'User Role',
-                        field: 'userRole',
-                        editComponent: props => (
-                            <Select
-                                id="userrole"
-                                value={props.value || false}
-                                onChange={e => props.onChange(e.target.value)}
-                            >
-                                <MenuItem value={"physician"}>physician</MenuItem>
-                                <MenuItem value={"patient"}>patient</MenuItem>
-                                <MenuItem value={"admin"}>admin</MenuItem>
-                            </Select>),
+                        title: 'User Type',
+                        field: 'user_type',
+                        editable: false,
+                        render: u => <span>{UserType.GetTranslation(u.user_type)}</span>,
+                        // editComponent: props => (
+                        //     <Select
+                        //         id="user-type"
+                        //         value={props.value}
+                        //         onChange={e => props.onChange(e.target.value)}
+                        //     >
+                        //         <MenuItem value={UserType.Physician}>{UserType.GetTranslation(UserType.Physician)}</MenuItem>
+                        //         <MenuItem value={UserType.Patient}>{UserType.GetTranslation(UserType.Patient)}</MenuItem>
+                        //         <MenuItem value={UserType.Admin}>{UserType.GetTranslation(UserType.Admin)}</MenuItem>
+                        //     </Select>),
                     },
                     {
-                        title: 'Is Active',
-                        field: 'isActive',
-                        render: row => (<span>{String(typeof row.isActive === "undefined" ? true : row.isActive)}</span>),
+                        title: 'User Status',
+                        field: 'user_status',
+                        render: u => <span>{UserStatus.GetTranslation(u.user_status)}</span>,
                         editComponent: props => (
                             <Select
-                                id="isActive"
-                                value={typeof props.value === "undefined" ? true : props.value}
+                                id="user-status"
+                                value={props.value}
                                 onChange={e => props.onChange(e.target.value)}
                             >
-                                <MenuItem value={true}>true</MenuItem>
-                                <MenuItem value={false}>false</MenuItem>
+                                <MenuItem value={UserStatus.Active}>{UserStatus.GetTranslation(UserStatus.Active)}</MenuItem>
+                                <MenuItem value={UserStatus.Inactive}>{UserStatus.GetTranslation(UserStatus.Inactive)}</MenuItem>
+                                <MenuItem value={UserStatus.Disabled}>{UserStatus.GetTranslation(UserStatus.Disabled)}</MenuItem>
                             </Select>),
-                    },
+                    }
                 ]}
                 data={this.state.users}
                 editable={{

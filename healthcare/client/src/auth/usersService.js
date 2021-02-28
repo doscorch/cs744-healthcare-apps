@@ -28,35 +28,37 @@ export const registerUser = async (username, password, firstName, lastName,
     user_type, security_answer_1, security_answer_2, security_answer_3,
     security_question_1, security_question_2, security_question_3,
     address, date_of_birth, license_number) => {
-        let args = {
-            username,
-            password,
-            firstName,
-            lastName,
-            user_type,
+    let args = {
+        username,
+        password,
+        firstName,
+        lastName,
+        user_type,
 
-            security_question_1,
-            security_answer_1,
-            security_question_2,
-            security_answer_2,
-            security_question_3,
-            security_answer_3,
+        security_question_1,
+        security_answer_1,
+        security_question_2,
+        security_answer_2,
+        security_question_3,
+        security_answer_3,
 
-            address,
-            date_of_birth,
-            license_number
+        address,
+        date_of_birth,
+        license_number
+    };
+
+    return client.post('/auth/register', args).then(res => {
+        return {
+            msg: res.msg,
         };
-
-        return client.post('/auth/register', args ).then(res => {
-            return {
-                msg: res.msg,
-            };
-        });
+    });
 }
 
 // call api to get users
 export const getUsers = async () => {
-    return users.find().then(u => u.data)
+    return client.get('/users/get').then(users => {
+        return users;
+    })
 }
 
 export const getQuestions = async (user) => {

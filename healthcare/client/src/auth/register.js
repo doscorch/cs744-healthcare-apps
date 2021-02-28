@@ -60,8 +60,42 @@ export default class Register extends React.Component {
             this.setState({ error: "Please provide a username" });
             return;
         }
+        // check the username bounds
+        let usernameIsValid = 
+        this.state.username.match(/^[0-9a-zA-Z]+$/) && // is alphanumeric
+        this.state.username.length >= 6 && // is greater or equal to 6 (in length)
+        !Number.isInteger(this.state.username.charAt(0)); // the first character is NOT a number
+
+        if (!usernameIsValid) {
+            this.setState({ error: "The username must be have 6 or more characters, must contain only numbers and letters, and must start with a letter!" });
+            return;
+        }
+
         if (!this.state.password) {
             this.setState({ error: "Please provide a password" });
+            return;
+        }
+
+        // check the password bounds
+
+        let containsSpecialChar = function (text) {
+            let chars = ['~', '!', '@', '#', '$', '%', '^', '&', '*', '+'];
+            for (let charI = 0; charI < chars.length; charI++) {
+                if (text.includes(chars[charI])) {
+                    return true;
+                }
+            }
+            return false;
+        };
+
+        let passwordIsValid = 
+        this.state.password.match(/^[0-9a-zA-Z~!@#$%^&*+]+$/) && // is alphanumeric
+        this.state.password.length >= 6 && // is greater or equal to 6 (in length)
+        containsSpecialChar(this.state.password); // the first character is NOT a number
+
+
+        if (!passwordIsValid) {
+            this.setState({ error: "The password must be have 6 or more characters, must contain only numbers and letters and the following special characters: ~!@#$%^&*+, and must start have at least one of the special characters: ~!@#$%^&*+!" });
             return;
         }
 
@@ -99,6 +133,15 @@ export default class Register extends React.Component {
             return;
         }
 
+        let sa1IsValid = 
+        this.state.security_answer_1.match(/^[0-9a-zA-Z]+$/) && // is alphanumeric
+        this.state.security_answer_1.length >= 4; // is greater or equal to 6 (in length)
+
+        if (!sa1IsValid) {
+            this.setState({ error: "Security answer 1 must be have 4 or more characters and must contain only numbers and letters!" });
+            return;
+        }
+
         if (!this.state.security_question_2) {
             this.setState({ error: 'Please select a security question 2'});
             return;
@@ -109,6 +152,15 @@ export default class Register extends React.Component {
             return;
         }
 
+        let sa2IsValid = 
+        this.state.security_answer_2.match(/^[0-9a-zA-Z]+$/) && // is alphanumeric
+        this.state.security_answer_2.length >= 4; // is greater or equal to 6 (in length)
+
+        if (!sa2IsValid) {
+            this.setState({ error: "Security answer 2 must be have 4 or more characters and must contain only numbers and letters!" });
+            return;
+        }
+
         if (!this.state.security_question_3) {
             this.setState({ error: 'Please select a security question 3'});
             return;
@@ -116,6 +168,15 @@ export default class Register extends React.Component {
 
         if (!this.state.security_answer_3) {
             this.setState({ error: 'Please provide a security answer 3'});
+            return;
+        }
+
+        let sa3IsValid = 
+        this.state.security_answer_3.match(/^[0-9a-zA-Z]+$/) && // is alphanumeric
+        this.state.security_answer_3.length >= 4; // is greater or equal to 6 (in length)
+
+        if (!sa3IsValid) {
+            this.setState({ error: "Security answer 3 must be have 4 or more characters and must contain only numbers and letters!" });
             return;
         }
 

@@ -7,6 +7,7 @@ const api = {
         const url = `${serviceUri}${path}`;
         return fetch(url, {
             method: 'GET',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
                 'x-csrf': token,
@@ -29,6 +30,7 @@ const api = {
         const url = `${serviceUri}${path}`;
         return fetch(url, {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json',
                 'x-csrf': token,
