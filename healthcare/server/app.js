@@ -4,6 +4,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var session = require('express-session');
 const auth = require('./routes/auth');
+const users = require('./routes/users');
+
 
 var app = express();
 
@@ -19,10 +21,21 @@ app.use(session({
     saveUninitialized: true
 }));
 
-const cors = require('cors');
-app.use(cors({
-    exposedHeaders: 'x-csrf'
-}));
+// const cors = require('cors');
+// // app.use(cors({
+// //     //origin: '*',
+// //     exposedHeaders: 'x-csrf',
+// //     credentials: true
+// // }));
+
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", req.header('Origin'));
+    res.header("Access-Control-Allow-Credentials", true);
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+    res.header("Access-Control-Allow-Headers", "content-type, x-csrf");
+    next();
+});
 
 app.get('/test', (req, res) => {
     res.status(200).send({
@@ -33,6 +46,7 @@ app.get('/test', (req, res) => {
 
 // configure routes
 app.use('/auth', auth);
+app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

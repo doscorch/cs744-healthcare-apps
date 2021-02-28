@@ -65,18 +65,18 @@ router.post('/login', function (req, res, next) {
  * 
  * @author Sahee Thao
  */
-router.post('/register', function(req, res, next) {
-    _userService.createUser(req.body, function(err) {
-        res.send({msg: err});
+router.post('/register', function (req, res, next) {
+    _userService.createUser(req.body, function (err) {
+        res.send({ msg: err });
     });
 });
 
 // logout user
 router.post('/logout', function (req, res, next) {
-    req.session.regenerate(function (err) {
-        res.send();
-        return;
-    });
+    console.log("logout!!!!!")
+    console.log(req.session.user)
+    req.session.destroy();
+    res.send();
 });
 
 module.exports = router;

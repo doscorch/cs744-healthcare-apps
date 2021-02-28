@@ -28,48 +28,50 @@ export const registerUser = async (username, password, firstName, lastName,
     user_type, security_answer_1, security_answer_2, security_answer_3,
     security_question_1, security_question_2, security_question_3,
     address, date_of_birth, license_number) => {
-        let args = {
-            username,
-            password,
-            firstName,
-            lastName,
-            user_type,
+    let args = {
+        username,
+        password,
+        firstName,
+        lastName,
+        user_type,
 
-            security_question_1,
-            security_answer_1,
-            security_question_2,
-            security_answer_2,
-            security_question_3,
-            security_answer_3,
+        security_question_1,
+        security_answer_1,
+        security_question_2,
+        security_answer_2,
+        security_question_3,
+        security_answer_3,
 
-            address,
-            date_of_birth,
-            license_number
+        address,
+        date_of_birth,
+        license_number
+    };
+
+    return client.post('/auth/register', args).then(res => {
+        return {
+            msg: res.msg,
         };
-
-        return client.post('/auth/register', args ).then(res => {
-            return {
-                msg: res.msg,
-            };
-        });
+    });
 }
 
 // call api to get users
 export const getUsers = async () => {
-    return users.find().then(u => u.data)
+    return client.get('/users/get').then(users => {
+        return users;
+    })
 }
 
 //call api to check security question answer
 export const answerSecurityQuestion = async (user, question_id, answer, attempt) => {
-    client.post(`/question`, 
-    {
-        user: user,
-        question_id: question_id,
-        answer: answer,
-        attempt: attempt
-    }).then(success => {
-        return success;
-    });
+    client.post(`/question`,
+        {
+            user: user,
+            question_id: question_id,
+            answer: answer,
+            attempt: attempt
+        }).then(success => {
+            return success;
+        });
 }
 
 // call api to register user by username

@@ -11,6 +11,7 @@ import { connect } from 'react-redux';
 import UserManager from './users/userManager'
 import MyAccount from './auth/myAccount';
 import SecurityQuestion from './auth/securityQuestion';
+import { UserType } from './models/user';
 
 class App extends React.Component {
 
@@ -22,7 +23,7 @@ class App extends React.Component {
   }
   render() {
     const hasUser = Boolean(this.props.user.user_id);
-    const isAdmin = this.props.user.user_type === "admin";
+    const isAdmin = this.props.user.user_type === UserType.Admin;
     return (
       <div>
         <Navbar sticky="top" bg="dark" variant="dark" expand="lg" style={{ marginBottom: "10px" }}>
@@ -30,7 +31,7 @@ class App extends React.Component {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-              {/* {isAdmin ? <Nav.Link as={Link} to="/user-manager">Manage Users</Nav.Link> : ""} */}
+              {isAdmin ? <Nav.Link as={Link} to="/user-manager">Manage Users</Nav.Link> : ""}
             </Nav>
             <Nav>
               {hasUser ? <Nav.Link as={Link} to="/" onClick={this.clickLogout}><i className="fas fa-sign-out-alt"></i> Logout</Nav.Link> : ""}
