@@ -23,7 +23,6 @@ class Login extends React.Component {
         e.preventDefault();
         // log the user in and go home
         let res = await loginUser(this.state.username, this.state.password);
-        console.log(res)
         if (res.msg) {
             this.setState({ error: res.msg });
         }

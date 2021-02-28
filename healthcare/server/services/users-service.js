@@ -25,15 +25,15 @@ async function createUser(user, cb) {
         // TODO: change this later probably. idk how to use sequelize
         await sequelize.query(
             'INSERT INTO `user` (username, password, first_name, last_name, user_status, user_type) values (?, ?, ?, ?, 1, 1)',
-            { 
-                replacements:  [
-                    user.username, 
+            {
+                replacements: [
+                    user.username,
                     user.password,
                     user.firstName,
                     user.lastName
                 ]
-                , 
-                type: sequelize.QueryTypes.INSERT 
+                ,
+                type: sequelize.QueryTypes.INSERT
             }
         ).then(function (data) {
             // all good
@@ -95,7 +95,7 @@ module.exports.getUserById = getUserById;
  * 
  * 
  */
-async function answerQuestion(answerInfo, cb){
+async function answerQuestion(answerInfo, cb) {
     //console.log(answerInfo);
     //get answer
     await sequelize.query(
@@ -107,12 +107,12 @@ async function answerQuestion(answerInfo, cb){
             ],
             type: sequelize.QueryTypes.SELECT
         }
-    ).then(async function(data){
+    ).then(async function (data) {
         let answer = data[0].answer;
-        if(answerInfo.answer === answer){
+        if (answerInfo.answer === answer) {
             cb(null, true);
-        }else{
-            if(answerInfo.attempt == 3){
+        } else {
+            if (answerInfo.attempt == 3) {
                 //Block user
                 await sequelize.query(
                     'UPDATE `user` SET user_status = 2 WHERE user_id = ?;',
@@ -122,21 +122,21 @@ async function answerQuestion(answerInfo, cb){
                         ],
                         type: sequelize.QueryTypes.UPDATE
                     }
-                ).catch(function (e){
+                ).catch(function (e) {
                     console.log(e);
                 });
                 cb("Incorrect. You're account has been blocked. Please contact an administrator.", false);
-            }else{
+            } else {
                 cb("Incorrect", false);
             }
         }
-    }).catch(function (e){
+    }).catch(function (e) {
         console.log(e);
     });
 }
 module.exports.answerQuestion = answerQuestion;
 
-async function getQuestions(user_id,cb){
+async function getQuestions(user_id, cb) {
     await sequelize.query(
         'SELECT security_question.question_id, question FROM security_question NATURAL JOIN security_answer WHERE security_answer.user_id = :user_id;',
         {
@@ -145,11 +145,17 @@ async function getQuestions(user_id,cb){
             },
             type: sequelize.QueryTypes.SELECT
         }
-    ).then(function(data){
+    ).then(function (data) {
         cb("", data);
-    }).catch(function(e){
+    }).catch(function (e) {
         console.log(e);
     })
 }
 
 module.exports.getQuestions = getQuestions;
+
+// partial update of user
+function patchUser(userId, userPartial, cb) {
+    _userRepository.patchUser(userId, userPartial, (err, user) => cb(err, user));
+}
+module.exports.patchUser = patchUser;
