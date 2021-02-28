@@ -86,3 +86,70 @@ function getUserById(userId, cb) {
     _userRepository.getUserById(userId, (err, user) => cb(err, user));
 }
 module.exports.getUserById = getUserById;
+
+
+/**
+ * 
+ * @param {*} answerInfo - has the attributes user, question_id, answer, attempt
+ * @param {*} cb 
+ * 
+ * 
+ */
+async function answerQuestion(answerInfo, cb){
+    //console.log(answerInfo);
+    //get answer
+    await sequelize.query(
+        'SELECT answer_id, question_id, user_id, answer FROM `security_answer` WHERE user_id = ? AND question_id = ?;',
+        {
+            replacements: [
+                answerInfo.user,
+                answerInfo.question_id
+            ],
+            type: sequelize.QueryTypes.SELECT
+        }
+    ).then(async function(data){
+        let answer = data[0].answer;
+        if(answerInfo.answer === answer){
+            cb(null, true);
+        }else{
+            if(answerInfo.attempt == 3){
+                //Block user
+                await sequelize.query(
+                    'UPDATE `user` SET user_status = 2 WHERE user_id = ?;',
+                    {
+                        replacements: [
+                            answerInfo.user
+                        ],
+                        type: sequelize.QueryTypes.UPDATE
+                    }
+                ).catch(function (e){
+                    console.log(e);
+                });
+                cb("Incorrect. You're account has been blocked. Please contact an administrator.", false);
+            }else{
+                cb("Incorrect", false);
+            }
+        }
+    }).catch(function (e){
+        console.log(e);
+    });
+}
+module.exports.answerQuestion = answerQuestion;
+
+async function getQuestions(user_id,cb){
+    await sequelize.query(
+        'SELECT security_question.question_id, question FROM security_question NATURAL JOIN security_answer WHERE security_answer.user_id = :user_id;',
+        {
+            replacements: {
+                user_id: user_id
+            },
+            type: sequelize.QueryTypes.SELECT
+        }
+    ).then(function(data){
+        cb("", data);
+    }).catch(function(e){
+        console.log(e);
+    })
+}
+
+module.exports.getQuestions = getQuestions;

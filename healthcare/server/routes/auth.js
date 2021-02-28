@@ -79,4 +79,31 @@ router.post('/logout', function (req, res, next) {
     });
 });
 
+
+/**
+ * Post request for answering a security question for authentication. Triggered in client>src>auth>usersService.js
+ * 
+ * @param req - req.body has the attributes user, question_id, answer, attempt
+ * 
+ * @author Nathan Diedrick
+ * 
+ */
+router.post('/answerquestion', function (req, res, next){
+    _userService.answerQuestion(req.body, function(err, correct) {
+        res.send({msg: err, correct:correct});
+    })
+});
+
+/**
+ * A GET request for retrieving a user's security questions
+ * 
+ * @author Nathan Diedrick
+ */
+router.get('/questions/:user_id', function (req,res, next){
+    _userService.getQuestions(parseInt(req.params.user_id), function(err, questions){
+        res.send({msg:err, questions: questions});
+    })
+});
+
+
 module.exports = router;

@@ -6,15 +6,29 @@ import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Alert from '@material-ui/lab/Alert';
 
-import { answerSecurityQuestion } from './usersService';
+import { answerSecurityQuestion, getQuestions } from './usersService';
 import { connect } from 'react-redux';
 import { app_login } from '../redux/actions/userActions';
 const initState = {
     answer: "",
     question_id: "",
-    question: "Where did you go to middle school?",
+    questions: [{question_id:0,question:""}],
     attempt_number: 1,
-    error: ""
+    error: "",
+    user:{
+        user_id: 1
+    },
+    order:[0,1,2]
+}
+
+const shuffle = (array) => {
+    let newOrder = new Array();
+    while(array.length>0){
+        const idx = Math.floor(Math.random()*(array.length));
+        newOrder.push(array[idx]);
+        array.splice(idx, 1)
+    }
+    return newOrder;
 }
 
 export class SecurityQuestion extends React.Component{
@@ -23,20 +37,24 @@ export class SecurityQuestion extends React.Component{
     }
 
     submitAnswer = async (e) => {
-        let success = await answerSecurityQuestion(this.user, this.state.question_id, 
+        let response = await answerSecurityQuestion(this.state.user.user_id, this.state.questions[this.state.attempt_number-1].question_id, 
             this.state.answer, this.state.attempt_number);
+
+        if(response.msg){
+            this.setState({ error: response.msg});
+        }
         
-        if(!success){
+        if(!response.correct){
             //Answered incorrectly
             let next_attempt = this.state.attempt_number+1;
             if(next_attempt>3){
-                this.setState({ error: "Security Questions failed: Please contact administrator."})
+                this.setState({ error: "Security Questions failed: Please contact administrator."});
             }else{
-                this.setState({ attempt_number: next_attempt})
+                this.setState({ attempt_number: next_attempt});
             }
         }else{
             //Answered correctly
-            
+            console.log('Correct');
         }
     }
 
@@ -45,6 +63,13 @@ export class SecurityQuestion extends React.Component{
         let propValue = e.target.value;
         let state = { ...this.state };
         state[propName] = propValue;
+        this.setState(state);
+    }
+
+    async componentDidMount(){
+        let questions = await getQuestions(this.state.user);
+        let state = { ...this.state };
+        state.questions = shuffle(questions);
         this.setState(state);
     }
 
@@ -72,7 +97,7 @@ export class SecurityQuestion extends React.Component{
                 <div style={classes.papper}>
                     <Typography component="h1" variant="h5">Security Question</Typography>
                     <Grid container justify="center">
-                        <Typography component="h4" variant="h5">{this.state.question}</Typography>
+                        <Typography component="h4" variant="h5">{this.state.questions[this.state.attempt_number-1].question}</Typography>
                         <TextField 
                             variant="outlined"
                             margin="normal"

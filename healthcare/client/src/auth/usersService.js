@@ -59,17 +59,21 @@ export const getUsers = async () => {
     return users.find().then(u => u.data)
 }
 
+export const getQuestions = async (user) => {
+    const response = await client.get('/auth/questions/'+user.user_id);
+    return response.questions;
+}
+
 //call api to check security question answer
 export const answerSecurityQuestion = async (user, question_id, answer, attempt) => {
-    client.post(`/question`, 
+    let response = client.post('/auth/answerquestion', 
     {
         user: user,
         question_id: question_id,
         answer: answer,
         attempt: attempt
-    }).then(success => {
-        return success;
     });
+    return response;
 }
 
 // call api to register user by username
