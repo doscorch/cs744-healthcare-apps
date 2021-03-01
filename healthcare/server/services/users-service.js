@@ -102,8 +102,8 @@ async function answerQuestion(answerInfo, cb){
         'SELECT answer_id, question_id, user_id, answer FROM `security_answer` WHERE user_id = ? AND question_id = ?;',
         {
             replacements: [
-                answerInfo.user,
-                answerInfo.question_id
+                answerInfo.user.user_id,
+                answerInfo.user.questions[answerInfo.user.answer_attempt-1].question_id
             ],
             type: sequelize.QueryTypes.SELECT
         }
@@ -112,13 +112,13 @@ async function answerQuestion(answerInfo, cb){
         if(answerInfo.answer === answer){
             cb(null, true);
         }else{
-            if(answerInfo.attempt == 3){
+            if(answerInfo.user.answer_attempt == 3){
                 //Block user
                 await sequelize.query(
                     'UPDATE `user` SET user_status = 2 WHERE user_id = ?;',
                     {
                         replacements: [
-                            answerInfo.user
+                            answerInfo.user.user_id
                         ],
                         type: sequelize.QueryTypes.UPDATE
                     }
@@ -146,7 +146,7 @@ async function getQuestions(user_id,cb){
             type: sequelize.QueryTypes.SELECT
         }
     ).then(function(data){
-        cb("", data);
+        cb(null, data);
     }).catch(function(e){
         console.log(e);
     })

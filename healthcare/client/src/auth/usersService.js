@@ -67,13 +67,11 @@ export const getQuestions = async (user) => {
 }
 
 //call api to check security question answer
-export const answerSecurityQuestion = async (user, question_id, answer, attempt) => {
+export const answerSecurityQuestion = async (user, answer) => {
     let response = client.post('/auth/answerquestion', 
     {
         user: user,
-        question_id: question_id,
-        answer: answer,
-        attempt: attempt
+        answer: answer
     });
     return response;
 }

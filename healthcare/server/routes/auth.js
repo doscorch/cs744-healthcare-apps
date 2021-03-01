@@ -42,17 +42,31 @@ router.post('/login', function (req, res, next) {
                 res.status('400').send(new Error('invalid username or password'));
                 return;
             }
+            _userService.getQuestions(user.user_id, function(err, questions){
+                let newOrder = new Array();
+                while(questions.length>0){
+                    const idx = Math.floor(Math.random()*(questions.length));
+                    newOrder.push(questions[idx]);
+                    questions.splice(idx, 1)
+                }
+                questions = newOrder;
+                if(questions.length<3){
+                    res.send({msg:"Insufficient security questions. Please conatact an admin."});
+                    return;
+                }
+                delete user.password;
+                req.session.user = user;
+                req.session.user.questions = questions;
+                req.session.user.answer_attempt = 1;
+                req.session.user.is_validated = false;
+                res.send({ data: user });
+                return;
+            });
             // if (!user.enabled) {
             //     res.status('403').send(new Error('User disbled, contact an administrator for assistance'));
             //     return;
             // }
-            delete user.password;
-            req.session.user = user;
-            let csrf = new Token().value;
-            req.session.csrf = csrf;
-            res.setHeader('x-csrf', csrf);
-            res.send({ data: user });
-            return;
+            
         });
     });
 });
@@ -90,7 +104,15 @@ router.post('/logout', function (req, res, next) {
  */
 router.post('/answerquestion', function (req, res, next){
     _userService.answerQuestion(req.body, function(err, correct) {
-        res.send({msg: err, correct:correct});
+        if(correct){
+            let csrf = new Token().value;
+            req.session.csrf = csrf;
+            res.setHeader('x-csrf', csrf);
+            req.session.user.isValidated = true;
+        }else{
+            req.session.user.answer_attempt += 1;
+        }
+        res.send({msg: err, correct:correct, user: req.session.user});
     })
 });
 

@@ -29,7 +29,7 @@ class Login extends React.Component {
         }
         else {
             this.props.app_login(res.user);
-            this.props.history.push('/');
+            this.props.history.push('/security-question');
         }
     }
 

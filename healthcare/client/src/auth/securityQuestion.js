@@ -11,14 +11,7 @@ import { connect } from 'react-redux';
 import { app_login } from '../redux/actions/userActions';
 const initState = {
     answer: "",
-    question_id: "",
-    questions: [{question_id:0,question:""}],
-    attempt_number: 1,
-    error: "",
-    user:{
-        user_id: 1
-    },
-    order:[0,1,2]
+    error: ""
 }
 
 const shuffle = (array) => {
@@ -37,24 +30,21 @@ export class SecurityQuestion extends React.Component{
     }
 
     submitAnswer = async (e) => {
-        let response = await answerSecurityQuestion(this.state.user.user_id, this.state.questions[this.state.attempt_number-1].question_id, 
-            this.state.answer, this.state.attempt_number);
+        let response = await answerSecurityQuestion(this.props.user, this.state.answer);
 
         if(response.msg){
             this.setState({ error: response.msg});
         }
+
+        this.props.app_login(response.user);
         
         if(!response.correct){
             //Answered incorrectly
-            let next_attempt = this.state.attempt_number+1;
-            if(next_attempt>3){
-                this.setState({ error: "Security Questions failed: Please contact administrator."});
-            }else{
-                this.setState({ attempt_number: next_attempt});
-            }
+            console.log("Incorrect");
         }else{
             //Answered correctly
             console.log('Correct');
+            this.props.history.push("/");
         }
     }
 
@@ -66,12 +56,12 @@ export class SecurityQuestion extends React.Component{
         this.setState(state);
     }
 
-    async componentDidMount(){
-        let questions = await getQuestions(this.state.user);
+    /*async componentDidMount(){
+        let questions = await getQuestions(this.props.user);
         let state = { ...this.state };
         state.questions = shuffle(questions);
         this.setState(state);
-    }
+    }*/
 
     render() {
         const classes = {
@@ -91,35 +81,36 @@ export class SecurityQuestion extends React.Component{
         };
 
         let alert = this.state.error ? <Alert severity="error">{this.state.error}</Alert> : "";
-
         return(
             <Container component="main" maxWidth="xs">
                 <div style={classes.papper}>
                     <Typography component="h1" variant="h5">Security Question</Typography>
-                    <Grid container justify="center">
-                        <Typography component="h4" variant="h5">{this.state.questions[this.state.attempt_number-1].question}</Typography>
-                        <TextField 
-                            variant="outlined"
-                            margin="normal"
-                            fullWidth
-                            name="answer"
-                            label= "Answer"
-                            id="security_answer"
-                            required
-                            autoFocus
-                            autoComplete="auto-answer"
-                            onChange={this.changeForm}
-                            value={this.state.answer} />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            color="primary"
-                            style={classes.submit}
-                            onClick={this.submitAnswer}>
-                            Submit
-                        </Button>
-                    </Grid>
+                    {this.props.user.answer_attempt<=3? 
+                        <Grid container justify="center">
+                            <Typography component="h4" variant="h5">{this.props.user.questions[this.props.user.answer_attempt-1].question}</Typography>
+                            <TextField 
+                                variant="outlined"
+                                margin="normal"
+                                fullWidth
+                                name="answer"
+                                label= "Answer"
+                                id="security_answer"
+                                required
+                                autoFocus
+                                autoComplete="auto-answer"
+                                onChange={this.changeForm}
+                                value={this.state.answer} />
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                style={classes.submit}
+                                onClick={this.submitAnswer}>
+                                Submit
+                            </Button>
+                        </Grid>: ""}
+                    
                     {alert}
                 </div>
             </Container>
