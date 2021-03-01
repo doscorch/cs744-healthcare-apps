@@ -14,7 +14,6 @@ export default class UserManager extends React.Component {
     }
 
     getData = () => {
-        let url = 'http://localhost:3030/users'
         return getUsers()
             .then(users => {
                 this.setState({ users: users })
@@ -72,7 +71,7 @@ export default class UserManager extends React.Component {
                 data={this.state.users}
                 editable={{
                     onRowUpdate: (newData, oldData) => {
-                        return patchUser(newData).then(_ => this.getData())
+                        return patchUser(newData.user_id, newData).then(_ => this.getData())
                     },
                 }}
             />

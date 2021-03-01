@@ -31,9 +31,9 @@ app.use(session({
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", req.header('Origin'));
     res.header("Access-Control-Allow-Credentials", true);
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
-    res.header("Access-Control-Allow-Headers", "content-type, x-csrf");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-csrf");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE, PATCH");
+    res.header("Access-Control-Expose-Headers", "x-csrf")
     next();
 });
 
@@ -46,6 +46,20 @@ app.get('/test', (req, res) => {
 
 // configure routes
 app.use('/auth', auth);
+
+// must have auth token to access users api
+// app.all('/users', (req, res, next) => {
+//     let authUser = req.session.user;
+//     console.log(authUser);
+//     if (authUser && req.headers['x-csrf'] && req.headers['x-csrf'] == req.session.csrf) {
+//         next();
+//     } else {
+//         req.session.regenerate(function (err) {
+//             res.status('403').send(new Error('invaild authenication'));
+//             return;
+//         });
+//     }
+// });
 app.use('/users', users);
 
 // catch 404 and forward to error handler

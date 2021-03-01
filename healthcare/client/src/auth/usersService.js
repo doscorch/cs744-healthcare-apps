@@ -56,13 +56,13 @@ export const registerUser = async (username, password, firstName, lastName,
 
 // call api to get users
 export const getUsers = async () => {
-    return client.get('/users/get').then(users => {
+    return client.get('/users').then(users => {
         return users;
     })
 }
 
 export const getQuestions = async (user) => {
-    const response = await client.get('/auth/questions/'+user.user_id);
+    const response = await client.get('/auth/questions/' + user.user_id);
     return response.questions;
 }
 
@@ -90,12 +90,12 @@ export const getUser = async (username) => {
 
 // call api to update user
 export const updateUser = async (user) => {
-    return await users.update(user._id, user, {});
+    // await users.update(user._id, user, {});
 }
 
 // call api to patch user
-export const patchUser = async (userPartial) => {
-    return await users.patch(userPartial._id, userPartial, {})
+export const patchUser = async (userId, userPartial) => {
+    return await client.patch(`/users/${userId}`, userPartial);
 }
 
 // call api to login user
@@ -117,7 +117,6 @@ export const loginUser = async (username, password) => {
             })
         }
     } catch (error) {
-        console.log(error);
         let message = error?.message ?? ERROR;
         return {
             error: message,
