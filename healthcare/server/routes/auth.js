@@ -29,8 +29,16 @@ router.post('/login', function (req, res, next) {
     _userService.getUserByCredentials(req.body, function (err, user) {
         console.log("user")
         console.log(user);
-        if (err) {
-            res.status('500').send(new Error('no user in db'));
+        if(err){
+            res.status('400').send({ msg: err});
+            return;
+        }
+        if(!user){
+            res.status('400').send({ msg: "Incorrect username or password"});
+            return;
+        }
+        if(user.user_status>1){
+            res.status('400').send({ msg: "User is blocked or deactivated. Please conatact an admin."});
             return;
         }
         req.session.regenerate(function (err) {

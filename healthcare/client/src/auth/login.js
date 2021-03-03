@@ -22,6 +22,14 @@ class Login extends React.Component {
     login = async (e) => {
         e.preventDefault();
         // log the user in and go home
+        if(!this.state.username || this.state.username === ""){
+            this.setState({ error: "Username is empty" });
+            return;
+        }
+        if(!this.state.password || this.state.password === ""){
+            this.setState({ error: "Password is empty" });
+            return;
+        }
         let res = await loginUser(this.state.username, this.state.password);
         if (res.msg) {
             this.setState({ error: res.msg });
