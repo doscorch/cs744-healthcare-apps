@@ -67,9 +67,16 @@ module.exports.updateUser = updateUser;
 function getUserByCredentials(form, cb) {
     _userRepository.getUserByUsername(form.username, (err, user) => {
         if (err) throw err;
+        if(!user){
+            cb(err, user);
+        }
         bcrypt.compare(form.password, user.password, function (err, res) {
             if (err) throw err;
-            if (res == true) cb(err, user);
+            if (res == true){ 
+                cb(err, user); 
+            }else{
+                cb("Incorrect username or password", null);
+            }
         });
     });
 }
@@ -115,7 +122,7 @@ async function answerQuestion(answerInfo, cb) {
             if(answerInfo.user.answer_attempt == 3){
                 //Block user
                 await sequelize.query(
-                    'UPDATE `user` SET user_status = 2 WHERE user_id = ?;',
+                    'UPDATE `user` SET user_status = 3 WHERE user_id = ?;',
                     {
                         replacements: [
                             answerInfo.user.user_id

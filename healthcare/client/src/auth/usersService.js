@@ -112,7 +112,7 @@ export const loginUser = async (username, password) => {
             return client.post('/auth/login', { username, password }).then(res => {
                 return {
                     user: res.data,
-                    msg: null,
+                    msg: res.msg,
                 }
             })
         }
