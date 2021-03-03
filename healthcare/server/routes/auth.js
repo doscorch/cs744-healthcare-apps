@@ -85,6 +85,12 @@ router.post('/register', function (req, res, next) {
     });
 });
 
+router.get('/getSecurityQuestions', function(req, res, next) {
+    _userService.getAllQuestions(function (result) {
+        res.send({data: result});
+    });
+});
+
 // logout user
 router.post('/logout', function (req, res, next) {
     console.log("logout!!!!!")

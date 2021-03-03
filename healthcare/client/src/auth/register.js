@@ -10,7 +10,7 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Alert from '@material-ui/lab/Alert';
 
-import { registerUser } from './usersService';
+import { registerUser, getAllSecurityQuestions } from './usersService';
 import { InputLabel } from '@material-ui/core';
 const initState = {
     username: "",
@@ -28,8 +28,12 @@ const initState = {
     security_question_3: "",
     security_answer_3: "",
     error: "",
-    success: ""
+    success: "",
+    questions: null,
 }
+
+let menuItems = [<MenuItem key={1}>Question 1</MenuItem>];
+
 
 export default class Register extends React.Component {
 
@@ -147,6 +151,11 @@ export default class Register extends React.Component {
             return;
         }
 
+        if (this.state.security_question_2 == this.state.security_question_1) {
+            this.setState({ error: 'Security question 2 has already been selected in security question 1! Please change security question 2.'});
+            return;
+        }
+
         if (!this.state.security_answer_2) {
             this.setState({ error: 'Please provide a security answer 2'});
             return;
@@ -163,6 +172,16 @@ export default class Register extends React.Component {
 
         if (!this.state.security_question_3) {
             this.setState({ error: 'Please select a security question 3'});
+            return;
+        }
+
+        if (this.state.security_question_3 == this.state.security_question_1) {
+            this.setState({ error: 'Security question 3 has already been selected in security question 1! Please change security question 3.'});
+            return;
+        }
+
+        if (this.state.security_question_3 == this.state.security_question_2) {
+            this.setState({ error: 'Security question 3 has already been selected in security question 2! Please change security question 3.'});
             return;
         }
 
@@ -201,7 +220,18 @@ export default class Register extends React.Component {
         state[propName] = propValue;
         this.setState(state);
     }
+    async componentDidMount() {
+        if (menuItems.length == 1) {
+            let securityQuestions = await getAllSecurityQuestions();
+             let list = securityQuestions.data;
 
+            menuItems = [];
+            for (let i = 0; i < list.length; i++) {
+                menuItems.push(<MenuItem key={list[i].question_id} value={list[i].question_id}>{list[i].question}</MenuItem>);
+            }
+            this.forceUpdate();
+        }    
+    }
     render() {
         const classes = {
             paper: {
@@ -367,9 +397,7 @@ export default class Register extends React.Component {
                                         auto-complete='sq1'
                                         value={this.state.security_question_1}
                                         onChange={this.changeForm}>
-                                            <MenuItem value={1}>Question 1</MenuItem>
-                                            <MenuItem value={2}>Question 2</MenuItem>
-                                            <MenuItem value={3}>Question 3</MenuItem>
+                                            {menuItems}
                                 </Select>
                             </Grid>
                             <Grid item xs={12}>
@@ -399,9 +427,7 @@ export default class Register extends React.Component {
                                         auto-complete='sq2'
                                         value={this.state.security_question_2}
                                         onChange={this.changeForm}>
-                                            <MenuItem value={1}>Question 1</MenuItem>
-                                            <MenuItem value={2}>Question 2</MenuItem>
-                                            <MenuItem value={3}>Question 3</MenuItem>
+                                            {menuItems}
                                 </Select>
                             </Grid>
                             <Grid item xs={12}>
@@ -431,9 +457,7 @@ export default class Register extends React.Component {
                                         auto-complete='sq3'
                                         value={this.state.security_question_3}
                                         onChange={this.changeForm}>
-                                            <MenuItem value={1}>Question 1</MenuItem>
-                                            <MenuItem value={2}>Question 2</MenuItem>
-                                            <MenuItem value={3}>Question 3</MenuItem>
+                                            {menuItems}
                                 </Select>
                             </Grid>
                             <Grid item xs={12}>

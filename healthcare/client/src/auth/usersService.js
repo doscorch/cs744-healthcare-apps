@@ -54,6 +54,14 @@ export const registerUser = async (username, password, firstName, lastName,
     });
 }
 
+export const getAllSecurityQuestions = async () => {
+    return client.get('/auth/getSecurityQuestions').then(res => {
+        return {
+            data: res.data
+        };
+    });
+}
+
 // call api to get users
 export const getUsers = async () => {
     return client.get('/users').then(users => {
