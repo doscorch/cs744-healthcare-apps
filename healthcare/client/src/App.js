@@ -3,6 +3,7 @@ import { Navbar, Nav } from 'react-bootstrap';
 import { Route, Link } from 'react-router-dom';
 import Login from './auth/login';
 import Register from './auth/register';
+import ChangePassword from './auth/changePassword'
 import './App.css';
 import { logout } from './auth/usersService';
 import { withRouter } from 'react-router-dom';
@@ -12,6 +13,7 @@ import UserManager from './users/userManager'
 import MyAccount from './auth/myAccount';
 import SecurityQuestion from './auth/securityQuestion';
 import { UserType } from './models/user';
+import ChangePassowrd from './auth/changePassword';
 
 class App extends React.Component {
 
@@ -46,6 +48,7 @@ class App extends React.Component {
         <Route path="/login" component={Login} />
         <Route path="/security-question" component={SecurityQuestion} />
         <Route path="/register" component={Register} />
+        <Route path="/changePassword" component={ChangePassword} />
         <Route path="/account" component={MyAccount} />
         <Route path="/user-manager" component={UserManager} />
       </div>

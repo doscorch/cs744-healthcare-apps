@@ -176,6 +176,34 @@ async function createUser(user, cb) {
 }
 module.exports.createUser = createUser;
 
+async function updatePassword(data, cb) {
+    let err = null;
+    const hash = await bcrypt.hash(data.password, saltRounds);
+    const queryRes = await sequelize.query(
+        'UPDATE `user` SET password=? WHERE username=?',
+        {
+            replacements: [
+                hash,
+                data.username
+            ],
+            type: sequelize.QueryTypes.UPDATE,
+            returning: true
+        }
+    ).catch(function (e) {
+        // error handling
+        console.log('sql error (update password):');
+        console.log(e);
+        return 'Database error';
+    });
+    if (typeof queryRes === 'string' || queryRes instanceof String) {
+        err = queryRes;
+    }
+
+    cb(err);
+}
+
+module.exports.updatePassword = updatePassword;
+
 // update user
 function updateUser(user, cb) {
     delete user.password;

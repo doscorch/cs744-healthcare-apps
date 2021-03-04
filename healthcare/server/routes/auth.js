@@ -93,6 +93,20 @@ router.post('/register', function (req, res, next) {
     });
 });
 
+/**
+ * get request to get all security questions. Triggered in client>src>auth>usersService.js 
+ */
+router.post('/updatePassword', function(req, res, next) {
+    _userService.updatePassword(req.body, function (err) {
+        res.send({ msg: err });
+    });
+});
+
+/**
+ * get request to get all security questions. Triggered in client>src>auth>usersService.js 
+ * 
+ * @author Sahee Thao
+ */
 router.get('/getSecurityQuestions', function(req, res, next) {
     _userService.getAllQuestions(function (result) {
         res.send({data: result});

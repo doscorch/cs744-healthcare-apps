@@ -1,6 +1,8 @@
 import React from 'react';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 import { connect } from 'react-redux';
+import { Navbar, Nav } from 'react-bootstrap';
+import { Route, Link } from 'react-router-dom';
 
 class MyAccount extends React.Component {
     state = {
@@ -27,6 +29,11 @@ class MyAccount extends React.Component {
                                     <p>{user.username}</p>
                                     <h6>Account Type</h6>
                                     <p>{user.userRole}</p>
+                                    <p><a href="/changeQuestions">Change my security questions and answers</a></p>
+                                    <Link to={{
+                                        pathname: "/changePassword",
+                                        state: { username: user.username }
+                                        }}>Change password</Link>
                                 </Col>
                             </Row>
                         </Card>

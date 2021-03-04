@@ -54,6 +54,18 @@ export const registerUser = async (username, password, firstName, lastName,
     });
 }
 
+export const updatePassword = async (username, password) => {
+    let args = {username, password};
+    return client.post('/auth/updatePassword', args).then(res => {
+        return {
+            msg: res.msg,
+        };
+    });
+}
+
+/**
+ * Gets all security questions
+ */
 export const getAllSecurityQuestions = async () => {
     return client.get('/auth/getSecurityQuestions').then(res => {
         return {
