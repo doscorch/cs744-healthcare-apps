@@ -29,11 +29,18 @@ class MyAccount extends React.Component {
                                     <p>{user.username}</p>
                                     <h6>Account Type</h6>
                                     <p>{user.userRole}</p>
-                                    <p><a href="/changeQuestions">Change my security questions and answers</a></p>
+                                    <p>
+                                    <Link to={{
+                                        pathname: "/changeSecurityQuestions",
+                                        state: { username: user.username }
+                                        }}>Change security questions</Link>
+                                    </p>
+                                    <p>
                                     <Link to={{
                                         pathname: "/changePassword",
                                         state: { username: user.username }
                                         }}>Change password</Link>
+                                    </p>
                                 </Col>
                             </Row>
                         </Card>

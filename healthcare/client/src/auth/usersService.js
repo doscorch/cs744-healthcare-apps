@@ -63,6 +63,17 @@ export const updatePassword = async (username, password) => {
     });
 }
 
+export const updateSecurityQuestions = async(username, security_question_1, security_answer_1, 
+    security_question_2, security_answer_2, security_question_3, security_answer_3) => {
+        let args = {username, security_question_1, security_answer_1, 
+            security_question_2, security_answer_2, security_question_3, security_answer_3};
+            return client.post('/auth/updateSecurityQuestions', args).then(res => {
+                return {
+                    msg: res.msg,
+                }
+            });
+    }
+
 /**
  * Gets all security questions
  */

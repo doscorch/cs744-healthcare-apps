@@ -13,7 +13,7 @@ import UserManager from './users/userManager'
 import MyAccount from './auth/myAccount';
 import SecurityQuestion from './auth/securityQuestion';
 import { UserType } from './models/user';
-import ChangePassowrd from './auth/changePassword';
+import changeSecurityQuestions from './auth/changeSecurityQuestions';
 
 class App extends React.Component {
 
@@ -49,6 +49,7 @@ class App extends React.Component {
         <Route path="/security-question" component={SecurityQuestion} />
         <Route path="/register" component={Register} />
         <Route path="/changePassword" component={ChangePassword} />
+        <Route path="/changeSecurityQuestions" component={changeSecurityQuestions} />
         <Route path="/account" component={MyAccount} />
         <Route path="/user-manager" component={UserManager} />
       </div>

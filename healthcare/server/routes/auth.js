@@ -83,7 +83,7 @@ router.post('/login', function (req, res, next) {
 /**
  * Post request to register a user. Triggered in client>src>auth>usersService.js
  * 
- * @param req - req.body is an asso array of input values for registration
+ * @param req - req.body is an object of input values for registration
  * 
  * @author Sahee Thao
  */
@@ -94,10 +94,23 @@ router.post('/register', function (req, res, next) {
 });
 
 /**
- * get request to get all security questions. Triggered in client>src>auth>usersService.js 
+ * post request to update password for a user. Triggered in client>src>auth>usersService.js
+ * 
+ * @param req - req.body is an object of the username and password {username: ?, password: ?} 
  */
 router.post('/updatePassword', function(req, res, next) {
     _userService.updatePassword(req.body, function (err) {
+        res.send({ msg: err });
+    });
+});
+
+/**
+ * post request to update security questions for a user. Triggered in client>src>auth>usersService.js
+ * 
+ * @param req - req.body is an object of the username and questions and answers {username: ?, question1: ?, answer1: ? ...} 
+ */
+router.post('/updateSecurityQuestions', function(req, res, next) {
+    _userService.updateSecurityQuestions(req.body, function (err) {
         res.send({ msg: err });
     });
 });

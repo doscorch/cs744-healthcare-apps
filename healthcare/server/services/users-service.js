@@ -198,11 +198,112 @@ async function updatePassword(data, cb) {
     if (typeof queryRes === 'string' || queryRes instanceof String) {
         err = queryRes;
     }
-
+    
     cb(err);
 }
 
 module.exports.updatePassword = updatePassword;
+
+async function updateSecurityQuestions(data, cb) {
+    let err = null;
+    console.log('DATA:');
+    console.log(data);
+    
+    // delete rows
+    let queryRes = await sequelize.query(
+        'DELETE FROM `security_answer` WHERE user_id=(SELECT user_id FROM `user` WHERE username=?)',
+        {
+            replacements: [
+                data.username
+            ],
+            type: sequelize.QueryTypes.DELETE,
+            returning: true
+        }
+    ).catch(function (e) {
+        // error handling
+        console.log('sql error (delete security_answer):');
+        console.log(e);
+        return 'Database error';
+    });
+    if (typeof queryRes === 'string' || queryRes instanceof String) {
+        err = queryRes;
+    }
+
+
+    // insert new rows
+    let securityAnswerError = await sequelize.query(
+        'INSERT INTO `security_answer` (question_id, user_id, answer) values (?, (SELECT user_id FROM `user` WHERE username=?), ?)',
+        {
+            replacements: [
+                data.security_question_1,
+                data.username,
+                data.security_answer_1
+            ],
+            type: sequelize.QueryTypes.INSERT,
+            returning: true
+        }
+    ).catch(function (e) {
+        // error handling
+        console.log('sql error (insert security answer 1):');
+        console.log(e);
+        return 'Database error';
+    });
+
+    if (typeof securityAnswerError === 'string' || securityAnswerError instanceof String) {
+        cb(securityAnswerError);
+        return;
+    }
+
+    securityAnswerError = await sequelize.query(
+        'INSERT INTO `security_answer` (question_id, user_id, answer) values (?, (SELECT user_id FROM `user` WHERE username=?), ?)',
+        {
+            replacements: [
+                data.security_question_2,
+                data.username,
+                data.security_answer_2
+            ],
+            type: sequelize.QueryTypes.INSERT,
+            returning: true
+        }
+    ).catch(function (e) {
+        // error handling
+        console.log('sql error (insert security answer 2):');
+        console.log(e);
+        return 'Database error';
+    });
+
+    if (typeof securityAnswerError === 'string' || securityAnswerError instanceof String) {
+        cb(securityAnswerError);
+        return;
+    }
+
+    securityAnswerError = await sequelize.query(
+        'INSERT INTO `security_answer` (question_id, user_id, answer) values (?, (SELECT user_id FROM `user` WHERE username=?), ?)',
+        {
+            replacements: [
+                data.security_question_3,
+                data.username,
+                data.security_answer_3
+            ],
+            type: sequelize.QueryTypes.INSERT,
+            returning: true
+        }
+    ).catch(function (e) {
+        // error handling
+        console.log('sql error (insert security answer 3):');
+        console.log(e);
+        return 'Database error';
+    });
+
+    if (typeof securityAnswerError === 'string' || securityAnswerError instanceof String) {
+        cb(securityAnswerError);
+        return;
+    }
+
+    cb(err);
+}
+
+module.exports.updateSecurityQuestions = updateSecurityQuestions;
 
 // update user
 function updateUser(user, cb) {
