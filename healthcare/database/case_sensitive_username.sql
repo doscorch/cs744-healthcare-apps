@@ -1,0 +1,1 @@
+ALTER TABLE user MODIFY username VARCHAR(63) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin;
