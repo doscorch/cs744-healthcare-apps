@@ -16,15 +16,15 @@ const initState = {
 
 const shuffle = (array) => {
     let newOrder = new Array();
-    while(array.length>0){
-        const idx = Math.floor(Math.random()*(array.length));
+    while (array.length > 0) {
+        const idx = Math.floor(Math.random() * (array.length));
         newOrder.push(array[idx]);
         array.splice(idx, 1)
     }
     return newOrder;
 }
 
-export class SecurityQuestion extends React.Component{
+export class SecurityQuestion extends React.Component {
     state = {
         ...initState
     }
@@ -32,16 +32,16 @@ export class SecurityQuestion extends React.Component{
     submitAnswer = async (e) => {
         let response = await answerSecurityQuestion(this.props.user, this.state.answer);
 
-        if(response.msg){
-            this.setState({ error: response.msg});
+        if (response.msg) {
+            this.setState({ error: response.msg });
         }
 
         this.props.app_login(response.user);
-        
-        if(!response.correct){
+
+        if (!response.correct) {
             //Answered incorrectly
             console.log("Incorrect");
-        }else{
+        } else {
             //Answered correctly
             console.log('Correct');
             this.props.history.push("/");
@@ -81,19 +81,19 @@ export class SecurityQuestion extends React.Component{
         };
 
         let alert = this.state.error ? <Alert severity="error">{this.state.error}</Alert> : "";
-        return(
+        return (
             <Container component="main" maxWidth="xs">
                 <div style={classes.papper}>
                     <Typography component="h1" variant="h5">Security Question</Typography>
-                    {this.props.user.answer_attempt<=3? 
+                    {this.props.user.answer_attempt <= 3 ?
                         <Grid container justify="center">
-                            <Typography component="h4" variant="h5">{this.props.user.questions[this.props.user.answer_attempt-1].question}</Typography>
-                            <TextField 
+                            <Typography component="h4" variant="h5">{this.props.user.questions[this.props.user.answer_attempt - 1].question}</Typography>
+                            <TextField
                                 variant="outlined"
                                 margin="normal"
                                 fullWidth
                                 name="answer"
-                                label= "Answer"
+                                label="Answer"
                                 id="security_answer"
                                 required
                                 autoFocus
@@ -109,8 +109,8 @@ export class SecurityQuestion extends React.Component{
                                 onClick={this.submitAnswer}>
                                 Submit
                             </Button>
-                        </Grid>: ""}
-                    
+                        </Grid> : ""}
+
                     {alert}
                 </div>
             </Container>

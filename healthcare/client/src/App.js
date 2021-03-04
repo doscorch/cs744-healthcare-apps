@@ -24,7 +24,7 @@ class App extends React.Component {
     this.props.history.push('/');
   }
   render() {
-    const hasUser = Boolean(this.props.user.user_id);
+    const hasUser = Boolean(this.props.user.is_validated);
     const isAdmin = this.props.user.user_type === UserType.Admin;
     return (
       <div>
@@ -33,11 +33,11 @@ class App extends React.Component {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
-              {isAdmin ? <Nav.Link as={Link} to="/user-manager">Manage Users</Nav.Link> : ""}
+              {hasUser && isAdmin ? <Nav.Link as={Link} to="/user-manager">Manage Users</Nav.Link> : ""}
             </Nav>
             <Nav>
               {hasUser ? <Nav.Link as={Link} to="/" onClick={this.clickLogout}><i className="fas fa-sign-out-alt"></i> Logout</Nav.Link> : ""}
-              {hasUser ? <Nav.Link as={Link} to="/account"><i className="fas fa-user"></i> {this.props.user.username}</Nav.Link> : ""}
+              {hasUser ? <Nav.Link as={Link} to="/account"><i className="fas fa-user"></i> {this.props.user.first_name} {this.props.user.last_name}</Nav.Link> : ""}
               {!hasUser ? <Nav.Link as={Link} to="/login"><i className="fas fa-sign-in-alt"></i> Login</Nav.Link> : ""}
             </Nav>
           </Navbar.Collapse>
