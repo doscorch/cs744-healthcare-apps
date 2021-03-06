@@ -28,8 +28,8 @@ class App extends React.Component {
     const isAdmin = this.props.user.user_type === UserType.Admin;
     return (
       <div>
-        <Navbar sticky="top" bg="dark" variant="dark" expand="lg" style={{ marginBottom: "10px" }}>
-          <Navbar.Brand as={Link} to="/"><img style={{ width: "30px", height: "30px" }} src="../logo.png" alt="logo"></img> Healthcare System</Navbar.Brand>
+        <Navbar sticky="top" bg="light" variant="light" expand="lg" style={{ marginBottom: "10px" }}>
+          <Navbar.Brand as={Link} to="/"><img style={{ width: "30px", height: "30px" }} src="../logo.png" alt="logo"></img> Pharmacy System</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
@@ -69,7 +69,7 @@ function Home() {
       <div className="row">
         <div className="card card-body bg-light" style={{ height: "300px" }}>
           <span >
-            Welcome to the Healthcare application.
+            Welcome to the Pharmacy application.
           </span>
         </div>
       </div>
