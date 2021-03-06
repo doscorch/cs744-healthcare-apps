@@ -65,10 +65,10 @@ export default class Register extends React.Component {
             return;
         }
         // check the username bounds
-        let usernameIsValid = 
-        this.state.username.match(/^[0-9a-zA-Z]+$/) && // is alphanumeric
-        this.state.username.length >= 6 && // is greater or equal to 6 (in length)
-        !Number.isInteger(this.state.username.charAt(0)); // the first character is NOT a number
+        let usernameIsValid =
+            this.state.username.match(/^[0-9a-zA-Z]+$/) && // is alphanumeric
+            this.state.username.length >= 6 && // is greater or equal to 6 (in length)
+            !Number.isInteger(this.state.username.charAt(0)); // the first character is NOT a number
 
         if (!usernameIsValid) {
             this.setState({ error: "The username must be have 6 or more characters, must contain only numbers and letters, and must start with a letter!" });
@@ -92,10 +92,10 @@ export default class Register extends React.Component {
             return false;
         };
 
-        let passwordIsValid = 
-        this.state.password.match(/^[0-9a-zA-Z~!@#$%^&*+]+$/) && // is alphanumeric
-        this.state.password.length >= 6 && // is greater or equal to 6 (in length)
-        containsSpecialChar(this.state.password); // the first character is NOT a number
+        let passwordIsValid =
+            this.state.password.match(/^[0-9a-zA-Z~!@#$%^&*+]+$/) && // is alphanumeric
+            this.state.password.length >= 6 && // is greater or equal to 6 (in length)
+            containsSpecialChar(this.state.password); // the first character is NOT a number
 
 
         if (!passwordIsValid) {
@@ -104,23 +104,23 @@ export default class Register extends React.Component {
         }
 
         if (!this.state.user_type) {
-            this.setState({ error: 'Please select a user type'});
+            this.setState({ error: 'Please select a user type' });
             return;
         }
 
         if (this.state.user_type === 'patient') {
             if (!this.state.address) {
-                this.setState({ error: 'Please provide an address'});
+                this.setState({ error: 'Please provide an address' });
                 return;
             }
             // TODO: GUI bug related to date selector
             if (!this.state.date_of_birth) {
-                this.setState({ error: 'Please provide a date of birth'});
+                this.setState({ error: 'Please provide a date of birth' });
                 return;
             }
         } else if (this.state.user_type === 'physician') {
             if (!this.state.license_number) {
-                this.setState({ error: 'Please provide a license number'});
+                this.setState({ error: 'Please provide a license number' });
                 return;
             }
         } else {
@@ -128,18 +128,18 @@ export default class Register extends React.Component {
         }
 
         if (!this.state.security_question_1) {
-            this.setState({ error: 'Please select a security question 1'});
+            this.setState({ error: 'Please select a security question 1' });
             return;
         }
 
         if (!this.state.security_answer_1) {
-            this.setState({ error: 'Please provide a security answer 1'});
+            this.setState({ error: 'Please provide a security answer 1' });
             return;
         }
 
-        let sa1IsValid = 
-        this.state.security_answer_1.match(/^[0-9a-zA-Z]+$/) && // is alphanumeric
-        this.state.security_answer_1.length >= 4; // is greater or equal to 6 (in length)
+        let sa1IsValid =
+            this.state.security_answer_1.match(/^[0-9a-zA-Z]+$/) && // is alphanumeric
+            this.state.security_answer_1.length >= 4; // is greater or equal to 6 (in length)
 
         if (!sa1IsValid) {
             this.setState({ error: "Security answer 1 must be have 4 or more characters and must contain only numbers and letters!" });
@@ -147,23 +147,23 @@ export default class Register extends React.Component {
         }
 
         if (!this.state.security_question_2) {
-            this.setState({ error: 'Please select a security question 2'});
+            this.setState({ error: 'Please select a security question 2' });
             return;
         }
 
         if (this.state.security_question_2 == this.state.security_question_1) {
-            this.setState({ error: 'Security question 2 has already been selected in security question 1! Please change security question 2.'});
+            this.setState({ error: 'Security question 2 has already been selected in security question 1! Please change security question 2.' });
             return;
         }
 
         if (!this.state.security_answer_2) {
-            this.setState({ error: 'Please provide a security answer 2'});
+            this.setState({ error: 'Please provide a security answer 2' });
             return;
         }
 
-        let sa2IsValid = 
-        this.state.security_answer_2.match(/^[0-9a-zA-Z]+$/) && // is alphanumeric
-        this.state.security_answer_2.length >= 4; // is greater or equal to 6 (in length)
+        let sa2IsValid =
+            this.state.security_answer_2.match(/^[0-9a-zA-Z]+$/) && // is alphanumeric
+            this.state.security_answer_2.length >= 4; // is greater or equal to 6 (in length)
 
         if (!sa2IsValid) {
             this.setState({ error: "Security answer 2 must be have 4 or more characters and must contain only numbers and letters!" });
@@ -171,28 +171,28 @@ export default class Register extends React.Component {
         }
 
         if (!this.state.security_question_3) {
-            this.setState({ error: 'Please select a security question 3'});
+            this.setState({ error: 'Please select a security question 3' });
             return;
         }
 
         if (this.state.security_question_3 == this.state.security_question_1) {
-            this.setState({ error: 'Security question 3 has already been selected in security question 1! Please change security question 3.'});
+            this.setState({ error: 'Security question 3 has already been selected in security question 1! Please change security question 3.' });
             return;
         }
 
         if (this.state.security_question_3 == this.state.security_question_2) {
-            this.setState({ error: 'Security question 3 has already been selected in security question 2! Please change security question 3.'});
+            this.setState({ error: 'Security question 3 has already been selected in security question 2! Please change security question 3.' });
             return;
         }
 
         if (!this.state.security_answer_3) {
-            this.setState({ error: 'Please provide a security answer 3'});
+            this.setState({ error: 'Please provide a security answer 3' });
             return;
         }
 
-        let sa3IsValid = 
-        this.state.security_answer_3.match(/^[0-9a-zA-Z]+$/) && // is alphanumeric
-        this.state.security_answer_3.length >= 4; // is greater or equal to 6 (in length)
+        let sa3IsValid =
+            this.state.security_answer_3.match(/^[0-9a-zA-Z]+$/) && // is alphanumeric
+            this.state.security_answer_3.length >= 4; // is greater or equal to 6 (in length)
 
         if (!sa3IsValid) {
             this.setState({ error: "Security answer 3 must be have 4 or more characters and must contain only numbers and letters!" });
@@ -202,14 +202,14 @@ export default class Register extends React.Component {
 
 
         // register user
-        let res = await registerUser(this.state.username, this.state.password, this.state.first_name, this.state.last_name, this.state.user_type, 
-            this.state.security_answer_1, this.state.security_answer_2, this.state.security_answer_3, this.state.security_question_1, 
-            this.state.security_question_2,this.state.security_question_3, this.state.address, this.state.date_of_birth, this.state.license_number)
-        
+        let res = await registerUser(this.state.username, this.state.password, this.state.first_name, this.state.last_name, this.state.user_type,
+            this.state.security_answer_1, this.state.security_answer_2, this.state.security_answer_3, this.state.security_question_1,
+            this.state.security_question_2, this.state.security_question_3, this.state.address, this.state.date_of_birth, this.state.license_number)
+
         if (res.msg == null) {
             this.setState({ ...initState, success: "User successfully created! Please login." });
         } else {
-            this.setState({error: res.msg});
+            this.setState({ error: res.msg });
         }
     }
 
@@ -223,14 +223,14 @@ export default class Register extends React.Component {
     async componentDidMount() {
         if (menuItems.length == 1) {
             let securityQuestions = await getAllSecurityQuestions();
-             let list = securityQuestions.data;
+            let list = securityQuestions.data;
 
             menuItems = [];
             for (let i = 0; i < list.length; i++) {
                 menuItems.push(<MenuItem key={list[i].question_id} value={list[i].question_id}>{list[i].question}</MenuItem>);
             }
             this.forceUpdate();
-        }    
+        }
     }
     render() {
         const classes = {
@@ -320,7 +320,7 @@ export default class Register extends React.Component {
                         <Grid container justify="center" spacing={4}>
                             <Grid item xs={12} sm={6}>
                                 <InputLabel id='register-user-type-label'>User Type</InputLabel>
-                                <Select 
+                                <Select
                                     labelId="register-user-type-label"
                                     required
                                     fullWidth
@@ -329,25 +329,25 @@ export default class Register extends React.Component {
                                     auto-complete='admin'
                                     value={this.state.user_type}
                                     onChange={this.changeForm}>
-                                        <MenuItem value={'admin'}>Admin</MenuItem>
-                                        <MenuItem value={'patient'}>Patient</MenuItem>
-                                        <MenuItem value={'physician'}>Physician</MenuItem>
+                                    <MenuItem value={'admin'}>Admin</MenuItem>
+                                    <MenuItem value={'patient'}>Patient</MenuItem>
+                                    <MenuItem value={'physician'}>Physician</MenuItem>
                                 </Select>
                             </Grid>
                         </Grid>
-                        {isPatient ? 
+                        {isPatient ?
                             <Grid container spacing={2} justify="center">
                                 <Grid item xs={12}>
                                     <TextField
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                    name="address"
-                                    label="Address"
-                                    id="address"
-                                    autoComplete="current-address"
-                                    value={this.state.address}
-                                    onChange={this.changeForm}
+                                        variant="outlined"
+                                        required
+                                        fullWidth
+                                        name="address"
+                                        label="Address"
+                                        id="address"
+                                        autoComplete="current-address"
+                                        value={this.state.address}
+                                        onChange={this.changeForm}
                                     />
                                 </Grid>
                                 <Grid item xs={12} sm={6}>
@@ -361,43 +361,43 @@ export default class Register extends React.Component {
                                         value={this.state.date_of_birth}
                                         InputLabelProps={{
                                             shrink: true,
-                                            }}
+                                        }}
                                         onChange={this.changeForm}
                                     />
                                 </Grid>
                             </Grid>
-                        : ""}
-                        {isPhysician ? 
+                            : ""}
+                        {isPhysician ?
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
                                     <TextField
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                    name="license_number"
-                                    label="License Number"
-                                    id="license_number"
-                                    autoComplete="current-number"
-                                    value={this.state.license_number}
-                                    onChange={this.changeForm}
+                                        variant="outlined"
+                                        required
+                                        fullWidth
+                                        name="license_number"
+                                        label="License Number"
+                                        id="license_number"
+                                        autoComplete="current-number"
+                                        value={this.state.license_number}
+                                        onChange={this.changeForm}
                                     />
                                 </Grid>
                             </Grid>
-                        : ""}
+                            : ""}
 
                         <Grid container spacing={4}>
                             <Grid item xs={12}>
                                 <InputLabel id='sq1-user-type-label'>Security Question 1</InputLabel>
-                                    <Select 
-                                        labelId="sq1-user-type-label"
-                                        required
-                                        fullWidth
-                                        name="security_question_1"
-                                        id="security_question_1"
-                                        auto-complete='sq1'
-                                        value={this.state.security_question_1}
-                                        onChange={this.changeForm}>
-                                            {menuItems}
+                                <Select
+                                    labelId="sq1-user-type-label"
+                                    required
+                                    fullWidth
+                                    name="security_question_1"
+                                    id="security_question_1"
+                                    auto-complete='sq1'
+                                    value={this.state.security_question_1}
+                                    onChange={this.changeForm}>
+                                    {menuItems}
                                 </Select>
                             </Grid>
                             <Grid item xs={12}>
@@ -411,23 +411,23 @@ export default class Register extends React.Component {
                                     autoComplete="current-sa1"
                                     value={this.state.security_answer_1}
                                     onChange={this.changeForm}
-                                    />
+                                />
                             </Grid>
                         </Grid>
 
                         <Grid container spacing={4}>
                             <Grid item xs={12}>
                                 <InputLabel id='sq2-user-type-label'>Security Question 2</InputLabel>
-                                    <Select 
-                                        labelId="sq2-user-type-label"
-                                        required
-                                        fullWidth
-                                        name="security_question_2"
-                                        id="security_question_2"
-                                        auto-complete='sq2'
-                                        value={this.state.security_question_2}
-                                        onChange={this.changeForm}>
-                                            {menuItems}
+                                <Select
+                                    labelId="sq2-user-type-label"
+                                    required
+                                    fullWidth
+                                    name="security_question_2"
+                                    id="security_question_2"
+                                    auto-complete='sq2'
+                                    value={this.state.security_question_2}
+                                    onChange={this.changeForm}>
+                                    {menuItems}
                                 </Select>
                             </Grid>
                             <Grid item xs={12}>
@@ -441,23 +441,23 @@ export default class Register extends React.Component {
                                     autoComplete="current-sa2"
                                     value={this.state.security_answer_2}
                                     onChange={this.changeForm}
-                                    />
+                                />
                             </Grid>
                         </Grid>
 
                         <Grid container spacing={4}>
                             <Grid item xs={12}>
                                 <InputLabel id='sq3-user-type-label'>Security Question 3</InputLabel>
-                                    <Select 
-                                        labelId="sq3-user-type-label"
-                                        required
-                                        fullWidth
-                                        name="security_question_3"
-                                        id="security_question_3"
-                                        auto-complete='sq3'
-                                        value={this.state.security_question_3}
-                                        onChange={this.changeForm}>
-                                            {menuItems}
+                                <Select
+                                    labelId="sq3-user-type-label"
+                                    required
+                                    fullWidth
+                                    name="security_question_3"
+                                    id="security_question_3"
+                                    auto-complete='sq3'
+                                    value={this.state.security_question_3}
+                                    onChange={this.changeForm}>
+                                    {menuItems}
                                 </Select>
                             </Grid>
                             <Grid item xs={12}>
@@ -471,10 +471,10 @@ export default class Register extends React.Component {
                                     autoComplete="current-sa3"
                                     value={this.state.security_answer_3}
                                     onChange={this.changeForm}
-                                    />
+                                />
                             </Grid>
                         </Grid>
-                        
+
                         <Button
                             type="submit"
                             fullWidth
@@ -484,13 +484,6 @@ export default class Register extends React.Component {
                             onClick={this.registerUser}>
                             Register
                         </Button>
-                        <Grid container justify="center">
-                            <Grid item>
-                                <Link href="/login">
-                                    Already have an account? Login
-                                </Link>
-                            </Grid>
-                        </Grid>
                     </form>
                     {error}
                     {success}

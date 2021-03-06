@@ -22,11 +22,11 @@ class Login extends React.Component {
     login = async (e) => {
         e.preventDefault();
         // log the user in and go home
-        if(!this.state.username || this.state.username === ""){
+        if (!this.state.username || this.state.username === "") {
             this.setState({ error: "Username is empty" });
             return;
         }
-        if(!this.state.password || this.state.password === ""){
+        if (!this.state.password || this.state.password === "") {
             this.setState({ error: "Password is empty" });
             return;
         }
@@ -108,11 +108,6 @@ class Login extends React.Component {
                             onClick={this.login}>
                             Log In
                         </Button>
-                        <Grid container justify="center">
-                            <Link href="/register">
-                                {"Don't have an account? Sign Up"}
-                            </Link>
-                        </Grid>
                     </form>
                     {alert}
                 </div>

@@ -38,8 +38,8 @@ export default class UserManager extends React.Component {
                     columns={[
                         // { title: 'Id', field: '_id' },
                         { title: 'Username', field: 'username', editable: false },
-                        { title: 'First Name', field: 'first_name' },
-                        { title: 'Last Name', field: 'last_name' },
+                        { title: 'First Name', field: 'first_name', validate: u => u.first_name == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
+                        { title: 'Last Name', field: 'last_name', validate: u => u.last_name == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
                         {
                             title: 'User Type',
                             field: 'user_type',
