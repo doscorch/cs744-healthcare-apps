@@ -2,6 +2,7 @@
   "name": "healthcare-client",
   "version": "0.1.0",
   "private": true,
+  "homepage": "http://138.49.101.87/peachinsurance",
   "dependencies": {
     "@feathersjs/client": "^4.5.10",
     "@feathersjs/feathers": "^4.5.10",
