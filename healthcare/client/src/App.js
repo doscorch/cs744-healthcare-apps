@@ -29,7 +29,7 @@ class App extends React.Component {
     return (
       <div>
         <Navbar sticky="top" bg="dark" variant="dark" expand="lg" style={{ marginBottom: "10px" }}>
-          <Navbar.Brand as={Link} to="/"><img style={{ width: "30px", height: "30px" }} src="../logo.png" alt="logo"></img> Healthcare System</Navbar.Brand>
+          <Navbar.Brand as={Link} to="/"><img style={{ width: "30px", height: "30px" }} src="logo.png" alt="logo"></img> Healthcare System</Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
@@ -43,17 +43,15 @@ class App extends React.Component {
           </Navbar.Collapse>
         </Navbar>
 
-        <Router basename={'/peachhealthcare'}>
-          <Route exact path="/" component={Home} />
-          <Route exact path="/home" component={Home} />
-          <Route path="/login" component={Login} />
-          <Route path="/security-question" component={SecurityQuestion} />
-          <Route path="/register" component={Register} />
-          <Route path="/changePassword" component={ChangePassword} />
-          <Route path="/changeSecurityQuestions" component={changeSecurityQuestions} />
-          <Route path="/account" component={MyAccount} />
-          <Route path="/user-manager" component={UserManager} />
-        </Router>
+        <Route exact path="/" component={Home} />
+        <Route exact path="/home" component={Home} />
+        <Route path="/login" component={Login} />
+        <Route path="security-question" component={SecurityQuestion} />
+        <Route path="/register" component={Register} />
+        <Route path="/changePassword" component={ChangePassword} />
+        <Route path="/changeSecurityQuestions" component={changeSecurityQuestions} />
+        <Route path="/account" component={MyAccount} />
+        <Route path="/user-manager" component={UserManager} />
       </div>
     );
   }
@@ -64,7 +62,7 @@ function Home() {
     <div className="container" style={{ backgroundColor: "darkgrey" }}>
       <div class="row">
         <div style={{ margin: "auto", marginBottom: "20px" }}>
-          <img src="../logo.png" alt="home image" style={{ width: "100px" }}></img>
+          <img src="logo.png" alt="home image" style={{ width: "100px" }}></img>
           <span style={{ fontSize: "3em" }}></span>
         </div>
       </div>
