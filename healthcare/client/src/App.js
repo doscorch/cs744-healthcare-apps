@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
-import { Route, Link } from 'react-router-dom';
+import { Route, Link, Router } from 'react-router-dom';
 import Login from './auth/login';
 import Register from './auth/register';
 import ChangePassword from './auth/changePassword'
@@ -43,15 +43,17 @@ class App extends React.Component {
           </Navbar.Collapse>
         </Navbar>
 
-        <Route exact path="/" component={Home} />
-        <Route exact path="/home" component={Home} />
-        <Route path="/login" component={Login} />
-        <Route path="/security-question" component={SecurityQuestion} />
-        <Route path="/register" component={Register} />
-        <Route path="/changePassword" component={ChangePassword} />
-        <Route path="/changeSecurityQuestions" component={changeSecurityQuestions} />
-        <Route path="/account" component={MyAccount} />
-        <Route path="/user-manager" component={UserManager} />
+        <Router basename={'/peachhealthcare'}>
+          <Route exact path="/" component={Home} />
+          <Route exact path="/home" component={Home} />
+          <Route path="/login" component={Login} />
+          <Route path="/security-question" component={SecurityQuestion} />
+          <Route path="/register" component={Register} />
+          <Route path="/changePassword" component={ChangePassword} />
+          <Route path="/changeSecurityQuestions" component={changeSecurityQuestions} />
+          <Route path="/account" component={MyAccount} />
+          <Route path="/user-manager" component={UserManager} />
+        </Router>
       </div>
     );
   }
