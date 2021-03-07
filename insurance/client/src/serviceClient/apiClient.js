@@ -1,5 +1,5 @@
 const tokenHeader = "x-csrf";
-const serviceUri = "http://localhost:5000";
+const serviceUri = "http://localhost:5002";
 const tokenManager = require('./authToken');
 const api = {
     get: (path) => {

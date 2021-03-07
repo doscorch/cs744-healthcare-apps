@@ -75,7 +75,7 @@ app.use(function (err, req, res, next) {
     res.render('error');
 });
 
-const PORT = 5000;
+const PORT = 5002;
 app.listen(PORT, () => {
     console.log(`server listening on port ${PORT}`);
 })
