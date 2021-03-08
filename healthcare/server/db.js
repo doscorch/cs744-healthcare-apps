@@ -1,4 +1,4 @@
-const schema = "peach_insurance"
+const schema = "peach_healthcare"
 const user = "root";
 const password = "3peachDatabase!";
 const host = "localhost";
