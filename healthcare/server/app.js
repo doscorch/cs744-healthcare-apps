@@ -21,13 +21,6 @@ app.use(session({
     saveUninitialized: true
 }));
 
-// const cors = require('cors');
-// // app.use(cors({
-// //     //origin: '*',
-// //     exposedHeaders: 'x-csrf',
-// //     credentials: true
-// // }));
-
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", req.header('Origin'));
     res.header("Access-Control-Allow-Credentials", true);
@@ -46,20 +39,6 @@ app.get('/test', (req, res) => {
 
 // configure routes
 app.use('/auth', auth);
-
-// must have auth token to access users api
-// app.all('/users', (req, res, next) => {
-//     let authUser = req.session.user;
-//     console.log(authUser);
-//     if (authUser && req.headers['x-csrf'] && req.headers['x-csrf'] == req.session.csrf) {
-//         next();
-//     } else {
-//         req.session.regenerate(function (err) {
-//             res.status('403').send(new Error('invaild authenication'));
-//             return;
-//         });
-//     }
-// });
 app.use('/users', users);
 
 // catch 404 and forward to error handler

@@ -1,5 +1,5 @@
 import tokenManager from "../../serviceClient/authToken";
-const STORAGE_KEY = "user";
+const STORAGE_KEY = "insurance-user";
 const init = () => {
     let saved = sessionStorage.getItem(STORAGE_KEY);
     if (saved)

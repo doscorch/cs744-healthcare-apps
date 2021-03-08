@@ -1,9 +1,9 @@
 const tokenManager = {
     get: function () {
-        return sessionStorage.getItem('x-csrf');
+        return sessionStorage.getItem('pharmacy-x-csrf');
     },
     set: function (value) {
-        sessionStorage.setItem('x-csrf', value)
+        sessionStorage.setItem('pharmacy-x-csrf', value)
     }
 }
 

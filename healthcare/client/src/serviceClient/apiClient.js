@@ -3,7 +3,7 @@ const serviceUri = "http://localhost:5000";
 const tokenManager = require('./authToken');
 const api = {
     get: (path) => {
-        let token = sessionStorage.getItem(tokenHeader);
+        let token = tokenManager.get();
         const url = `${serviceUri}${path}`;
         return fetch(url, {
             method: 'GET',
@@ -27,7 +27,7 @@ const api = {
         });
     },
     post: (path, data) => {
-        let token = sessionStorage.getItem(tokenHeader);
+        let token = tokenManager.get();
         const url = `${serviceUri}${path}`;
         return fetch(url, {
             method: 'POST',
@@ -53,7 +53,7 @@ const api = {
         });
     },
     patch: (path, data) => {
-        let token = sessionStorage.getItem(tokenHeader);
+        let token = tokenManager.get();
         const url = `${serviceUri}${path}`;
         return fetch(url, {
             method: 'PATCH',
