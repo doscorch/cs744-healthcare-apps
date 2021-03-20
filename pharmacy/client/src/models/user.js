@@ -1,16 +1,13 @@
 const User_Type_Admin = 1;
-const User_Type_Patient = 2;
-const User_Type_Physician = 3;
+const User_Type_Pharmacist = 2;
 export const UserType = {
     Admin: User_Type_Admin,
-    Patient: User_Type_Patient,
-    Physician: User_Type_Physician,
+    Pharmacist: User_Type_Pharmacist,
 
     GetTranslation: (type) => {
         switch (type) {
             case User_Type_Admin: return "admin";
-            case User_Type_Patient: return "patient";
-            case User_Type_Physician: return "physician";
+            case User_Type_Pharmacist: return "pharmacist";
         }
     }
 };

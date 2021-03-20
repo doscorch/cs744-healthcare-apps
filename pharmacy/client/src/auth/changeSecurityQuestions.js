@@ -170,9 +170,6 @@ export default class changeSecurityQuestions extends React.Component {
         let error = this.state.error ? <Alert severity="error">{this.state.error}</Alert> : "";
         let success = this.state.success ? <Alert severity="success">{this.state.success}</Alert> : "";
 
-        const isPatient = this.state.user_type === 'patient';
-        const isPhysician = this.state.user_type === 'physician';
-
         return (
             <Container component="main" maxWidth="xs" >
                 <div style={classes.paper}>

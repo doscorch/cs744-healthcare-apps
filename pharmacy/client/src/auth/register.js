@@ -18,9 +18,6 @@ const initState = {
     first_name: "",
     last_name: "",
     user_type: "",
-    date_of_birth: "",
-    address: "",
-    license_number: "",
     security_question_1: "",
     security_answer_1: "",
     security_question_2: "",
@@ -41,13 +38,6 @@ export default class Register extends React.Component {
         ...initState
     }
 
-    /**
-     * Called when the User clicks on the register button. Posts to server/auth/register
-     * 
-     * @param {*} e 
-     * @author Sahee Thao
-     * @date 02/21/2021
-     */
     registerUser = async (e) => {
 
         e.preventDefault();
@@ -106,25 +96,6 @@ export default class Register extends React.Component {
         if (!this.state.user_type) {
             this.setState({ error: 'Please select a user type' });
             return;
-        }
-
-        if (this.state.user_type === 'patient') {
-            if (!this.state.address) {
-                this.setState({ error: 'Please provide an address' });
-                return;
-            }
-            // TODO: GUI bug related to date selector
-            if (!this.state.date_of_birth) {
-                this.setState({ error: 'Please provide a date of birth' });
-                return;
-            }
-        } else if (this.state.user_type === 'physician') {
-            if (!this.state.license_number) {
-                this.setState({ error: 'Please provide a license number' });
-                return;
-            }
-        } else {
-            // is admin
         }
 
         if (!this.state.security_question_1) {
@@ -204,7 +175,7 @@ export default class Register extends React.Component {
         // register user
         let res = await registerUser(this.state.username, this.state.password, this.state.first_name, this.state.last_name, this.state.user_type,
             this.state.security_answer_1, this.state.security_answer_2, this.state.security_answer_3, this.state.security_question_1,
-            this.state.security_question_2, this.state.security_question_3, this.state.address, this.state.date_of_birth, this.state.license_number)
+            this.state.security_question_2, this.state.security_question_3)
 
         if (res.msg == null) {
             this.setState({ ...initState, success: "User successfully created! Please login." });
@@ -250,9 +221,6 @@ export default class Register extends React.Component {
         };
         let error = this.state.error ? <Alert severity="error">{this.state.error}</Alert> : "";
         let success = this.state.success ? <Alert severity="success">{this.state.success}</Alert> : "";
-
-        const isPatient = this.state.user_type === 'patient';
-        const isPhysician = this.state.user_type === 'physician';
 
         return (
             <Container component="main" maxWidth="xs" >
@@ -317,8 +285,11 @@ export default class Register extends React.Component {
                                 />
                             </Grid>
                         </Grid>
+                        <br />
+                        <hr></hr>
+                        <br />
                         <Grid container justify="center" spacing={4}>
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12}>
                                 <InputLabel id='register-user-type-label'>User Type</InputLabel>
                                 <Select
                                     labelId="register-user-type-label"
@@ -330,61 +301,13 @@ export default class Register extends React.Component {
                                     value={this.state.user_type}
                                     onChange={this.changeForm}>
                                     <MenuItem value={'admin'}>Admin</MenuItem>
-                                    <MenuItem value={'patient'}>Patient</MenuItem>
-                                    <MenuItem value={'physician'}>Physician</MenuItem>
+                                    <MenuItem value={'pharmacist'}>Pharmacist</MenuItem>
                                 </Select>
                             </Grid>
                         </Grid>
-                        {isPatient ?
-                            <Grid container spacing={2} justify="center">
-                                <Grid item xs={12}>
-                                    <TextField
-                                        variant="outlined"
-                                        required
-                                        fullWidth
-                                        name="address"
-                                        label="Address"
-                                        id="address"
-                                        autoComplete="current-address"
-                                        value={this.state.address}
-                                        onChange={this.changeForm}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <TextField
-                                        type="date"
-                                        format="MM/dd/yyyy"
-                                        margin="normal"
-                                        id="date-of-birth"
-                                        name="date_of_birth"
-                                        label="Date of Birth"
-                                        value={this.state.date_of_birth}
-                                        InputLabelProps={{
-                                            shrink: true,
-                                        }}
-                                        onChange={this.changeForm}
-                                    />
-                                </Grid>
-                            </Grid>
-                            : ""}
-                        {isPhysician ?
-                            <Grid container spacing={2}>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        variant="outlined"
-                                        required
-                                        fullWidth
-                                        name="license_number"
-                                        label="License Number"
-                                        id="license_number"
-                                        autoComplete="current-number"
-                                        value={this.state.license_number}
-                                        onChange={this.changeForm}
-                                    />
-                                </Grid>
-                            </Grid>
-                            : ""}
-
+                        <br />
+                        <hr></hr>
+                        <br />
                         <Grid container spacing={4}>
                             <Grid item xs={12}>
                                 <InputLabel id='sq1-user-type-label'>Security Question 1</InputLabel>

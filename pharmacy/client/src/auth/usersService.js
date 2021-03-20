@@ -5,29 +5,9 @@ import client from "../serviceClient/apiClient";
 const users = {};
 // call api to register user
 
-/**
- * 
- * @param {String} username 
- * @param {String} password 
- * @param {String} firstName - TODO: refactor name
- * @param {String} lastName - TODO: refactor name
- * @param {String} user_type - admin, patient, physician only 
- * @param {String} security_answer_1 
- * @param {String} security_answer_2 
- * @param {String} security_answer_3 
- * @param {Integer} security_question_1 
- * @param {Integer} security_question_2 
- * @param {Integer} security_question_3 
- * @param {String} address 
- * @param {String} date_of_birth 
- * @param {String} license_number
- * 
- * @return {object} - contains msg property. If msg is null, there was a success. If msg is not null, it contains an error message
- */
 export const registerUser = async (username, password, firstName, lastName,
     user_type, security_answer_1, security_answer_2, security_answer_3,
-    security_question_1, security_question_2, security_question_3,
-    address, date_of_birth, license_number) => {
+    security_question_1, security_question_2, security_question_3) => {
     let args = {
         username,
         password,
@@ -41,10 +21,6 @@ export const registerUser = async (username, password, firstName, lastName,
         security_answer_2,
         security_question_3,
         security_answer_3,
-
-        address,
-        date_of_birth,
-        license_number
     };
 
     return client.post('/auth/register', args).then(res => {
@@ -55,7 +31,7 @@ export const registerUser = async (username, password, firstName, lastName,
 }
 
 export const updatePassword = async (username, password) => {
-    let args = {username, password};
+    let args = { username, password };
     return client.post('/auth/updatePassword', args).then(res => {
         return {
             msg: res.msg,
@@ -63,16 +39,18 @@ export const updatePassword = async (username, password) => {
     });
 }
 
-export const updateSecurityQuestions = async(username, security_question_1, security_answer_1, 
+export const updateSecurityQuestions = async (username, security_question_1, security_answer_1,
     security_question_2, security_answer_2, security_question_3, security_answer_3) => {
-        let args = {username, security_question_1, security_answer_1, 
-            security_question_2, security_answer_2, security_question_3, security_answer_3};
-            return client.post('/auth/updateSecurityQuestions', args).then(res => {
-                return {
-                    msg: res.msg,
-                }
-            });
-    }
+    let args = {
+        username, security_question_1, security_answer_1,
+        security_question_2, security_answer_2, security_question_3, security_answer_3
+    };
+    return client.post('/auth/updateSecurityQuestions', args).then(res => {
+        return {
+            msg: res.msg,
+        }
+    });
+}
 
 /**
  * Gets all security questions
@@ -99,11 +77,11 @@ export const getQuestions = async (user) => {
 
 //call api to check security question answer
 export const answerSecurityQuestion = async (user, answer) => {
-    let response = client.post('/auth/answerquestion', 
-    {
-        user: user,
-        answer: answer
-    });
+    let response = client.post('/auth/answerquestion',
+        {
+            user: user,
+            answer: answer
+        });
     return response;
 }
 

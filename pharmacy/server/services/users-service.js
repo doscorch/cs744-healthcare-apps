@@ -20,10 +20,8 @@ async function createUser(user, cb) {
     // set the user type to the correct number
     if (user.user_type == 'admin') {
         user.user_type = userType.User_Type_Admin;
-    } else if (user.user_type == 'patient') {
-        user.user_type = userType.User_Type_Patient;
-    } else if (user.user_type == 'physician') {
-        user.user_type = userType.User_Type_Physician;
+    } else if (user.user_type == 'pharmacist') {
+        user.user_type = userType.User_Type_Pharmacist;
     }
 
     const queryRes = await sequelize.query(
@@ -55,52 +53,6 @@ async function createUser(user, cb) {
         return;
     }
     let insertId = queryRes[0];
-    let infoRes = null;
-    if (user.user_type == userType.User_Type_Admin) {
-        // no extra inserts needed
-    } else if (user.user_type == userType.User_Type_Patient) {
-        // insert patient info
-        infoRes = await sequelize.query(
-            'INSERT INTO `patient_info` (user_id, date_of_birth, address) values (?, ?, ?)',
-            {
-                replacements: [
-                    insertId,
-                    user.date_of_birth,
-                    user.address
-                ],
-                type: sequelize.QueryTypes.INSERT,
-                returning: true
-            }
-        ).catch(function (e) {
-            // error handling
-            console.log('sql error (patient info):');
-            console.log(e);
-            return 'Database error';
-        });
-    } else if (user.user_type == userType.User_Type_Physician) {
-        // insert physician info
-        infoRes = await sequelize.query(
-            'INSERT INTO `physician_info` (user_id, license_number) values (?, ?)',
-            {
-                replacements: [
-                    insertId,
-                    user.license_number
-                ],
-                type: sequelize.QueryTypes.INSERT,
-                returning: true
-            }
-        ).catch(function (e) {
-            // error handling
-            console.log('sql error (physician info):');
-            console.log(e);
-            return 'Database error';
-        });
-    }
-
-    if (typeof infoRes === 'string' || infoRes instanceof String) {
-        cb(infoRes);
-        return;
-    }
 
     // security answers
     let securityAnswerError = await sequelize.query(
@@ -198,7 +150,7 @@ async function updatePassword(data, cb) {
     if (typeof queryRes === 'string' || queryRes instanceof String) {
         err = queryRes;
     }
-    
+
     cb(err);
 }
 
@@ -208,7 +160,7 @@ async function updateSecurityQuestions(data, cb) {
     let err = null;
     console.log('DATA:');
     console.log(data);
-    
+
     // delete rows
     let queryRes = await sequelize.query(
         'DELETE FROM `security_answer` WHERE user_id=(SELECT user_id FROM `user` WHERE username=?)',
@@ -316,14 +268,14 @@ module.exports.updateUser = updateUser;
 function getUserByCredentials(form, cb) {
     _userRepository.getUserByUsername(form.username, (err, user) => {
         if (err) throw err;
-        if(!user){
+        if (!user) {
             cb(err, user);
         }
         bcrypt.compare(form.password, user.password, function (err, res) {
             if (err) throw err;
-            if (res == true){ 
-                cb(err, user); 
-            }else{
+            if (res == true) {
+                cb(err, user);
+            } else {
                 cb("Incorrect username or password", null);
             }
         });
@@ -359,7 +311,7 @@ async function answerQuestion(answerInfo, cb) {
         {
             replacements: [
                 answerInfo.user.user_id,
-                answerInfo.user.questions[answerInfo.user.answer_attempt-1].question_id
+                answerInfo.user.questions[answerInfo.user.answer_attempt - 1].question_id
             ],
             type: sequelize.QueryTypes.SELECT
         }
@@ -367,8 +319,8 @@ async function answerQuestion(answerInfo, cb) {
         let answer = data[0].answer;
         if (answerInfo.answer === answer) {
             cb(null, true);
-        }else{
-            if(answerInfo.user.answer_attempt == 3){
+        } else {
+            if (answerInfo.user.answer_attempt == 3) {
                 //Block user
                 await sequelize.query(
                     'UPDATE `user` SET user_status = 3 WHERE user_id = ?;',
@@ -401,9 +353,9 @@ async function getQuestions(user_id, cb) {
             },
             type: sequelize.QueryTypes.SELECT
         }
-    ).then(function(data){
+    ).then(function (data) {
         cb(null, data);
-    }).catch(function(e){
+    }).catch(function (e) {
         console.log(e);
     })
 }
@@ -419,7 +371,7 @@ async function getAllQuestions(cb) {
         {
             type: sequelize.QueryTypes.SELECT
         }
-    ).catch(function(e){
+    ).catch(function (e) {
         console.log('SQL Error:');
         console.log(e);
         return null;

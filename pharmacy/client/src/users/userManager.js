@@ -45,16 +45,7 @@ export default class UserManager extends React.Component {
                             field: 'user_type',
                             editable: false,
                             render: u => <span>{UserType.GetTranslation(u.user_type)}</span>,
-                            // editComponent: props => (
-                            //     <Select
-                            //         id="user-type"
-                            //         value={props.value}
-                            //         onChange={e => props.onChange(e.target.value)}
-                            //     >
-                            //         <MenuItem value={UserType.Physician}>{UserType.GetTranslation(UserType.Physician)}</MenuItem>
-                            //         <MenuItem value={UserType.Patient}>{UserType.GetTranslation(UserType.Patient)}</MenuItem>
-                            //         <MenuItem value={UserType.Admin}>{UserType.GetTranslation(UserType.Admin)}</MenuItem>
-                            //     </Select>),
+
                         },
                         {
                             title: 'User Status',
