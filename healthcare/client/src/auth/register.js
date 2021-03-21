@@ -10,7 +10,7 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import Alert from '@material-ui/lab/Alert';
 
-import { registerUser, getAllSecurityQuestions } from './usersService';
+import { registerUser, getAllSecurityQuestions, getPhysicians } from './usersService';
 import { InputLabel } from '@material-ui/core';
 const initState = {
     username: "",
@@ -20,6 +20,8 @@ const initState = {
     user_type: "",
     date_of_birth: "",
     address: "",
+    physician_id: "",
+    physician_state: "",
     license_number: "",
     security_question_1: "",
     security_answer_1: "",
@@ -33,6 +35,7 @@ const initState = {
 }
 
 let menuItems = [<MenuItem key={1}>Question 1</MenuItem>];
+let physician_list = [<MenuItem key={1}>Physician Name</MenuItem>]
 
 
 export default class Register extends React.Component {
@@ -118,9 +121,17 @@ export default class Register extends React.Component {
                 this.setState({ error: 'Please provide a date of birth' });
                 return;
             }
+            if (!this.state.physician_id){
+                this.setState({ error: 'Please provide a physician' });
+                return;
+            }
         } else if (this.state.user_type === 'physician') {
             if (!this.state.license_number) {
                 this.setState({ error: 'Please provide a license number' });
+                return;
+            }
+            if (!this.state.physician_state) {
+                this.setState({ error: 'Please provide a physician state' });
                 return;
             }
         } else {
@@ -204,7 +215,8 @@ export default class Register extends React.Component {
         // register user
         let res = await registerUser(this.state.username, this.state.password, this.state.first_name, this.state.last_name, this.state.user_type,
             this.state.security_answer_1, this.state.security_answer_2, this.state.security_answer_3, this.state.security_question_1,
-            this.state.security_question_2, this.state.security_question_3, this.state.address, this.state.date_of_birth, this.state.license_number)
+            this.state.security_question_2, this.state.security_question_3, this.state.address, this.state.date_of_birth, this.state.physician_id,
+            this.state.license_number, this.state.physician_state);
 
         if (res.msg == null) {
             this.setState({ ...initState, success: "User successfully created! Please login." });
@@ -228,6 +240,17 @@ export default class Register extends React.Component {
             menuItems = [];
             for (let i = 0; i < list.length; i++) {
                 menuItems.push(<MenuItem key={list[i].question_id} value={list[i].question_id}>{list[i].question}</MenuItem>);
+            }
+            this.forceUpdate();
+        }
+
+        if (physician_list.length == 1) {
+            let physicians = await getPhysicians();
+            let list = physicians.data;
+
+            physician_list = [];
+            for (let i = 0; i < list.length; i++) {
+                physician_list.push(<MenuItem key={list[i].user_id} value={list[i].user_id}>{list[i].first_name} {list[i].last_name}</MenuItem>);
             }
             this.forceUpdate();
         }
@@ -365,11 +388,96 @@ export default class Register extends React.Component {
                                         onChange={this.changeForm}
                                     />
                                 </Grid>
+                                <Grid item xs={12} spacing={3}>
+                                    <InputLabel id='patient-physician-label'>Physician</InputLabel>
+                                    <Select
+                                        labelId="patient-physician-label"
+                                        required
+                                        fullWidth
+                                        name="physician_id"
+                                        id="physician_id"
+                                        auto-complete=''
+                                        value={this.state.physician_id}
+                                        onChange={this.changeForm}>
+                                        {physician_list}
+                                    </Select>
+                                </Grid>
                             </Grid>
                             : ""}
                         {isPhysician ?
                             <Grid container spacing={2}>
-                                <Grid item xs={12}>
+                                <Grid item xs={4}>
+                                    <InputLabel id='register-physician-state-label'>Physician State</InputLabel>
+                                    <Select
+                                        labelId="register-physician-state-label"
+                                        required
+                                        fullWidth
+                                        name="physician_state"
+                                        id="register-physician-state"
+                                        auto-complete='admin'
+                                        value={this.state.physician_state}
+                                        onChange={this.changeForm}>
+                                        <MenuItem value={'AL'}>AL</MenuItem>
+                                        <MenuItem value={'AK'}>AK</MenuItem>
+                                        <MenuItem value={'AZ'}>AZ</MenuItem>
+                                        <MenuItem value={'AR'}>AR</MenuItem>
+                                        <MenuItem value={'CA'}>CA</MenuItem>
+                                        <MenuItem value={'CO'}>CO</MenuItem>
+                                        <MenuItem value={'CT'}>CT</MenuItem>
+                                        <MenuItem value={'DE'}>DE</MenuItem>
+                                        <MenuItem value={'DC'}>DC</MenuItem>
+                                        <MenuItem value={'FL'}>FL</MenuItem>
+                                        <MenuItem value={'GA'}>GA</MenuItem>
+                                        <MenuItem value={'HI'}>HI</MenuItem>
+                                        <MenuItem value={'ID'}>ID</MenuItem>
+                                        <MenuItem value={'IL'}>IL</MenuItem>
+                                        <MenuItem value={'IN'}>IN</MenuItem>
+                                        <MenuItem value={'IA'}>IA</MenuItem>
+                                        <MenuItem value={'KS'}>KS</MenuItem>
+                                        <MenuItem value={'KY'}>KY</MenuItem>
+                                        <MenuItem value={'LA'}>LA</MenuItem>
+                                        <MenuItem value={'ME'}>ME</MenuItem>
+                                        <MenuItem value={'MD'}>MD</MenuItem>
+                                        <MenuItem value={'MA'}>MA</MenuItem>
+                                        <MenuItem value={'MI'}>MI</MenuItem>
+                                        <MenuItem value={'MN'}>MN</MenuItem>
+                                        <MenuItem value={'MS'}>MS</MenuItem>
+                                        <MenuItem value={'MO'}>MO</MenuItem>
+                                        <MenuItem value={'MT'}>MT</MenuItem>
+                                        <MenuItem value={'NE'}>NE</MenuItem>
+                                        <MenuItem value={'NV'}>NV</MenuItem>
+                                        <MenuItem value={'NH'}>NH</MenuItem>
+                                        <MenuItem value={'NJ'}>NJ</MenuItem>
+                                        <MenuItem value={'NM'}>NM</MenuItem>
+                                        <MenuItem value={'NY'}>NY</MenuItem>
+                                        <MenuItem value={'NC'}>ND</MenuItem>
+                                        <MenuItem value={'OH'}>OH</MenuItem>
+                                        <MenuItem value={'OK'}>OK</MenuItem>
+                                        <MenuItem value={'OR'}>OR</MenuItem>
+                                        <MenuItem value={'PA'}>PA</MenuItem>
+                                        <MenuItem value={'RI'}>RI</MenuItem>
+                                        <MenuItem value={'SC'}>SC</MenuItem>
+                                        <MenuItem value={'SD'}>SD</MenuItem>
+                                        <MenuItem value={'TN'}>TN</MenuItem>
+                                        <MenuItem value={'TX'}>TX</MenuItem>
+                                        <MenuItem value={'UT'}>UT</MenuItem>
+                                        <MenuItem value={'VT'}>VT</MenuItem>
+                                        <MenuItem value={'VA'}>VA</MenuItem>
+                                        <MenuItem value={'WA'}>WA</MenuItem>
+                                        <MenuItem value={'WV'}>WV</MenuItem>
+                                        <MenuItem value={'WI'}>WI</MenuItem>
+                                        <MenuItem value={'WY'}>WY</MenuItem>
+                                        <MenuItem value={'AS'}>AS</MenuItem>
+                                        <MenuItem value={'GU'}>GU</MenuItem>
+                                        <MenuItem value={'MH'}>MH</MenuItem>
+                                        <MenuItem value={'FM'}>FM</MenuItem>
+                                        <MenuItem value={'MP'}>MP</MenuItem>
+                                        <MenuItem value={'PW'}>PW</MenuItem>
+                                        <MenuItem value={'PR'}>PR</MenuItem>
+                                        <MenuItem value={'VI'}>VI</MenuItem>
+                                    </Select>
+                                </Grid>
+                                <Grid item xs={8}>
                                     <TextField
                                         variant="outlined"
                                         required

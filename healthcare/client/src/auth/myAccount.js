@@ -42,6 +42,12 @@ class MyAccount extends React.Component {
                                             state: { username: user.username }
                                         }}>Change password</Link>
                                     </p>
+                                    {user.user_type === UserType.Patient ? 
+                                    <h4>Patient Information</h4>
+                                    : "" }
+                                    {user.user_type === UserType.Physician ? 
+                                    <h4>Physician Information</h4>
+                                    : "" }
                                 </Col>
                             </Row>
                         </Card>

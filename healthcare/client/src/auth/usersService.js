@@ -27,7 +27,7 @@ const users = {};
 export const registerUser = async (username, password, firstName, lastName,
     user_type, security_answer_1, security_answer_2, security_answer_3,
     security_question_1, security_question_2, security_question_3,
-    address, date_of_birth, license_number) => {
+    address, date_of_birth, physician_id, license_number, physician_state) => {
     let args = {
         username,
         password,
@@ -44,7 +44,9 @@ export const registerUser = async (username, password, firstName, lastName,
 
         address,
         date_of_birth,
-        license_number
+        physician_id,
+        license_number,
+        physician_state
     };
 
     return client.post('/auth/register', args).then(res => {
@@ -95,6 +97,14 @@ export const getUsers = async () => {
 export const getQuestions = async (user) => {
     const response = await client.get('/auth/questions/' + user.user_id);
     return response.questions;
+}
+
+export const getPhysicians = async () =>{
+    return client.get('/auth/getPhysicians').then(res =>{
+        return {
+            data: res.data
+        };
+    })
 }
 
 //call api to check security question answer

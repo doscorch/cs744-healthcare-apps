@@ -1,0 +1,1 @@
+ALTER TABLE physician_info ADD COLUMN physician_state VARCHAR(4) AFTER license_number;

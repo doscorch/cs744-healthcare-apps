@@ -12,8 +12,10 @@ import { connect } from 'react-redux';
 import UserManager from './users/userManager'
 import MyAccount from './auth/myAccount';
 import SecurityQuestion from './auth/securityQuestion';
+import WritePrescription from './physician/writePrescription';
 import { UserType } from './models/user';
 import changeSecurityQuestions from './auth/changeSecurityQuestions';
+import SearchPatients from './physician/searchPatients';
 
 class App extends React.Component {
 
@@ -26,6 +28,7 @@ class App extends React.Component {
   render() {
     const hasUser = Boolean(this.props.user.is_validated);
     const isAdmin = this.props.user.user_type === UserType.Admin;
+    const isPhysician = this.props.user.user_type === UserType.Physician;
     return (
       <div>
         <Navbar sticky="top" bg="light" variant="light" expand="lg" style={{ marginBottom: "10px" }}>
@@ -34,6 +37,7 @@ class App extends React.Component {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
               {hasUser && isAdmin ? <Nav.Link as={Link} to="/user-manager">Manage Users</Nav.Link> : ""}
+              {hasUser && isPhysician ? <Nav.Link as={Link} to="/search-patients">Patients</Nav.Link> : ""}
             </Nav>
             <Nav>
               {hasUser ? <Nav.Link as={Link} to="/" onClick={this.clickLogout}><i className="fas fa-sign-out-alt"></i> Logout</Nav.Link> : ""}
@@ -52,6 +56,8 @@ class App extends React.Component {
         <Route path="/changeSecurityQuestions" component={changeSecurityQuestions} />
         <Route path="/account" component={MyAccount} />
         <Route path="/user-manager" component={UserManager} />
+        <Route path="/search-patients" component={SearchPatients} />
+        <Route path="/write-prescription/:patient" component={WritePrescription}/>
       </div>
     );
   }

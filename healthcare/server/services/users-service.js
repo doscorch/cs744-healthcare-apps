@@ -77,14 +77,32 @@ async function createUser(user, cb) {
             console.log(e);
             return 'Database error';
         });
-    } else if (user.user_type == userType.User_Type_Physician) {
-        // insert physician info
+
         infoRes = await sequelize.query(
-            'INSERT INTO `physician_info` (user_id, license_number) values (?, ?)',
+            'INSERT INTO `patient_physician` (patient_id, physician_id) values (?, ?)',
             {
                 replacements: [
                     insertId,
-                    user.license_number
+                    user.physician_id
+                ],
+                type: sequelize.QueryTypes.INSERT,
+                returning: true
+            }
+        ).catch(function (e) {
+            // error handling
+            console.log('sql error (patient physician):');
+            console.log(e);
+            return 'Database error';
+        });
+    } else if (user.user_type == userType.User_Type_Physician) {
+        // insert physician info
+        infoRes = await sequelize.query(
+            'INSERT INTO `physician_info` (user_id, license_number, physician_state) values (?, ?, ?)',
+            {
+                replacements: [
+                    insertId,
+                    user.license_number,
+                    user.physician_state
                 ],
                 type: sequelize.QueryTypes.INSERT,
                 returning: true
@@ -428,6 +446,22 @@ async function getAllQuestions(cb) {
 }
 
 module.exports.getAllQuestions = getAllQuestions;
+
+async function getPhysicians(cb) {
+    let result = await sequelize.query(
+        'SELECT user_id, first_name, last_name FROM user WHERE user_type = 3;',
+        {
+            type: sequelize.QueryTypes.SELECT
+        }
+    ).catch(function(e){
+        console.log("SQL error:");
+        console.log(e);
+        return null
+    });
+    cb(result);
+}
+
+module.exports.getPhysicians = getPhysicians;
 
 // partial update of user
 function patchUser(userId, userPartial, cb) {

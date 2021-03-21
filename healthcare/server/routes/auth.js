@@ -127,6 +127,12 @@ router.get('/getSecurityQuestions', function (req, res, next) {
     });
 });
 
+router.get('/getPhysicians', isAuthenticated, function (req, res, next){
+    _userService.getPhysicians(function (result){
+        res.send({ data: result });
+    });
+});
+
 // logout user
 router.post('/logout', function (req, res, next) {
     console.log(req.session.user)

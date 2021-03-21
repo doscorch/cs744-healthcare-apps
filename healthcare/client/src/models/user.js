@@ -26,8 +26,8 @@ export const UserStatus = {
     GetTranslation: (type) => {
         switch (type) {
             case User_Status_Active: return "active";
-            case User_Status_Inactive: return "inactive";
-            case User_Status_Disabled: return "disabled";
+            case User_Status_Inactive: return "disabled";
+            case User_Status_Disabled: return "blocked";
         }
     }
 };
