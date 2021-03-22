@@ -1,0 +1,10 @@
+INSERT INTO security_question ( question ) VALUES ( 'Where did you go to middle school?' );
+INSERT INTO security_question ( question ) VALUES ( 'What was the name of your first pet?' );
+INSERT INTO security_question ( question ) VALUES ( 'What is the name of your childhood best friend?' );
+INSERT INTO security_question ( question ) VALUES ( 'What is the last name of your first grade teacher?' );
+INSERT INTO security_question ( question ) VALUES ( 'In what city was your first job?' );
+INSERT INTO security_question ( question ) VALUES ( 'What was your high school mascot?' );
+INSERT INTO security_question ( question ) VALUES ( 'In what city does your nearest does your nearest sibling live?' );
+INSERT INTO security_question ( question ) VALUES ( 'What was your favorite childhood video game?' );
+INSERT INTO security_question ( question ) VALUES ( 'What is your oldest siblings middle name?' );
+INSERT INTO security_question ( question ) VALUES ( 'What is the name of your oldest cousin?' );

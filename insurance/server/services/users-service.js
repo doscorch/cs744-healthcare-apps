@@ -20,10 +20,8 @@ async function createUser(user, cb) {
     // set the user type to the correct number
     if (user.user_type == 'admin') {
         user.user_type = userType.User_Type_Admin;
-    } else if (user.user_type == 'patient') {
-        user.user_type = userType.User_Type_Patient;
-    } else if (user.user_type == 'physician') {
-        user.user_type = userType.User_Type_Physician;
+    } else if (user.user_type == 'agent') {
+        user.user_type = userType.User_Type_Agent;
     }
 
     const queryRes = await sequelize.query(
@@ -54,124 +52,6 @@ async function createUser(user, cb) {
         cb(queryRes);
         return;
     }
-    let insertId = queryRes[0];
-    let infoRes = null;
-    if (user.user_type == userType.User_Type_Admin) {
-        // no extra inserts needed
-    } else if (user.user_type == userType.User_Type_Patient) {
-        // insert patient info
-        infoRes = await sequelize.query(
-            'INSERT INTO `patient_info` (user_id, date_of_birth, address) values (?, ?, ?)',
-            {
-                replacements: [
-                    insertId,
-                    user.date_of_birth,
-                    user.address
-                ],
-                type: sequelize.QueryTypes.INSERT,
-                returning: true
-            }
-        ).catch(function (e) {
-            // error handling
-            console.log('sql error (patient info):');
-            console.log(e);
-            return 'Database error';
-        });
-    } else if (user.user_type == userType.User_Type_Physician) {
-        // insert physician info
-        infoRes = await sequelize.query(
-            'INSERT INTO `physician_info` (user_id, license_number) values (?, ?)',
-            {
-                replacements: [
-                    insertId,
-                    user.license_number
-                ],
-                type: sequelize.QueryTypes.INSERT,
-                returning: true
-            }
-        ).catch(function (e) {
-            // error handling
-            console.log('sql error (physician info):');
-            console.log(e);
-            return 'Database error';
-        });
-    }
-
-    if (typeof infoRes === 'string' || infoRes instanceof String) {
-        cb(infoRes);
-        return;
-    }
-
-    // security answers
-    let securityAnswerError = await sequelize.query(
-        'INSERT INTO `security_answer` (question_id, user_id, answer) values (?, ?, ?)',
-        {
-            replacements: [
-                user.security_question_1,
-                insertId,
-                user.security_answer_1
-            ],
-            type: sequelize.QueryTypes.INSERT,
-            returning: true
-        }
-    ).catch(function (e) {
-        // error handling
-        console.log('sql error (insert security answer 1):');
-        console.log(e);
-        return 'Database error';
-    });
-
-    if (typeof securityAnswerError === 'string' || securityAnswerError instanceof String) {
-        cb(securityAnswerError);
-        return;
-    }
-
-    securityAnswerError = await sequelize.query(
-        'INSERT INTO `security_answer` (question_id, user_id, answer) values (?, ?, ?)',
-        {
-            replacements: [
-                user.security_question_2,
-                insertId,
-                user.security_answer_2
-            ],
-            type: sequelize.QueryTypes.INSERT,
-            returning: true
-        }
-    ).catch(function (e) {
-        // error handling
-        console.log('sql error (insert security answer 2):');
-        console.log(e);
-        return 'Database error';
-    });
-
-    if (typeof securityAnswerError === 'string' || securityAnswerError instanceof String) {
-        cb(securityAnswerError);
-        return;
-    }
-
-    securityAnswerError = await sequelize.query(
-        'INSERT INTO `security_answer` (question_id, user_id, answer) values (?, ?, ?)',
-        {
-            replacements: [
-                user.security_question_3,
-                insertId,
-                user.security_answer_3
-            ],
-            type: sequelize.QueryTypes.INSERT,
-            returning: true
-        }
-    ).catch(function (e) {
-        // error handling
-        console.log('sql error (insert security answer 3):');
-        console.log(e);
-        return 'Database error';
-    });
-
-    if (typeof securityAnswerError === 'string' || securityAnswerError instanceof String) {
-        cb(securityAnswerError);
-        return;
-    }
-
     cb(null);
 }
 module.exports.createUser = createUser;

@@ -14,6 +14,12 @@ import MyAccount from './auth/myAccount';
 import SecurityQuestion from './auth/securityQuestion';
 import { UserType } from './models/user';
 import changeSecurityQuestions from './auth/changeSecurityQuestions';
+import PolicyManager from './policy/policyManager';
+import CreatePolicy from './policy/create';
+import EditPolicy from './policy/edit';
+import PolicyHolderManager from './policyHolder/policyHolderManager';
+import CreatePolicyHolder from './policyHolder/create';
+import EditPolicyHolder from './policyHolder/edit';
 
 class App extends React.Component {
 
@@ -26,6 +32,8 @@ class App extends React.Component {
   render() {
     const hasUser = Boolean(this.props.user.is_validated);
     const isAdmin = this.props.user.user_type === UserType.Admin;
+    const isAgent = this.props.user.user_type === UserType.Agent;
+
     return (
       <div>
         <Navbar sticky="top" bg="light" variant="light" expand="lg" style={{ marginBottom: "10px" }}>
@@ -34,6 +42,8 @@ class App extends React.Component {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
               {hasUser && isAdmin ? <Nav.Link as={Link} to="/user-manager">Manage Users</Nav.Link> : ""}
+              {hasUser && isAgent ? <Nav.Link as={Link} to="/manage-policies">Manage Policies</Nav.Link> : ""}
+              {hasUser && isAgent ? <Nav.Link as={Link} to="/manage-policy-holders">Manage Policy Holders</Nav.Link> : ""}
             </Nav>
             <Nav>
               {hasUser ? <Nav.Link as={Link} to="/" onClick={this.clickLogout}><i className="fas fa-sign-out-alt"></i> Logout</Nav.Link> : ""}
@@ -52,6 +62,12 @@ class App extends React.Component {
         <Route path="/changeSecurityQuestions" component={changeSecurityQuestions} />
         <Route path="/account" component={MyAccount} />
         <Route path="/user-manager" component={UserManager} />
+        <Route path="/manage-policies" component={PolicyManager} />
+        <Route path="/policy/create" component={CreatePolicy}></Route>
+        <Route path="/policy/edit" component={EditPolicy}></Route>
+        <Route path="/manage-policy-holders" component={PolicyHolderManager} />
+        <Route path="/policy-holder/create" component={CreatePolicyHolder} />
+        <Route path="/policy-holder/edit" component={EditPolicyHolder} />
       </div>
     );
   }

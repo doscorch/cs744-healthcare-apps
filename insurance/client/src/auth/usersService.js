@@ -26,8 +26,7 @@ const users = {};
  */
 export const registerUser = async (username, password, firstName, lastName,
     user_type, security_answer_1, security_answer_2, security_answer_3,
-    security_question_1, security_question_2, security_question_3,
-    address, date_of_birth, license_number) => {
+    security_question_1, security_question_2, security_question_3) => {
     let args = {
         username,
         password,
@@ -41,10 +40,6 @@ export const registerUser = async (username, password, firstName, lastName,
         security_answer_2,
         security_question_3,
         security_answer_3,
-
-        address,
-        date_of_birth,
-        license_number
     };
 
     return client.post('/auth/register', args).then(res => {
