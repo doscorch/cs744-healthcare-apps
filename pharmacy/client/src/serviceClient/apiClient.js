@@ -78,6 +78,30 @@ const api = {
             console.log(err);
         });
     },
+    delete: (path) => {
+        let token = tokenManager.get();
+        const url = `${serviceUri}${path}`;
+        return fetch(url, {
+            method: 'DELETE',
+            credentials: 'include',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-csrf': token,
+            },
+        }).then(res => {
+            const resTok = res.headers.get(tokenHeader);
+            if (resTok) {
+                token = resTok;
+                tokenManager.set(token);
+            }
+            return res.json();
+        }).then(json => {
+            return json
+        }).catch(err => {
+            console.log(err);
+        });
+    },
 };
 
 export default api;

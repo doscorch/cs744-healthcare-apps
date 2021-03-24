@@ -10,6 +10,8 @@ import { withRouter } from 'react-router-dom';
 import { app_logout } from './redux/actions/userActions';
 import { connect } from 'react-redux';
 import UserManager from './users/userManager'
+import PhysicianManager from './physicians/physicianManager'
+import PatientManager from './patients/patientManager'
 import MyAccount from './auth/myAccount';
 import SecurityQuestion from './auth/securityQuestion';
 import { UserType } from './models/user';
@@ -26,6 +28,8 @@ class App extends React.Component {
   render() {
     const hasUser = Boolean(this.props.user.is_validated);
     const isAdmin = this.props.user.user_type === UserType.Admin;
+    const isPharmacist = this.props.user.user_type === UserType.Pharmacist;
+
     return (
       <div>
         <Navbar sticky="top" bg="light" variant="light" expand="lg" style={{ marginBottom: "10px" }}>
@@ -34,6 +38,8 @@ class App extends React.Component {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
               {hasUser && isAdmin ? <Nav.Link as={Link} to="/user-manager">Manage Users</Nav.Link> : ""}
+              {hasUser && isPharmacist ? <Nav.Link as={Link} to="/physician-manager">Manage Physicians</Nav.Link> : ""}
+              {hasUser && isPharmacist ? <Nav.Link as={Link} to="/patient-manager">Manage Patients</Nav.Link> : ""}
             </Nav>
             <Nav>
               {hasUser ? <Nav.Link as={Link} to="/" onClick={this.clickLogout}><i className="fas fa-sign-out-alt"></i> Logout</Nav.Link> : ""}
@@ -52,6 +58,8 @@ class App extends React.Component {
         <Route path="/changeSecurityQuestions" component={changeSecurityQuestions} />
         <Route path="/account" component={MyAccount} />
         <Route path="/user-manager" component={UserManager} />
+        <Route path="/physician-manager" component={PhysicianManager} />
+        <Route path="/patient-manager" component={PatientManager} />
       </div>
     );
   }

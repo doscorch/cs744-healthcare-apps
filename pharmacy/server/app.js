@@ -5,6 +5,8 @@ var logger = require('morgan');
 var session = require('express-session');
 const auth = require('./routes/auth');
 const users = require('./routes/users');
+const patients = require('./routes/patients');
+const physicians = require('./routes/physicians');
 
 
 var app = express();
@@ -61,6 +63,9 @@ app.use('/auth', auth);
 //     }
 // });
 app.use('/users', users);
+app.use('/patients', patients);
+app.use('/physicians', physicians);
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
