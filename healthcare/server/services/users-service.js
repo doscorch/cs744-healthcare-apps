@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const _userRepository = require('../data-repositories/users-repository');
+const { Sequelize } = require('../db');
 const sequelize = require('../db');
 const userType = require('../models/user');
 
@@ -468,3 +469,60 @@ function patchUser(userId, userPartial, cb) {
     _userRepository.patchUser(userId, userPartial, (err, user) => cb(err, user));
 }
 module.exports.patchUser = patchUser;
+
+async function changePhysician(user_id, physician_id, cb){
+    await sequelize.query("UPDATE patient_physician SET physician_id = ? WHERE patient_id = ?;",
+    {
+        replacements: [
+            physician_id,
+            user_id
+        ],
+        type: Sequelize.QueryTypes.UPDATE
+    }).catch(function(e){
+        console.log("SQL error:");
+        console.log(e);
+        cb(e);
+        return null;
+    });
+    cb(null);
+}
+
+module.exports.changePhysician = changePhysician;
+
+async function getPhysicianInfo(physician_id, cb){
+    let result = await sequelize.query(
+        'SELECT * FROM physician_info WHERE user_id = ?',
+        {
+            replacements: [
+                physician_id
+            ],
+            type: sequelize.QueryTypes.SELECT
+        }
+    ).catch(function(e){
+        console.log("SQL error:");
+        console.log(e);
+        cb(e, null);
+    });
+    cb(null,result);
+}
+
+module.exports.getPhysicianInfo = getPhysicianInfo;
+
+async function getPatientInfo(patient_id, cb){
+    let result = await sequelize.query(
+        'SELECT pati.date_of_birth, pati.address, u.first_name AS physician_first, u.last_name as physician_last, u.user_id as physician_id FROM patient_info AS pati INNER JOIN patient_physician AS pp ON pp.patient_id = pati.user_id INNER JOIN user AS u ON u.user_id = pp.physician_id WHERE pati.user_id = ?',
+        {
+            replacements: [
+                patient_id
+            ],
+            type: sequelize.QueryTypes.SELECT
+        }
+    ).catch(function(e){
+        console.log("SQL error:");
+        console.log(e);
+        cb(e, null);
+    });
+    cb(null, result);
+}
+
+module.exports.getPatientInfo = getPatientInfo;

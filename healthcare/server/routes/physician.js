@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const _physicianService = require('../services/physician-service');
+const _userService = require('../services/users-service');
 const Token = require('../models/authToken');
 const dataUser = require('../data-repositories/dbmodels/user');
 const { isAuthenticated, isAdmin } = require('../middleware/auth');
@@ -59,6 +60,28 @@ router.get('/patients/:patient', isAuthenticated, function (req, res) {
         return;
     })
 });
+
+router.get('/patients/:patient/prescriptions', isAuthenticated, async function(req, res) {
+    console.log(req.params);
+    var auth = true;
+    await _userService.getPatientInfo(parseInt(req.params.patient), function(error, patient){
+        if(!(req.session.user.user_id == parseInt(req.params.patient) || req.session.user.user_id == patient.physician_id)){
+            auth = false;
+        }
+    })
+    if (!auth){
+        res.status('403').send({ err: "You are not this patient or you are not a physician assigned to this physician" });
+            return;
+    }
+    _physicianService.getPatientPrescriptions(parseInt(req.params.patient), function (err, prescriptions){
+        if (err) {
+            res.status('500').send({ err: err});
+            return;
+        }
+        res.send(prescriptions);
+        return;
+    })
+})
 
 router.post('/savePrescription', isAuthenticated, function(req, res){
     _physicianService.savePrescription(req.body, function(err){

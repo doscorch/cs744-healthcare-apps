@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import MaterialTable from 'material-table';
 import Alert from '@material-ui/lab/Alert';
 import { Row, Col, Card } from 'react-bootstrap';
 
@@ -22,7 +23,8 @@ const initState = {
     prescription: "",
     quantity: "",
     dosage: "",
-    refill: ""
+    refill: "",
+    prescriptions: []
 }
 
 
@@ -46,6 +48,38 @@ export class WritePrescription extends React.Component {
 
     savePrescription = async (e) => {
         e.preventDefault();
+        if(this.state.prescriptions.length == 0){
+            this.setState({ error: "Medication list is empty"});
+            return;
+        }
+        if(this.state.prescription){
+            this.setState({ error: "Check if you meant to add a medication, otherwise leave entries empty"});
+            return;
+        }
+        if(this.state.dosage){
+            this.setState({ error: "Check if you meant to add a medication, otherwise leave entries empty"});
+            return;
+        }
+        if(this.state.refill){
+            this.setState({ error: "Check if you meant to add a medication, otherwise leave entries empty"});
+            return;
+        }
+        if(this.state.quantity){
+            this.setState({ error: "Check if you meant to add a medication, otherwise leave entries empty"});
+            return;
+        }
+
+        let response = await savePrescription(this.props.user.user_id, this.props.match.params.patient, 
+            this.state.prescriptions);
+        if(response.err){
+            this.setState({ error: response.err});
+            return;
+        }else{
+            this.setState({ success: "Prescirption Saved!", error: "", prescriptions: []});
+        }
+    }
+
+    addMedication = async () =>{
         if(!this.state.prescription){
             this.setState({ error: "Please enter a prescription"});
             return;
@@ -70,15 +104,15 @@ export class WritePrescription extends React.Component {
             this.setState({ error: "Please enter a whole number quntity amount"});
             return;
         }
-
-        let response = await savePrescription(this.props.user.user_id, this.props.match.params.patient, 
-            this.state.prescription, this.state.dosage, this.state.quantity, this.state.refill);
-        if(response.err){
-            this.setState({ error: response.err});
-            return;
-        }else{
-            this.setState({ success: "Prescirption Saved!", error: ""})
-        }
+        let currMeds = [...this.state.prescriptions];
+        currMeds.push(
+            {
+                prescription: this.state.prescription,
+                dosage: this.state.dosage,
+                quantity: this.state.quantity,
+                refill: this.state.refill
+        })
+        this.setState({prescriptions: currMeds, prescription: "", refill: "", dosage: "", quantity: "", error: ""});
     }
 
     async componentDidMount() {
@@ -123,6 +157,7 @@ export class WritePrescription extends React.Component {
         };
         let error = this.state.error ? <Alert severity="error">{this.state.error}</Alert> : "";
         let success = this.state.success ? <Alert severity="success">{this.state.success}</Alert> : "";
+        const tableRef = React.createRef();
 
         return (
             <Container component="main" maxWidth="xs" >
@@ -150,6 +185,42 @@ export class WritePrescription extends React.Component {
                                 </Col>
                             </Row>
                         </Card>
+                        <MaterialTable 
+                            tableRef={tableRef}
+                            options={{
+                                sorting: true,
+                                search: false,
+                                paging: false,
+                            }}
+                            title="Medications"
+                            actions={
+                                [
+                                ]
+                            }
+                            columns={[
+                                // { title: 'Id', field: '_id' },
+                                { title: 'Prescription', field: 'prescription', validate: u => u.first_name == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
+                                { title: 'Dosage', field: 'dosage', validate: u => u.last_name == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
+                                { title: 'Quantity', field: 'quantity', validate: u => u.date_of_birth == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
+                                { title: 'Refill', field: 'refill', validate: u => u.address == "" ? { isValid: false, helperText: "required" } : { isValid: true } }
+                            ]}
+                            data={this.state.prescriptions}
+                            editable={{
+                                isEditable: _ => false,
+                                isDeletable: _ => true,
+                                onRowDelete: oldData => 
+                                new Promise((resolve, reject) => {
+                                    setTimeout(() => {
+                                        const currMeds = [...this.state.prescriptions];
+                                        const index = oldData.tableData.id;
+                                        currMeds.splice(index, 1);
+                                        this.setState({prescriptions: currMeds})
+                    
+                                        resolve();
+                                    }, 1000);
+                                })
+                            }}
+                        />
                     <form style={classes.form} noValidate>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
@@ -207,7 +278,15 @@ export class WritePrescription extends React.Component {
                                 />
                             </Grid>
                         </Grid>
-                        {this.state.patient && this.state.physician ? 
+                        <Button 
+                            variant="contained"
+                            fullWidth
+                            color="secondary"
+                            style={classes.submit}
+                            onClick={this.addMedication}>
+                            Add Medication
+                        </Button>
+                        {this.state.patient && this.state.physician && this.state.prescriptions.length>0? 
                         <Button
                             type="submit"
                             fullWidth

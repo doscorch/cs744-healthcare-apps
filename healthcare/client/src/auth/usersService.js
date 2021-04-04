@@ -170,3 +170,20 @@ export const logout = async () => {
     return await client.post('/auth/logout');
 }
 
+export const changePhysician = async (physician_id) => {
+    return await client.post('/users/change-physician',
+    {
+        physician_id: physician_id
+    });
+}
+
+export const getPhysicianInfo = async () => {
+    let result  = await client.get('/users/physician');
+    return result;
+}
+
+export const getPatientInfo = async () => {
+    let result = await client.get('/users/patient');
+    return result;
+}
+

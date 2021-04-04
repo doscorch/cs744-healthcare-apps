@@ -20,17 +20,22 @@ export const getPatient = async (patient_id) => {
     });
 }
 
-export const savePrescription = async (physician_id, patient_id, prescription, dosage, quantity, refill) => {
+export const savePrescription = async (physician_id, patient_id, prescriptions) => {
     return client.post("/physician/savePrescription",
     {
         physician_id: physician_id,
         patient_id: patient_id,
-        prescription: prescription,
-        dosage: dosage,
-        quantity: quantity,
-        refill: refill
+        prescriptions: prescriptions,
     }).then(response => {
         console.log("response: "+response);
         return response;
     });
+}
+
+export const getPatientPrescriptions = async (patient_id) => {
+    return client.get("/physician/patients/"+patient_id+"/prescriptions").then(
+        prescriptions => {
+            return prescriptions;
+        }
+    )
 }

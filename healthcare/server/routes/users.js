@@ -41,4 +41,39 @@ router.patch('/:userId', isAuthenticated, isAdmin, function (req, res) {
     });
 });
 
+router.post('/change-physician', isAuthenticated, function (req, res){
+    _userService.changePhysician(req.session.user.user_id, req.body.physician_id, function(error){
+        if(error){
+            res.status('500').send();
+            return;
+        }
+        res.send();
+        return;
+    })
+})
+
+router.get('/physician', isAuthenticated, function (req, res){
+    _userService.getPhysicianInfo(req.session.user.user_id, function(error, result){
+        if(error){
+            console.log(error);
+            res.status('500').send();
+            return;
+        }
+        res.send(result[0]);
+        return;
+    });
+});
+
+router.get('/patient', isAuthenticated, function (req, res){
+    _userService.getPatientInfo(req.session.user.user_id, function(error, result){
+        if(error){
+            console.log(error);
+            res.status('500').send();
+            return;
+        }
+        res.send(result[0]);
+        return;
+    });
+});
+
 module.exports = router;

@@ -61,26 +61,70 @@ async function getPhysician(physician_id, cb){
 module.exports.getPhysician = getPhysician;
 
 async function savePrescription(prescription,cb){
-    await sequelize.query(
-        'INSERT INTO prescription (physician_id, patient_id, prescription, dosage, quantity, refill) VALUES (?, ?, ?, ?, ?, ?);',
+    let queryRes = await sequelize.query(
+        'INSERT INTO prescription_order (physician_id, patient_id) VALUES (?, ?);',
         {
             replacements: [
                 prescription.physician_id,
                 prescription.patient_id,
-                prescription.prescription,
-                prescription.dosage,
-                prescription.quantity,
-                prescription.refill
             ],
-            type: sequelize.QueryTypes.INSERT
+            type: sequelize.QueryTypes.INSERT,
+            returning: true
         }
     ).catch(
         function(e){
             console.log("SQL error:");
             console.log(e);
             cb(e);
+    });
+    if (typeof queryRes === 'string' || queryRes instanceof String) {
+        cb(queryRes);
+        return;
+    }
+    let insertId = queryRes[0];
+    prescription.prescriptions.forEach(async element => {
+        await sequelize.query(
+            'INSERT INTO prescription_medicine (prescription_order_id, prescription, dosage, quantity, refill) VALUES (?, ?, ?, ?, ?);',
+            {
+                replacements: [
+                    insertId,
+                    element.prescription,
+                    element.dosage,
+                    element.quantity,
+                    element.refill
+                ],
+                type: sequelize.QueryTypes.INSERT
+            }
+        ).catch(
+            function(e){
+                console.log("SQL error:");
+                console.log(e);
+                cb(e);
+                return;
         });
+    });
     cb(null);
+    return;
 }
 
 module.exports.savePrescription = savePrescription;
+
+async function getPatientPrescriptions(patient_id, cb){
+    let result = await sequelize.query('SELECT upat.first_name AS patient_first_name, upat.last_name AS patient_last_name, uphy.first_name AS physician_first_name, uphy.last_name AS physician_last_name, p.*, pm.* FROM prescription_order AS p INNER JOIN user AS upat ON upat.user_id = p.patient_id INNER JOIN user AS uphy ON uphy.user_id = p.physician_id INNER JOIN prescription_medicine AS pm ON pm.prescription_order_id = p.prescription_id WHERE patient_id = ?;',
+    {
+        replacements: [
+            patient_id
+        ],
+        type: sequelize.QueryTypes.SELECT
+    })
+    .catch(
+        function(e){
+            console.log("SQL error:");
+            console.log(e);
+            cb(e, null);
+        }
+    );
+    cb(null, result);
+}
+
+module.exports.getPatientPrescriptions = getPatientPrescriptions;

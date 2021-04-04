@@ -44,6 +44,14 @@ export default class searchPatients extends React.Component {
                                     const patient_id = row.user_id;
                                     this.props.history.push("/write-prescription/"+patient_id);
                                 }
+                            },
+                            {
+                                icon: 'list',
+                                tooltip: 'View Prescriptions',
+                                onClick: (event, row) => {
+                                    const patient_id = row.user_id;
+                                    this.props.history.push("/patient/"+patient_id+"/prescriptions");
+                                }
                             }
                         ]
                     }

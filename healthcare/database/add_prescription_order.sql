@@ -1,13 +1,9 @@
-DROP TABLE IF EXISTS prescription;
+DROP TABLE IF EXISTS prescription_order;
 
-CREATE TABLE prescription(
+CREATE TABLE prescription_order(
     prescription_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     physician_id INT NOT NULL,
     patient_id INT NOT NULL,
-    prescription VARCHAR(512) NOT NULL,
-    dosage VARCHAR(256) NOT NULL,
-    quantity INT NOT NULL,
-    refill INT NOT NULL,
     creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_physician_prescription
     FOREIGN KEY (physician_id)

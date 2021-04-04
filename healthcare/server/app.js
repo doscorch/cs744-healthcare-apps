@@ -6,6 +6,7 @@ var session = require('express-session');
 const auth = require('./routes/auth');
 const users = require('./routes/users');
 const physician = require('./routes/physician');
+const prescription = require('./routes/prescription');
 
 
 var app = express();
@@ -42,6 +43,7 @@ app.get('/test', (req, res) => {
 app.use('/auth', auth);
 app.use('/users', users);
 app.use('/physician', physician);
+app.use('/prescription', prescription);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
