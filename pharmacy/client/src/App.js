@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import UserManager from './users/userManager'
 import PhysicianManager from './physicians/physicianManager'
 import PatientManager from './patients/patientManager'
+import MedicineManager from './medicines/medicineManager'
 import MyAccount from './auth/myAccount';
 import SecurityQuestion from './auth/securityQuestion';
 import { UserType } from './models/user';
@@ -37,9 +38,10 @@ class App extends React.Component {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
+              {hasUser && isPharmacist ? <Nav.Link as={Link} to="/medicine-manager">Medicines</Nav.Link> : ""}
               {hasUser && isAdmin ? <Nav.Link as={Link} to="/user-manager">Manage Users</Nav.Link> : ""}
-              {hasUser && isPharmacist ? <Nav.Link as={Link} to="/physician-manager">Manage Physicians</Nav.Link> : ""}
-              {hasUser && isPharmacist ? <Nav.Link as={Link} to="/patient-manager">Manage Patients</Nav.Link> : ""}
+              {hasUser && isPharmacist ? <Nav.Link as={Link} to="/physician-manager">Physicians</Nav.Link> : ""}
+              {hasUser && isPharmacist ? <Nav.Link as={Link} to="/patient-manager">Patients</Nav.Link> : ""}
             </Nav>
             <Nav>
               {hasUser ? <Nav.Link as={Link} to="/" onClick={this.clickLogout}><i className="fas fa-sign-out-alt"></i> Logout</Nav.Link> : ""}
@@ -60,6 +62,7 @@ class App extends React.Component {
         <Route path="/user-manager" component={UserManager} />
         <Route path="/physician-manager" component={PhysicianManager} />
         <Route path="/patient-manager" component={PatientManager} />
+        <Route path="/medicine-manager" component={MedicineManager} />
       </div>
     );
   }

@@ -39,23 +39,7 @@ export default class PatientManager extends React.Component {
                     columns={[
                         { title: 'First name', field: 'first_name', validate: u => u.first_name == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
                         { title: 'Last name', field: 'last_name', validate: u => u.last_name == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
-                        // { title: 'Date of birth', field: 'birth_date', validate: u => u.birth_date == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
-                        {
-                            title: 'Date of birth',
-                            field: 'birth_date',
-                            render: u => <span>{new Date(Date.parse(u.birth_date.replace(/-/g, '\/').replace(/T.+/, ''))).toLocaleDateString('en-US')}</span>,
-                            editComponent: props => (
-                                <TextField
-                                    type="date"
-                                    margin="normal"
-                                    id="birth_date"
-                                    label="Date of birth"
-                                    value={props.value}
-                                    InputLabelProps={{
-                                        shrink: true,
-                                    }}
-                                    onChange={e => props.onChange(e.target.value)} />),
-                        },
+                        { title: 'Date of birth', type: 'date', field: 'birth_date', validate: u => u.birth_date == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
                         { title: 'Address', field: 'address', validate: u => u.address == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
                         { title: 'City', field: 'city', validate: u => u.city == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
                         {
