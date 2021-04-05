@@ -65,6 +65,8 @@ router.get('/patients/:patient/prescriptions', isAuthenticated, async function(r
     console.log(req.params);
     var auth = true;
     await _userService.getPatientInfo(parseInt(req.params.patient), function(error, patient){
+        console.log(patient);
+        patient = patient[0];
         if(!(req.session.user.user_id == parseInt(req.params.patient) || req.session.user.user_id == patient.physician_id)){
             auth = false;
         }
