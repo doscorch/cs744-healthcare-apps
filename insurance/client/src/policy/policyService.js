@@ -46,7 +46,7 @@ import client from "../serviceClient/apiClient";
         percent_coverage: Number(percent_coverage),
         premium_per_month: Number(premium_per_month),
 
-        selectedDrugIds: Number(selectedDrugIds),
+        selectedDrugIds,
         policy_status: 1,
     };
 
