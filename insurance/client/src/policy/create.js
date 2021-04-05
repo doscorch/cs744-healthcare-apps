@@ -48,7 +48,6 @@ export default class CreatePolicy extends React.Component {
     createPolicy = async (e) => {
 
         e.preventDefault();
-        console.log('CREATE');
         // error handling
         if (!this.state.code) {
             this.setState({ error: "Please provide a code" });
@@ -74,16 +73,18 @@ export default class CreatePolicy extends React.Component {
             this.setState({ error: "Please provide a maximum coverage per year" });
             return;
         }
-        Number.prototype.countDecimals = function () {
-            if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
-            return this.toString().split(".")[1].length || 0;
+        let decCount = function (num) {
+            if (Number.isInteger(num)) return 0;
+            if (num.split(".")[1] == null) return 0;
+            return num.split(".")[1].length || 0;
         }
-        if (Number.isNaN(this.state.max_coverage_per_year)) {
+
+        if (isNaN(this.state.max_coverage_per_year)) {
             this.setState({ error: "Please provide a number for maximum coverage per year" });
             return;
         }
 
-        if (this.state.max_coverage_per_year.countDecimals > 2) {
+        if (decCount(this.state.max_coverage_per_year) > 2) {
             this.setState({ error: "Please provide no more than 2 decimals for maximum coverage per year" });
             return;
         }
@@ -93,8 +94,8 @@ export default class CreatePolicy extends React.Component {
             return;
         }
 
-        if (Number.isNaN(this.state.percent_coverage)) {
-            this.setState({ error: "Please provide a number for percent od coverage" });
+        if (isNaN(this.state.percent_coverage)) {
+            this.setState({ error: "Please provide a number for percent of coverage" });
             return;
         }
 
@@ -104,12 +105,12 @@ export default class CreatePolicy extends React.Component {
             return;
         }
 
-        if (Number.isNaN(this.state.premium_per_month)) {
+        if (isNaN(this.state.premium_per_month)) {
             this.setState({ error: "Please provide a number for premium per month" });
             return;
         }
 
-        if (this.state.premium_per_month.countDecimals > 2) {
+        if (decCount(this.state.premium_per_month) > 2) {
             this.setState({ error: "Please provide no more than 2 decimals for premium per month" });
             return;
         }
@@ -118,7 +119,6 @@ export default class CreatePolicy extends React.Component {
             this.setState({ error: "Please add at least one drug" });
             return;
         }
-
         // create policy
         let res = await createPolicy(this.state.code, this.state.policy_name, this.state.age_limit, this.state.max_coverage_per_year,
             this.state.percent_coverage, this.state.premium_per_month, selectedDrugIds);
@@ -280,7 +280,6 @@ export default class CreatePolicy extends React.Component {
                                     fullWidth
                                     id="policy_name"
                                     label="Name"
-                                    autoFocus
                                     required
                                     value={this.state.policy_name}
                                     onChange={this.changeForm}

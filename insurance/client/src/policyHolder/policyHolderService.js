@@ -45,14 +45,16 @@ amount_remaining) => {
 export const updatePolicyHolder = async (
     policy_holder_id,
     first_name,
-last_name,
-date_of_birth,
-address,
-policy_id,
-start_date,
-end_date,
-amount_paid,
-amount_remaining) => {
+    last_name,
+    date_of_birth,
+    address,
+    policy_id,
+    start_date,
+    end_date,
+    amount_paid,
+    amount_remaining,
+    policy_holder_status) => {
+
     let args = {
         policy_holder_id,
         first_name,
@@ -64,10 +66,21 @@ amount_remaining) => {
 
         end_date,
         amount_paid,
-        amount_remaining
+        amount_remaining,
+
+        policy_holder_status
     };
 
     return client.post('/policyHolder/updatePolicyHolder', args).then(res => {
+        return {
+            data: res.data
+        };
+    });
+}
+
+export const getTransactions = async (policy_holder_id) => {
+
+    return client.get('/policyHolder/getTransactions/' + policy_holder_id).then(res => {
         return {
             data: res.data
         };

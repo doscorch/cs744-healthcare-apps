@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navbar, Nav } from 'react-bootstrap';
-import { Route, Link } from 'react-router-dom';
+import { Route, Link, Router } from 'react-router-dom';
 import Login from './auth/login';
 import Register from './auth/register';
 import ChangePassword from './auth/changePassword'
@@ -20,6 +20,8 @@ import EditPolicy from './policy/edit';
 import PolicyHolderManager from './policyHolder/policyHolderManager';
 import CreatePolicyHolder from './policyHolder/create';
 import EditPolicyHolder from './policyHolder/edit';
+import RequestManager from './request/requestManager';
+import ViewTransactions from './policyHolder/viewTransactions';
 
 class App extends React.Component {
 
@@ -44,6 +46,7 @@ class App extends React.Component {
               {hasUser && isAdmin ? <Nav.Link as={Link} to="/user-manager">Manage Users</Nav.Link> : ""}
               {hasUser && isAgent ? <Nav.Link as={Link} to="/manage-policies">Manage Policies</Nav.Link> : ""}
               {hasUser && isAgent ? <Nav.Link as={Link} to="/manage-policy-holders">Manage Policy Holders</Nav.Link> : ""}
+              {hasUser && isAgent ? <Nav.Link as={Link} to="/manage-requests">Manage Requests</Nav.Link> : ""}
             </Nav>
             <Nav>
               {hasUser ? <Nav.Link as={Link} to="/" onClick={this.clickLogout}><i className="fas fa-sign-out-alt"></i> Logout</Nav.Link> : ""}
@@ -68,6 +71,9 @@ class App extends React.Component {
         <Route path="/manage-policy-holders" component={PolicyHolderManager} />
         <Route path="/policy-holder/create" component={CreatePolicyHolder} />
         <Route path="/policy-holder/edit" component={EditPolicyHolder} />
+        <Route path="/manage-requests" component={RequestManager}/>
+        <Route path="/policy-holder/view-transactions" component={ViewTransactions}/>
+        
       </div>
     );
   }

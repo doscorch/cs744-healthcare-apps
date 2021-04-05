@@ -17,6 +17,14 @@ export default class PolicyManager extends React.Component {
         policies: []
     }
 
+    translateStatus(status) {
+      if (status === 1) {
+        return 'Active';
+      } else {
+        return 'Inactive';
+      } 
+    }
+
     async componentDidMount() {
         let result = await getAllPolicies();
         let policies = result.data;
@@ -33,8 +41,6 @@ export default class PolicyManager extends React.Component {
         }
 
         this.setState({ policies: policies });
-        console.log(this.state);
-
         //this.forceUpdate();
     }
 
@@ -55,10 +61,10 @@ export default class PolicyManager extends React.Component {
                     columns={[
                         { title: 'Code', field: 'code'},
                         { title: 'Name', field: 'policy_name' },
-                        { title: 'Age Limit', field: 'age_limit'},
-                        { title: 'Max Coverage per Year', field: 'max_coverage_per_year'},
-                        { title: 'Percentage of Coverage', field: 'percent_coverage'},
-                        { title: 'Premium per Month', field: 'premium_per_month'},
+                        { title: 'Age Limit (Years)', field: 'age_limit'},
+                        { title: 'Max Coverage per Year', field: 'max_coverage_per_year', render: p => <p>${p.max_coverage_per_year}</p>},
+                        { title: 'Percentage of Coverage', field: 'percent_coverage', render: p => <p>{p.percent_coverage}%</p>},
+                        { title: 'Premium per Month', field: 'premium_per_month', render: p => <p>${p.premium_per_month}</p>},
                         { 
                             title: 'Drugs Covered',
                             field: 'policy_id',
@@ -75,6 +81,12 @@ export default class PolicyManager extends React.Component {
                             </AccordionDetails>
                           </Accordion>
                         },
+                        {
+                          title: 'Status',
+                          field: 'policy_status',
+                          render: p => <p>{this.translateStatus(p.policy_status)}</p>
+
+                      },
                         {
                             title: '',
                             field: 'policy_id',

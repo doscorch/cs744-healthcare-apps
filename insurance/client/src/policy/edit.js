@@ -14,7 +14,7 @@ import MaterialTable from 'material-table';
 
 // import { registerUser, getAllSecurityQuestions } from './usersService';
 import { InputLabel } from '@material-ui/core';
-import { getAllDrugs, updatePolicy } from './policyService';
+import { getAllDrugs, updatePolicy, getPolicyHoldersWithPolicy } from './policyService';
 const initState = {
     code: '',
     policy_name: '',
@@ -22,7 +22,9 @@ const initState = {
     max_coverage_per_year: '',
     percent_coverage: '',
     premium_per_month: '',
+    status: '',
     drug: '',
+    num_policy_holders: '',
     error: '',
     success: ''
 }
@@ -48,7 +50,7 @@ export default class EditPolicy extends React.Component {
     updatePolicy = async (e) => {
 
         e.preventDefault();
-        console.log('EDIT');
+        // error handling
         // error handling
         if (!this.state.code) {
             this.setState({ error: "Please provide a code" });
@@ -59,7 +61,6 @@ export default class EditPolicy extends React.Component {
             this.setState({ error: "Please provide a name" });
             return;
         }
-
         if (!this.state.age_limit) {
             this.setState({ error: "Please provide an age limit" });
             return;
@@ -74,16 +75,18 @@ export default class EditPolicy extends React.Component {
             this.setState({ error: "Please provide a maximum coverage per year" });
             return;
         }
-        Number.prototype.countDecimals = function () {
-            if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
-            return this.toString().split(".")[1].length || 0;
+        let decCount = function (num) {
+            if (Number.isInteger(+num)) return 0;
+            if (num.split(".")[1] == null) return 0;
+            return num.split(".")[1].length || 0;
         }
-        if (Number.isNaN(this.state.max_coverage_per_year)) {
+
+        if (isNaN(this.state.max_coverage_per_year)) {
             this.setState({ error: "Please provide a number for maximum coverage per year" });
             return;
         }
 
-        if (this.state.max_coverage_per_year.countDecimals > 2) {
+        if (decCount(this.state.max_coverage_per_year) > 2) {
             this.setState({ error: "Please provide no more than 2 decimals for maximum coverage per year" });
             return;
         }
@@ -93,8 +96,8 @@ export default class EditPolicy extends React.Component {
             return;
         }
 
-        if (Number.isNaN(this.state.percent_coverage)) {
-            this.setState({ error: "Please provide a number for percent od coverage" });
+        if (isNaN(this.state.percent_coverage)) {
+            this.setState({ error: "Please provide a number for percent of coverage" });
             return;
         }
 
@@ -104,12 +107,12 @@ export default class EditPolicy extends React.Component {
             return;
         }
 
-        if (Number.isNaN(this.state.premium_per_month)) {
+        if (isNaN(this.state.premium_per_month)) {
             this.setState({ error: "Please provide a number for premium per month" });
             return;
         }
 
-        if (this.state.premium_per_month.countDecimals > 2) {
+        if (decCount(this.state.premium_per_month) > 2) {
             this.setState({ error: "Please provide no more than 2 decimals for premium per month" });
             return;
         }
@@ -119,12 +122,25 @@ export default class EditPolicy extends React.Component {
             return;
         }
 
+        if (!this.state.status) {
+            this.setState({ error: "Please select a status" });
+            return;
+        }
+
+        if (this.state.status == 0) {
+            if (this.state.num_policy_holders != 0) {
+                this.setState({ error: "This policy may not be inactive. " + this.state.num_policy_holders + " policy holder(s) still use this policy!" });
+                return;
+            }
+        }
+
         // create policy
         let res = await updatePolicy(policy.policy_id, this.state.code, this.state.policy_name, this.state.age_limit, this.state.max_coverage_per_year,
-            this.state.percent_coverage, this.state.premium_per_month, selectedDrugIds);
+            this.state.percent_coverage, this.state.premium_per_month, this.state.status, selectedDrugIds);
 
         if (res.data == null) {
             this.setState({ success: "Policy successfully updated!" });
+            this.setState({ error: '' });
             this.forceUpdate();
         } else {
             this.setState({ error: res.data });
@@ -149,7 +165,7 @@ export default class EditPolicy extends React.Component {
         for (let i = 0; i < fullDrugMenuItems.length; i++) {
             let key = fullDrugMenuItems[i].key;
             if (selectedDrugIds.includes(Number.parseInt(key))) {
-                console.log('key ' + key + 'in ids');
+                //console.log('key ' + key + 'in ids');
             } else {
                 cur.push(fullDrugMenuItems[i]);
             }
@@ -234,6 +250,7 @@ export default class EditPolicy extends React.Component {
         state['max_coverage_per_year'] = policy.max_coverage_per_year;
         state['percent_coverage'] = policy.percent_coverage;
         state['premium_per_month'] = policy.premium_per_month;
+        state['status'] = policy.policy_status;
         this.setState(state);
 
         let drugsArr = policy.drugs.split(',');
@@ -254,12 +271,10 @@ export default class EditPolicy extends React.Component {
         }
 
 
-        console.log('STATE');
-        console.log(this.state)
-
+        let policyHolders = await getPolicyHoldersWithPolicy(policy.policy_id);
+        state['num_policy_holders'] = policyHolders.data.length;
+        this.setState(state);
         this.forceUpdate();
-
-
     }
 
     render() {
@@ -293,10 +308,11 @@ export default class EditPolicy extends React.Component {
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
                                 <TextField
+                                    disabled
                                     autoComplete="code"
                                     name="code"
                                     variant="outlined"
-                                    required
+                                    required = {true} readOnly = {true}
                                     fullWidth
                                     id="code"
                                     label="Code"
@@ -308,6 +324,7 @@ export default class EditPolicy extends React.Component {
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    disabled
                                     autoComplete="policyName"
                                     name="policy_name"
                                     variant="outlined"
@@ -315,7 +332,6 @@ export default class EditPolicy extends React.Component {
                                     fullWidth
                                     id="policy_name"
                                     label="Name"
-                                    autoFocus
                                     required
                                     value={this.state.policy_name}
                                     onChange={this.changeForm}
@@ -402,6 +418,23 @@ export default class EditPolicy extends React.Component {
                             <div style={classes.center}>
                                 {this.generateDrugs()}
                             </div>
+
+                            <Grid item xs={12}>
+                                <InputLabel id='status'>Status</InputLabel>
+                                <Select
+                                    labelId="status-select"
+                                    required
+                                    fullWidth
+                                    name="status"
+                                    id="status"
+                                    auto-complete='status'
+                                    value={this.state.status}
+                                    onChange={this.changeForm}>
+                                    <MenuItem value="1">Active</MenuItem>
+                                    <MenuItem value="0">Inactive</MenuItem>
+                                </Select>
+                            </Grid>
+
                             <Button
                                 type="submit"
                                 fullWidth

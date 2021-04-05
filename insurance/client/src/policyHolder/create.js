@@ -83,16 +83,17 @@ export default class CreatePolicyHolder extends React.Component {
             this.setState({ error: "Please provide an amount paid" });
             return;
         }
-        Number.prototype.countDecimals = function () {
-            if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
-            return this.toString().split(".")[1].length || 0;
+        let decCount = function (num) {
+            if (Number.isInteger(+num)) return 0;
+            if (num.split(".")[1] == null) return 0;
+            return num.split(".")[1].length || 0;
         }
-        if (Number.isNaN(this.state.amount_paid)) {
+        if (isNaN(this.state.amount_paid)) {
             this.setState({ error: "Please provide a number for amount paid" });
             return;
         }
 
-        if (this.state.amount_paid.countDecimals > 2) {
+        if (decCount(this.state.amount_paid) > 2) {
             this.setState({ error: "Please provide no more than 2 decimals for amount paid" });
             return;
         }
@@ -102,12 +103,12 @@ export default class CreatePolicyHolder extends React.Component {
             return;
         }
 
-        if (Number.isNaN(this.state.amount_remaining)) {
+        if (isNaN(this.state.amount_remaining)) {
             this.setState({ error: "Please provide a number for amount remaining" });
             return;
         }
 
-        if (this.state.amount_remaining.countDecimals > 2) {
+        if (decCount(this.state.amount_remaining) > 2) {
             this.setState({ error: "Please provide no more than 2 decimals for amount remaining" });
             return;
         }
@@ -147,7 +148,9 @@ export default class CreatePolicyHolder extends React.Component {
         console.log(result.data);
         policyMenuItems = [];
         for (let i = 0; i < data.length; i++) {
-            policyMenuItems.push(<MenuItem key={data[i].policy_id} value={data[i]}>{data[i].code}</MenuItem>);
+            if (data[i].policy_status == 1) {
+                policyMenuItems.push(<MenuItem key={data[i].policy_id} value={data[i]}>{data[i].code}</MenuItem>);
+            }
         }
         this.forceUpdate();
     }
@@ -205,7 +208,6 @@ export default class CreatePolicyHolder extends React.Component {
                                     fullWidth
                                     id="last_name"
                                     label="Last Name"
-                                    autoFocus
                                     required
                                     value={this.state.last_name}
                                     onChange={this.changeForm}

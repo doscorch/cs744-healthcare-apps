@@ -21,8 +21,6 @@ import client from "../serviceClient/apiClient";
             data: res.data
         };
     });
-
-
 }
 
 /**
@@ -43,12 +41,13 @@ import client from "../serviceClient/apiClient";
     let args = {
         code,
         policy_name,
-        age_limit,
-        max_coverage_per_year,
-        percent_coverage,
-        premium_per_month,
+        age_limit: Number(age_limit),
+        max_coverage_per_year: Number(max_coverage_per_year),
+        percent_coverage: Number(percent_coverage),
+        premium_per_month: Number(premium_per_month),
 
-        selectedDrugIds,
+        selectedDrugIds: Number(selectedDrugIds),
+        policy_status: 1,
     };
 
     return client.post('/policy/createPolicy', args).then(res => {
@@ -58,7 +57,7 @@ import client from "../serviceClient/apiClient";
     });
 }
 
-export const updatePolicy = async (policy_id, code, policy_name, age_limit, max_coverage_per_year, percent_coverage, premium_per_month, selectedDrugIds) => {
+export const updatePolicy = async (policy_id, code, policy_name, age_limit, max_coverage_per_year, percent_coverage, premium_per_month, policy_status, selectedDrugIds) => {
     let args = {
         policy_id,
         code,
@@ -67,6 +66,7 @@ export const updatePolicy = async (policy_id, code, policy_name, age_limit, max_
         max_coverage_per_year,
         percent_coverage,
         premium_per_month,
+        policy_status,
 
         selectedDrugIds,
     };
@@ -77,3 +77,15 @@ export const updatePolicy = async (policy_id, code, policy_name, age_limit, max_
         };
     });
 }
+
+
+export const getPolicyHoldersWithPolicy = async(policy_id) => {
+    let args = {policy_id};
+    return client.post('/policy/getPolicyHoldersWithPolicy', args).then(res => {
+        return {
+            data: res.data
+        };
+    });
+}
+
+

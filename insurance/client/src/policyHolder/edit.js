@@ -22,6 +22,7 @@ const initState = {
     end_date: '',
     amount_paid: '',
     amount_remaining: '',
+    status: '',
     error: '',
     success: ''
 }
@@ -85,16 +86,19 @@ export default class EditPolicyHolder extends React.Component {
             this.setState({ error: "Please provide an amount paid" });
             return;
         }
-        Number.prototype.countDecimals = function () {
-            if (Math.floor(this.valueOf()) === this.valueOf()) return 0;
-            return this.toString().split(".")[1].length || 0;
+
+        let decCount = function (num) {
+            if (Number.isInteger(+num)) return 0;
+            if (num.split(".")[1] == null) return 0;
+            return num.split(".")[1].length || 0;
         }
-        if (Number.isNaN(this.state.amount_paid)) {
+
+        if (isNaN(this.state.amount_paid)) {
             this.setState({ error: "Please provide a number for amount paid" });
             return;
         }
 
-        if (this.state.amount_paid.countDecimals > 2) {
+        if (decCount(this.state.amount_paid) > 2) {
             this.setState({ error: "Please provide no more than 2 decimals for amount paid" });
             return;
         }
@@ -104,13 +108,18 @@ export default class EditPolicyHolder extends React.Component {
             return;
         }
 
-        if (Number.isNaN(this.state.amount_remaining)) {
+        if (isNaN(this.state.amount_remaining)) {
             this.setState({ error: "Please provide a number for amount remaining" });
             return;
         }
 
-        if (this.state.amount_remaining.countDecimals > 2) {
+        if (decCount(this.state.amount_remaining) > 2) {
             this.setState({ error: "Please provide no more than 2 decimals for amount remaining" });
+            return;
+        }
+
+        if (!this.state.status) {
+            this.setState({ error: "Please select a status" });
             return;
         }
 
@@ -126,10 +135,13 @@ export default class EditPolicyHolder extends React.Component {
     
             this.state.end_date,
             this.state.amount_paid,
-            this.state.amount_remaining);
+            this.state.amount_remaining,
+            this.state.status);
 
         if (res.data == null) {
             this.setState({ success: "Policy holder successfully updated!" });
+            this.setState({ error: '' });
+            this.forceUpdate();
         } else {
             this.setState({ error: res.data });
         }
@@ -160,13 +172,15 @@ export default class EditPolicyHolder extends React.Component {
         state['end_date'] = policyHolder.end_date;
         state['amount_paid'] = policyHolder.amount_paid;
         state['amount_remaining'] = policyHolder.amount_remaining;
+        state['status'] = policyHolder.policy_holder_status;
         for (let i = 0; i < data.length; i++) {
-            policyMenuItems.push(<MenuItem key={data[i].policy_id} value={data[i]}>{data[i].code}</MenuItem>);
-            if (data[i].code == policyHolder.code) {
-                state['policy'] = data[i];
+            if (data[i].policy_status == 1) {
+                policyMenuItems.push(<MenuItem key={data[i].policy_id} value={data[i]}>{data[i].code}</MenuItem>);
+                if (data[i].code == policyHolder.code) {
+                    state['policy'] = data[i];
+                }
             }
         }
-
         this.setState(state);
 
         this.forceUpdate();
@@ -225,7 +239,6 @@ export default class EditPolicyHolder extends React.Component {
                                     fullWidth
                                     id="last_name"
                                     label="Last Name"
-                                    autoFocus
                                     required
                                     value={this.state.last_name}
                                     onChange={this.changeForm}
@@ -340,6 +353,22 @@ export default class EditPolicyHolder extends React.Component {
                                     value={this.state.amount_remaining}
                                     onChange={this.changeForm}
                                 />
+                            </Grid>
+
+                            <Grid item xs={12}>
+                                <InputLabel id='status'>Status</InputLabel>
+                                <Select
+                                    labelId="status-select"
+                                    required
+                                    fullWidth
+                                    name="status"
+                                    id="status"
+                                    auto-complete='status'
+                                    value={this.state.status}
+                                    onChange={this.changeForm}>
+                                    <MenuItem value="1">Active</MenuItem>
+                                    <MenuItem value="0">Inactive</MenuItem>
+                                </Select>
                             </Grid>
 
                             <Button

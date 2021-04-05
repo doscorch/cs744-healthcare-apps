@@ -25,4 +25,11 @@ router.post('/updatePolicyHolder', isAuthenticated, function (req, res, next) {
     });
 });
 
+router.get('/getTransactions/:policy_id', isAuthenticated, function (req, res, next) {
+    console.log(req.body);
+    _policyHolderService.getTransactions(parseInt(req.params.policy_id), function (data) {
+        res.send({data: data});
+    });
+});
+
 module.exports = router;

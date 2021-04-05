@@ -28,6 +28,14 @@ export default class PolicyHolderManager extends React.Component {
 
     }
 
+    translateStatus(status) {
+        if (status === 1) {
+          return 'Active';
+        } else {
+          return 'Inactive';
+        } 
+    }
+
     render() {
         const tableRef = React.createRef();
         return (
@@ -42,7 +50,6 @@ export default class PolicyHolderManager extends React.Component {
                     }}
                     title="Policy Holders"
                     columns={[
-                        { title: 'ID', field: 'policy_holder_id'},
                         { title: 'First Name', field: 'first_name' },
                         { title: 'Last Name', field: 'last_name' },
                         { title: 'Date of Birth', field: 'date_of_birth'},
@@ -50,8 +57,25 @@ export default class PolicyHolderManager extends React.Component {
                         { title: 'Policy Code', field: 'code'},
                         { title: 'Start Date', field: 'start_date'},
                         { title: 'End Date', field: 'end_date'},
-                        { title: 'Amount Paid', field: 'amount_paid'},
-                        { title: 'Amount Remaining', field: 'amount_remaining'},
+                        { title: 'Amount Paid', field: 'amount_paid', render: ph => <p>${ph.amount_paid}</p>},
+                        { title: 'Amount Remaining', field: 'amount_remaining', render: ph => <p>${ph.amount_remaining}</p>},
+                        {
+                            title: 'Status',
+                            field: 'policy_status',
+                            render: p => <p>{this.translateStatus(p.policy_holder_status)}</p>
+  
+                        },
+                        {
+                            title: 'Transactions',
+                            field: '',
+                            render: ph => <Link to={{
+                                pathname: '/policy-holder/view-transactions',
+                                state: {
+                                  policyHolder: ph
+                                }
+                              }}>View</Link>
+
+                        },
                         {
                             title: '',
                             field: '',

@@ -46,4 +46,12 @@ router.post('/updatePolicy', isAuthenticated, function (req, res, next) {
     });
 });
 
+router.post('/getPolicyHoldersWithPolicy', isAuthenticated, function (req, res, next) {
+    _policyService.getPolicyHoldersWithPolicy(req.body, function (data) {
+        res.send({data: data});
+    });
+});
+
+
+
 module.exports = router;

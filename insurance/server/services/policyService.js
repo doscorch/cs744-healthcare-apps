@@ -51,7 +51,7 @@ module.exports.getAllDrugs = getAllDrugs;
 async function createPolicy(policy, cb) {
 
     let queryRes = await sequelize.query(
-        'INSERT INTO policy (code, policy_name, age_limit, max_coverage_per_year, percent_coverage, premium_per_month) VALUES (?, ?, ?, ?, ?, ?);',
+        'INSERT INTO policy (code, policy_name, age_limit, max_coverage_per_year, percent_coverage, premium_per_month, policy_status) VALUES (?, ?, ?, ?, ?, ?, ?);',
         {
             replacements: [
                 policy.code,
@@ -59,7 +59,8 @@ async function createPolicy(policy, cb) {
                 policy.age_limit,
                 policy.max_coverage_per_year,
                 policy.percent_coverage,
-                policy.premium_per_month
+                policy.premium_per_month,
+                policy.policy_status
             ],
             type: sequelize.QueryTypes.INSERT,
             returning: true
@@ -72,6 +73,7 @@ async function createPolicy(policy, cb) {
             return 'The code must be unique';
         } else {
             console.log('unknown error');
+            console.log(e);
             return 'Unknown error';
         }
     });
@@ -118,7 +120,7 @@ module.exports.createPolicy = createPolicy;
 async function updatePolicy(policy, cb) {
 
     let queryRes = await sequelize.query(
-        'UPDATE policy SET code=?, policy_name=?, age_limit=?, max_coverage_per_year=?, percent_coverage=?, premium_per_month=? WHERE policy_id=?;',
+        'UPDATE policy SET code=?, policy_name=?, age_limit=?, max_coverage_per_year=?, percent_coverage=?, premium_per_month=?, policy_status=? WHERE policy_id=?;',
         {
             replacements: [
                 policy.code,
@@ -127,6 +129,7 @@ async function updatePolicy(policy, cb) {
                 policy.max_coverage_per_year,
                 policy.percent_coverage,
                 policy.premium_per_month,
+                policy.policy_status,
                 policy.policy_id
             ],
             type: sequelize.QueryTypes.UPDATE,
@@ -196,3 +199,23 @@ async function updatePolicy(policy, cb) {
 }
 
 module.exports.updatePolicy = updatePolicy;
+
+async function getPolicyHoldersWithPolicy(policy, cb) {
+    let result = await sequelize.query(
+        'SELECT * FROM policy_holder WHERE policy_id=?;',
+        {
+            replacements: [
+                policy.policy_id
+            ],
+            type: sequelize.QueryTypes.SELECT
+        }
+    ).catch(function(e){
+        console.log('SQL Error:');
+        console.log(e);
+        return null;
+    });
+    cb(result);
+}
+
+module.exports.getPolicyHoldersWithPolicy = getPolicyHoldersWithPolicy;
+

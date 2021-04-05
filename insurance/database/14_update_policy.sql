@@ -1,0 +1,3 @@
+SET SQL_SAFE_UPDATES = 0;
+UPDATE policy SET policy_status=1;
+SET SQL_SAFE_UPDATES = 1;
