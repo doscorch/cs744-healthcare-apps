@@ -8,6 +8,8 @@ const users = require('./routes/users');
 const patients = require('./routes/patients');
 const physicians = require('./routes/physicians');
 const medicines = require('./routes/medicines');
+const prescriptions = require('./routes/prescriptions');
+const healthcare = require('./routes/healthcare');
 
 var app = express();
 
@@ -22,13 +24,6 @@ app.use(session({
     resave: true,
     saveUninitialized: true
 }));
-
-// const cors = require('cors');
-// // app.use(cors({
-// //     //origin: '*',
-// //     exposedHeaders: 'x-csrf',
-// //     credentials: true
-// // }));
 
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", req.header('Origin'));
@@ -48,24 +43,13 @@ app.get('/test', (req, res) => {
 
 // configure routes
 app.use('/auth', auth);
-
-// must have auth token to access users api
-// app.all('/users', (req, res, next) => {
-//     let authUser = req.session.user;
-//     console.log(authUser);
-//     if (authUser && req.headers['x-csrf'] && req.headers['x-csrf'] == req.session.csrf) {
-//         next();
-//     } else {
-//         req.session.regenerate(function (err) {
-//             res.status('403').send(new Error('invaild authenication'));
-//             return;
-//         });
-//     }
-// });
 app.use('/users', users);
 app.use('/patients', patients);
 app.use('/physicians', physicians);
 app.use('/medicines', medicines);
+app.use('/prescriptions', prescriptions);
+app.use('/healthcare', healthcare);
+
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

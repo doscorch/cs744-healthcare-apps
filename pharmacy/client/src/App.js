@@ -13,6 +13,7 @@ import UserManager from './users/userManager'
 import PhysicianManager from './physicians/physicianManager'
 import PatientManager from './patients/patientManager'
 import MedicineManager from './medicines/medicineManager'
+import PrescriptionManager from './prescriptions/prescriptionManager'
 import MyAccount from './auth/myAccount';
 import SecurityQuestion from './auth/securityQuestion';
 import { UserType } from './models/user';
@@ -38,6 +39,7 @@ class App extends React.Component {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
+              {hasUser && isPharmacist ? <Nav.Link as={Link} to="/prescription-manager">Prescriptions</Nav.Link> : ""}
               {hasUser && isPharmacist ? <Nav.Link as={Link} to="/medicine-manager">Medicines</Nav.Link> : ""}
               {hasUser && isAdmin ? <Nav.Link as={Link} to="/user-manager">Manage Users</Nav.Link> : ""}
               {hasUser && isPharmacist ? <Nav.Link as={Link} to="/physician-manager">Physicians</Nav.Link> : ""}
@@ -60,6 +62,7 @@ class App extends React.Component {
         <Route path="/changeSecurityQuestions" component={changeSecurityQuestions} />
         <Route path="/account" component={MyAccount} />
         <Route path="/user-manager" component={UserManager} />
+        <Route path="/prescription-manager" component={PrescriptionManager} />
         <Route path="/physician-manager" component={PhysicianManager} />
         <Route path="/patient-manager" component={PatientManager} />
         <Route path="/medicine-manager" component={MedicineManager} />
