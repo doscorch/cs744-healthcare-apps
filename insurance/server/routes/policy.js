@@ -22,7 +22,7 @@ router.get('/getAllPolicies', isAuthenticated, function (req, res, next) {
  * A GET request for retrieving a policy's drugs
 
  */
- router.get('/getDrugs/:policy_id', isAuthenticated, function (req, res, next) {
+router.get('/getDrugs/:policy_id', isAuthenticated, function (req, res, next) {
     _policyService.getDrugsFromPolicyId(parseInt(req.params.policy_id), function (result) {
         res.send({ data: result});
     })
@@ -48,6 +48,12 @@ router.post('/updatePolicy', isAuthenticated, function (req, res, next) {
 
 router.post('/getPolicyHoldersWithPolicy', isAuthenticated, function (req, res, next) {
     _policyService.getPolicyHoldersWithPolicy(req.body, function (data) {
+        res.send({data: data});
+    });
+});
+
+router.post('/getPolicyByPatient', isAuthenticated, function (req, res, next) {
+    _policyService.getPolicyByPatient(req.body, function (data) {
         res.send({data: data});
     });
 });

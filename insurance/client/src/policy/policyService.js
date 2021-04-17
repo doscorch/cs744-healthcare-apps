@@ -88,4 +88,11 @@ export const getPolicyHoldersWithPolicy = async(policy_id) => {
     });
 }
 
+export const getPolicyByPatient = async(payload) => {
+    return client.post('/policy/getPolicyByPatient', payload).then(res => {
+        return {
+            data: res.data
+        };
+    });
+}
 
