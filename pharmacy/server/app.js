@@ -10,6 +10,7 @@ const physicians = require('./routes/physicians');
 const medicines = require('./routes/medicines');
 const prescriptions = require('./routes/prescriptions');
 const healthcare = require('./routes/healthcare');
+const insurance = require('./routes/insurance');
 
 var app = express();
 
@@ -49,6 +50,7 @@ app.use('/physicians', physicians);
 app.use('/medicines', medicines);
 app.use('/prescriptions', prescriptions);
 app.use('/healthcare', healthcare);
+app.use('/insurance', insurance);
 
 
 // catch 404 and forward to error handler

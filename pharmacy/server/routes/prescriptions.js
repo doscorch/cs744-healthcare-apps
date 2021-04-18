@@ -36,6 +36,26 @@ router.post('/', isAuthenticated, isPharmacist, function (req, res) {
     });
 });
 
+// get a prescription
+router.get('/:prescriptionId', isAuthenticated, isPharmacist, function (req, res) {
+    console.log('here');
+    if (!req.params.prescriptionId || !req.body) {
+        res.status('400').send();
+        return;
+    }
+
+    _prescriptionService.getPrescription(req.params.prescriptionId, function (err, prescription) {
+        if (err) {
+            console.log(err);
+            res.status('500').send();
+            return;
+        }
+
+        res.send(prescription);
+        return;
+    });
+});
+
 // patch a prescription
 router.patch('/:prescriptionId', isAuthenticated, isPharmacist, function (req, res) {
     if (!req.params.prescriptionId || !req.body) {

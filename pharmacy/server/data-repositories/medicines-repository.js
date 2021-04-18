@@ -27,3 +27,8 @@ function deleteMedicine(medicineId, cb) {
     }).then(res => cb(null, true));
 }
 module.exports.deleteMedicine = deleteMedicine;
+
+function getMedicine(id, cb) {
+    medicines.findAll({ where: { medicine_id: id } }).then(medicines => cb(null, medicines.length ? medicines[0].dataValues : null))
+}
+module.exports.getMedicine = getMedicine;

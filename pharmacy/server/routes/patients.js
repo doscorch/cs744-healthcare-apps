@@ -74,4 +74,24 @@ router.delete('/:patientId', isAuthenticated, isPharmacist, function (req, res) 
     });
 });
 
+// get a patient
+router.get('/:patientId', isAuthenticated, isPharmacist, function (req, res) {
+    console.log('here');
+    if (!req.params.patientId || !req.body) {
+        res.status('400').send();
+        return;
+    }
+
+    _patientService.getPatient(req.params.patientId, function (err, patient) {
+        if (err) {
+            console.log(err);
+            res.status('500').send();
+            return;
+        }
+
+        res.send(patient);
+        return;
+    });
+});
+
 module.exports = router;

@@ -23,3 +23,9 @@ function deletePatient(patientId, cb) {
     _patientRepository.deletePatient(patientId, (err, isSuccess) => cb(err, isSuccess));
 }
 module.exports.deletePatient = deletePatient;
+
+// get patient
+function getPatient(id, cb) {
+    _patientRepository.getPatient(id, (err, patient) => cb(err, patient));
+}
+module.exports.getPatient = getPatient;

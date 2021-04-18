@@ -40,6 +40,10 @@ const Medicine = sequelize.define('Medicine', {
         type: DataTypes.DATE,
         allowNull: false
     },
+    cost: {
+        type: DataTypes.DECIMAL,
+        allowNull: false
+    },
 }, {
     timestamps: false,
     tableName: 'medicines'

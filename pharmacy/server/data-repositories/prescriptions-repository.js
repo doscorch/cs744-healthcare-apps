@@ -14,6 +14,11 @@ function getAllPrescriptions(cb) {
 }
 module.exports.getAllPrescriptions = getAllPrescriptions;
 
+function getPrescription(id, cb) {
+    prescriptions.findAll({ where: { prescription_id: id } }).then(prescriptions => cb(null, prescriptions.length ? prescriptions[0].dataValues : null))
+}
+module.exports.getPrescription = getPrescription;
+
 function patchPrescription(prescriptionId, prescriptionPartial, cb) {
     prescriptions.update(prescriptionPartial, {
         where: { prescription_id: prescriptionId }

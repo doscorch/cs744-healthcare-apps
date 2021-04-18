@@ -98,6 +98,26 @@ const Prescription = sequelize.define('Prescription', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
+    order_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    patient_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    physician_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    medicine_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    insurance_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
 }, {
     timestamps: false,
     tableName: 'prescriptions'

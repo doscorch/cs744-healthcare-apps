@@ -16,6 +16,12 @@ export const getPrescriptions = async () => {
         return prescriptions;
     })
 }
+// call api to get prescription
+export const getPrescription = async (id) => {
+    return await client.get('/prescriptions/' + id).then(prescription => {
+        return prescription;
+    })
+}
 // call api to patch prescription
 export const patchPrescription = async (prescriptionId, prescriptionPartial) => {
     return await client.patch(`/prescriptions/${prescriptionId}`, prescriptionPartial);
@@ -24,4 +30,8 @@ export const patchPrescription = async (prescriptionId, prescriptionPartial) => 
 // call api to delete prescription
 export const deletePrescription = async (prescriptionId) => {
     return await client.delete(`/prescriptions/${prescriptionId}`);
+}
+
+export const sendInsuranceRequest = async (prescriptionId) => {
+    return await client.post(`/insurance/request/${prescriptionId}`);
 }

@@ -97,6 +97,12 @@ router.post('/recieve/prescription', async function (req, res) {
         res.status('400').send(new Error('missing date'));
         return;
     }
+    const order_id = req.body.prescription_id;
+    if (!order_id) {
+        res.status('400').send(new Error('missing prescription id'));
+        return;
+    }
+
     const prescriptions = req.body.prescriptions;
     if (!prescriptions) {
         res.status('400').send(new Error('missing prescriptions'));
@@ -125,7 +131,12 @@ router.post('/recieve/prescription', async function (req, res) {
                 quantity,
                 refill,
                 order_date,
-                order_status: 0
+                order_id,
+                order_status: 0,
+                patient_id: -1,
+                physician_id: -1,
+                medicine_id: -1,
+                insurance_id: -1,
             }
             console.log(order);
 

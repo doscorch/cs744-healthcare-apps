@@ -27,3 +27,8 @@ function deletePhysician(physicianId, cb) {
     }).then(res => cb(null, true));
 }
 module.exports.deletePhysician = deletePhysician;
+
+function getPhysician(id, cb) {
+    physicians.findAll({ where: { physician_id: id } }).then(physicians => cb(null, physicians.length ? physicians[0].dataValues : null))
+}
+module.exports.getPhysician = getPhysician;

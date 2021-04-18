@@ -15,5 +15,10 @@ CREATE TABLE prescriptions(
     quantity INT NOT NULL,
     refill INT NOT NULL,
     order_date Date NOT NULL,
-	order_status INT NOT NULL
+	order_status INT NOT NULL,
+	order_id INT NOT NULL,
+	patient_id INT NOT NULL,
+	physician_id INT NOT NULL,
+    medicine_id INT NOT NULL,
+	insurance_id INT NOT NULL
 );
