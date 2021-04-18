@@ -219,3 +219,55 @@ async function getPolicyHoldersWithPolicy(policy, cb) {
 
 module.exports.getPolicyHoldersWithPolicy = getPolicyHoldersWithPolicy;
 
+async function getPolicyByPatient(payload, cb) {
+    let returnPayload = {policy: null, procedures: null};
+
+    let patient = payload.patient;
+    let resultPolicy = await sequelize.query(
+        'SELECT * FROM policy JOIN policy_holder ON policy.policy_id = policy_holder.policy_id WHERE first_name=? AND last_name=? AND date_of_birth=? AND address=?;',
+        {
+            replacements: [
+                patient.first_name,
+                patient.last_name,
+                patient.date_of_birth,
+                patient.address,
+            ],
+            type: sequelize.QueryTypes.SELECT
+        }
+    ).catch(function(e){
+        console.log('SQL Error:');
+        console.log(e);
+        return null;
+    });
+
+    /*
+        returnPolicy looks like:
+        {
+            policy_id: ..., code: ..., policy_name: ...,
+
+            percent_coverage: ...,
+
+        }
+    */
+    if (resultPolicy.length > 0) {
+        resultPolicy = resultPolicy[0];
+        returnPayload.policy = resultPolicy;
+        let resultProcedure = await sequelize.query(
+            'SELECT * FROM `procedure` JOIN policy_procedure ON `procedure`.procedure_id = policy_procedure.procedure_id WHERE policy_id=?;',
+            {
+                replacements: [
+                    resultPolicy.policy_id
+                ],
+                type: sequelize.QueryTypes.SELECT
+            }
+        ).catch(function(e){
+            console.log('SQL Error:');
+            console.log(e);
+            return null;
+        });
+        returnPayload.procedures = resultProcedure;
+    }
+    cb(returnPayload);    
+}
+
+module.exports.getPolicyByPatient = getPolicyByPatient;

@@ -46,7 +46,7 @@ import client from "../serviceClient/apiClient";
         percent_coverage: Number(percent_coverage),
         premium_per_month: Number(premium_per_month),
 
-        selectedDrugIds: Number(selectedDrugIds),
+        selectedDrugIds,
         policy_status: 1,
     };
 
@@ -88,4 +88,11 @@ export const getPolicyHoldersWithPolicy = async(policy_id) => {
     });
 }
 
+export const getPolicyByPatient = async(payload) => {
+    return client.post('/policy/getPolicyByPatient', payload).then(res => {
+        return {
+            data: res.data
+        };
+    });
+}
 

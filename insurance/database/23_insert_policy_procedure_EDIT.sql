@@ -1,0 +1,1 @@
+INSERT INTO `policy_procedure` (`policy_id`,`procedure_id`) VALUES (?,?);

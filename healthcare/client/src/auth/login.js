@@ -11,12 +11,44 @@ import Alert from '@material-ui/lab/Alert';
 import { loginUser } from './usersService';
 import { connect } from 'react-redux';
 import { app_login } from '../redux/actions/userActions';
+import {getPolicyByPatient} from '../physician/physicianService';
 
 class Login extends React.Component {
     state = {
         username: "",
         password: "",
         error: "",
+    }
+
+    test = async(e) => {
+        e.preventDefault();
+        let payload = {
+            patient: 
+            {
+                first_name: 'Peter',
+                last_name: 'Parker',
+                date_of_birth: '1982-03-27T00:00:00.000Z',
+                address: '746 23rd Ave. New York City, NY'
+            },
+            procedures:
+                [ 
+                    { 
+                        procedure_id: '90785-90899',
+                        name: 'Psychiatry Services and Procedures',
+                        price: 350,
+                        tableData: null 
+                    },
+                    { 
+                        procedure_id: '92920-93799',
+                        name: 'Cardiovascular Procedures',
+                        price: 450,
+                        tableData: null 
+                    } 
+                ]
+        };
+        let res = await getPolicyByPatient(payload);
+        console.log('test!');
+        console.log(res);
     }
 
     login = async (e) => {
@@ -111,6 +143,15 @@ class Login extends React.Component {
                     </form>
                     {alert}
                 </div>
+                <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            style={classes.submit}
+                            onClick={this.test}>
+                            Test
+                        </Button>
             </Container>
         );
     }

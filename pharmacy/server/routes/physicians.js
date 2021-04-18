@@ -74,4 +74,25 @@ router.delete('/:physicianId', isAuthenticated, isPharmacist, function (req, res
     });
 });
 
+// get a physician
+router.get('/:physicianId', isAuthenticated, isPharmacist, function (req, res) {
+    console.log('here');
+    if (!req.params.physicianId || !req.body) {
+        res.status('400').send();
+        return;
+    }
+
+    _physicianService.getPhysician(req.params.physicianId, function (err, physician) {
+        if (err) {
+            console.log(err);
+            res.status('500').send();
+            return;
+        }
+
+        res.send(physician);
+        return;
+    });
+});
+
+
 module.exports = router;

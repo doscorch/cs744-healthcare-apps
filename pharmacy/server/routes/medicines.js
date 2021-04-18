@@ -74,4 +74,24 @@ router.delete('/:medicineId', isAuthenticated, isPharmacist, function (req, res)
     });
 });
 
+router.get('/:medicineId', isAuthenticated, isPharmacist, function (req, res) {
+    console.log('here');
+    if (!req.params.medicineId || !req.body) {
+        res.status('400').send();
+        return;
+    }
+
+    _medicineService.getMedicine(req.params.medicineId, function (err, medicine) {
+        if (err) {
+            console.log(err);
+            res.status('500').send();
+            return;
+        }
+
+        res.send(medicine);
+        return;
+    });
+});
+
+
 module.exports = router;

@@ -16,6 +16,13 @@ export const getPatients = async () => {
         return patients;
     })
 }
+// call api to get patient
+export const getPatient = async (patientId) => {
+    return await client.get(`/patients/${patientId}`).then(patient => {
+        return patient;
+    })
+}
+
 // call api to patch patient
 export const patchPatient = async (patientId, patientPartial) => {
     return await client.patch(`/patients/${patientId}`, patientPartial);

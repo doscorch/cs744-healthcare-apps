@@ -23,3 +23,9 @@ function deleteMedicine(medicineId, cb) {
     _medicineRepository.deleteMedicine(medicineId, (err, isSuccess) => cb(err, isSuccess));
 }
 module.exports.deleteMedicine = deleteMedicine;
+
+// get medicine
+function getMedicine(id, cb) {
+    _medicineRepository.getMedicine(id, (err, medicine) => cb(err, medicine));
+}
+module.exports.getMedicine = getMedicine;

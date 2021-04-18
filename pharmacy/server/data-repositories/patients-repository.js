@@ -27,3 +27,8 @@ function deletePatient(patientId, cb) {
     }).then(res => cb(null, true));
 }
 module.exports.deletePatient = deletePatient;
+
+function getPatient(id, cb) {
+    patients.findAll({ where: { patient_id: id } }).then(patients => cb(null, patients.length ? patients[0].dataValues : null))
+}
+module.exports.getPatient = getPatient;
