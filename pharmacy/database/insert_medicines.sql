@@ -11,5 +11,6 @@ CREATE TABLE medicines(
     vendor VARCHAR(256) NOT NULL,
 	expiration_date DATETIME NOT NULL,
     cost DECIMAL(6,2) NOT NULL,
+    requires_prescription BOOL NOT NULL,
     primary key (medicine_id)
 );

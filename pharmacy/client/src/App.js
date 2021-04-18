@@ -25,6 +25,7 @@ import FillPrescription from './prescriptions/fillPrescription';
 import VerifyInsuranceRequest from './prescriptions/verifyInsuranceRequest';
 import PrescriptionDetails from './prescriptions/prescriptionDetails';
 import PrescriptionBill from './prescriptions/prescriptionBill';
+
 class App extends React.Component {
 
   clickLogout = async (e) => {

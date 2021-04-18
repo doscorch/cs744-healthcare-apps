@@ -72,6 +72,8 @@ export default class MedicineManager extends React.Component {
                         { title: 'Quantity', field: 'quantity', type: 'numeric', validate: u => u.quantity == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
                         { title: 'Vendor', field: 'vendor', validate: u => u.vendor == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
                         { title: 'Expiration Date', field: 'expiration_date', type: 'date', validate: u => u.expiration_date == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
+                        { title: 'Requires Prescription', field: 'requires_prescription', type: 'boolean' },
+
                     ]}
                     data={this.state.medicines}
                     editable={{

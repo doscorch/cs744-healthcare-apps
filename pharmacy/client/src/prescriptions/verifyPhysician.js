@@ -38,6 +38,7 @@ export class VerifyPatient extends React.Component {
 
         getPhysicians()
             .then(physicians => {
+                physicians = physicians.map(p => { return { ...p, name: p.first_name + " " + p.last_name } })
                 this.setState({ physicians: physicians })
             })
     }
@@ -84,7 +85,7 @@ export class VerifyPatient extends React.Component {
                             }}
                             title="Find Physician in System"
                             columns={[
-                                { title: 'Name', render: p => (`${p.first_name} ${p.last_name}`) },
+                                { title: 'Name', field: "name" },
                                 { title: 'Healthcare Institution', type: 'date', field: 'institution' },
                                 { title: 'License Number', field: 'license' },
                             ]}

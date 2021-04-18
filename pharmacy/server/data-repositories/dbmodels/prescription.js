@@ -114,8 +114,8 @@ const Prescription = sequelize.define('Prescription', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
-    insurance_id: {
-        type: DataTypes.INTEGER,
+    insurance_coverage: {
+        type: DataTypes.DECIMAL,
         allowNull: false
     },
 }, {
