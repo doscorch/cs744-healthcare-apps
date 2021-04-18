@@ -58,6 +58,10 @@ router.post('/getPolicyByPatient', isAuthenticated, function (req, res, next) {
     });
 });
 
-
+router.post('/getPolicyByPatientPharmacy', isAuthenticated, function (req, res, next) {
+    _policyService.getPolicyByPatientPharmacy(req.body, function (data) {
+        res.send({data: data});
+    });
+});
 
 module.exports = router;
