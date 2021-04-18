@@ -240,15 +240,6 @@ async function getPolicyByPatient(payload, cb) {
         return null;
     });
 
-    /*
-        returnPolicy looks like:
-        {
-            policy_id: ..., code: ..., policy_name: ...,
-
-            percent_coverage: ...,
-
-        }
-    */
     if (resultPolicy.length > 0) {
         resultPolicy = resultPolicy[0];
         returnPayload.policy = resultPolicy;
@@ -271,3 +262,54 @@ async function getPolicyByPatient(payload, cb) {
 }
 
 module.exports.getPolicyByPatient = getPolicyByPatient;
+
+async function getPolicyByPatientPharmacy(payload, cb) {
+    let returnPayload = {policy: null, medicines: null, covered_medicine: false};
+
+    let prescription = payload.prescription;
+    let resultPolicy = await sequelize.query(
+        'SELECT * FROM policy JOIN policy_holder ON policy.policy_id = policy_holder.policy_id WHERE first_name=? AND last_name=? AND date_of_birth=? AND address=?;',
+        {
+            replacements: [
+                prescription.patient_first_name,
+                prescription.patient_last_name,
+                prescription.patient_date_of_birth,
+                prescription.patient_address,
+            ],
+            type: sequelize.QueryTypes.SELECT
+        }
+    ).catch(function(e){
+        console.log('SQL Error:');
+        console.log(e);
+        return null;
+    });
+    
+    if (resultPolicy.length > 0) {
+        resultPolicy = resultPolicy[0];
+        returnPayload.policy = resultPolicy;
+        let resultMedicine= await sequelize.query(
+            'SELECT * FROM drug JOIN policy_drug ON drug.drug_id = policy_drug.drug_id WHERE policy_id=?;',
+            {
+                replacements: [
+                    resultPolicy.policy_id
+                ],
+                type: sequelize.QueryTypes.SELECT
+            }
+        ).catch(function(e){
+            console.log('SQL Error:');
+            console.log(e);
+            return null;
+        });
+        returnPayload.medicines = resultMedicine;
+
+        for (let i = 0; i < returnPayload.medicines.length; i++) {
+            if (returnPayload.medicines[i].drug_code == payload.medicine.medicine_code) {
+                returnPayload.covered_medicine = true;
+                break;
+            }
+        }
+    }
+    cb(returnPayload);    
+}
+
+module.exports.getPolicyByPatientPharmacy = getPolicyByPatientPharmacy;

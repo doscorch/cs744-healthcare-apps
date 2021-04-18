@@ -1,6 +1,14 @@
 import { ERROR } from "../errorHandling";
 import client from "../serviceClient/apiClient";
-
+// insurance post test
+import insurance from "../serviceClient/apiInsurance"
+export const getPolicyByPatientPharmacy = async(payload) => {
+    return insurance.post('/policy/getPolicyByPatientPharmacy', payload).then(res => {
+        return {
+            data: res.data
+        };
+    });
+}
 // call api to create patient
 export const createPatient = async (patient) => {
     return await client.post('/patients', patient).then(res => {

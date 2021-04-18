@@ -52,12 +52,16 @@ router.post('/getPolicyHoldersWithPolicy', isAuthenticated, function (req, res, 
     });
 });
 
-router.post('/getPolicyByPatient', isAuthenticated, function (req, res, next) {
+router.post('/getPolicyByPatient', function (req, res, next) {
     _policyService.getPolicyByPatient(req.body, function (data) {
         res.send({data: data});
     });
 });
 
-
+router.post('/getPolicyByPatientPharmacy', function (req, res, next) {
+    _policyService.getPolicyByPatientPharmacy(req.body, function (data) {
+        res.send({data: data});
+    });
+});
 
 module.exports = router;

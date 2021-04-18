@@ -11,12 +11,66 @@ import Alert from '@material-ui/lab/Alert';
 import { loginUser } from './usersService';
 import { connect } from 'react-redux';
 import { app_login } from '../redux/actions/userActions';
-
+import {getPolicyByPatientPharmacy} from '../patients/patientsService';
 class Login extends React.Component {
     state = {
         username: "",
         password: "",
         error: "",
+    }
+
+    test = async(e) => {
+        e.preventDefault();
+        let payload = {
+            prescription: {
+                patient_first_name: 'Peter',
+                patient_last_name: 'Parker',
+                patient_date_of_birth: '1982-03-27',
+                patient_address: '746 23rd Ave. New York City, NY',
+              },
+              medicine: {
+                medicine_code: 'AB17',
+                medical_name: 'Amoxicillin 50mg capsules',
+                commercial_name: 'amooxicillin',
+              }
+        };
+        let res = await getPolicyByPatientPharmacy(payload);
+        console.log('payload with medicine and policy holder');
+        console.log(res);
+
+        payload = {
+            prescription: {
+                patient_first_name: 'Peter',
+                patient_last_name: 'Parker',
+                patient_date_of_birth: '1982-03-27',
+                patient_address: '746 23rd Ave. New York City, NY',
+              },
+              medicine: {
+                medicine_code: '0000', // Code is not found in insurance
+                medical_name: 'Amoxicillin 50mg capsules',
+                commercial_name: 'amooxicillin',
+              }
+        };
+        res = await getPolicyByPatientPharmacy(payload);
+        console.log('payload without medicine and policy holder');
+        console.log(res);
+
+        payload = {
+            prescription: {
+                patient_first_name: 'Ben', // name is not found in insurance
+                patient_last_name: 'Parker',
+                patient_date_of_birth: '1982-03-27',
+                patient_address: '746 23rd Ave. New York City, NY',
+              },
+              medicine: {
+                medicine_code: 'AB17',
+                medical_name: 'Amoxicillin 50mg capsules',
+                commercial_name: 'amooxicillin',
+              }
+        };
+        res = await getPolicyByPatientPharmacy(payload);
+        console.log('payload without policy holder');
+        console.log(res);
     }
 
     login = async (e) => {
@@ -111,6 +165,15 @@ class Login extends React.Component {
                     </form>
                     {alert}
                 </div>
+                <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            style={classes.submit}
+                            onClick={this.test}>
+                            Test
+                        </Button>
             </Container>
         );
     }
