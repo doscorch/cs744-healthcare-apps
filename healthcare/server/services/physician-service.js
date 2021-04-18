@@ -184,7 +184,7 @@ async function saveVisitation(visitation,cb){
 module.exports.saveVisitation = saveVisitation;
 
 async function sendVisitation(visitaition, cb){
-    insuranceClient.default.post('/insurance', visitation).then(response => {
+    insuranceClient.default.post('/policy/getPolicyByPatient', visitation).then(response => {
         console.log("response: "+response);
         cb(null);
         return response;
