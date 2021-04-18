@@ -25,6 +25,8 @@ async function createUser(user, cb) {
         user.user_type = userType.User_Type_Patient;
     } else if (user.user_type == 'physician') {
         user.user_type = userType.User_Type_Physician;
+    } else if (user.user_type == 'staff member'){
+        user.user_type = userType.User_Type_Staff_Member;
     }
 
     const queryRes = await sequelize.query(
@@ -57,7 +59,7 @@ async function createUser(user, cb) {
     }
     let insertId = queryRes[0];
     let infoRes = null;
-    if (user.user_type == userType.User_Type_Admin) {
+    if (user.user_type == userType.User_Type_Admin || user.user_type == userType.User_Type_Staff_Member) {
         // no extra inserts needed
     } else if (user.user_type == userType.User_Type_Patient) {
         // insert patient info
@@ -450,7 +452,7 @@ module.exports.getAllQuestions = getAllQuestions;
 
 async function getPhysicians(cb) {
     let result = await sequelize.query(
-        'SELECT user_id, first_name, last_name FROM user WHERE user_type = 3;',
+        'SELECT u.user_id, first_name, last_name, pi.* FROM user AS u INNER JOIN physician_info as pi ON u.user_id = pi.user_id WHERE user_type = 3;',
         {
             type: sequelize.QueryTypes.SELECT
         }
@@ -526,3 +528,19 @@ async function getPatientInfo(patient_id, cb){
 }
 
 module.exports.getPatientInfo = getPatientInfo;
+
+async function getPatients(cb){
+    let result = await sequelize.query(
+        'SELECT pati.date_of_birth, pati.address, pu.first_name AS physician_first, pu.last_name as physician_last, pu.user_id as physician_id, patu.first_name as patient_first, patu.last_name as patient_last, pati.user_id FROM patient_info AS pati INNER JOIN patient_physician AS pp ON pp.patient_id = pati.user_id INNER JOIN user AS pu ON pu.user_id = pp.physician_id INNER JOIN user as patu ON patu.user_id = pati.user_id;',
+        {
+            type: sequelize.QueryTypes.SELECT
+        }
+    ).catch(function(e){
+        console.log("SQL error:");
+        console.log(e);
+        cb(e, null);
+    });
+    cb(null, result);
+}
+
+module.exports.getPatients = getPatients;

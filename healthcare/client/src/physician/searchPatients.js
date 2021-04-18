@@ -13,11 +13,12 @@ export default class searchPatients extends React.Component {
     }
 
     componentDidMount() {
-        this.getData();
+        
+        this.getData(this.props.match.params.physician);
     }
 
-    getData = () => {
-        return getPatients()
+    getData = (physician_id) => {
+        return getPatients(physician_id)
             .then(users => {
                 this.setState({ users: users })
             })
@@ -51,6 +52,22 @@ export default class searchPatients extends React.Component {
                                 onClick: (event, row) => {
                                     const patient_id = row.user_id;
                                     this.props.history.push("/patient/"+patient_id+"/prescriptions");
+                                }
+                            },
+                            {
+                                icon: 'medical_services',
+                                tooltip: 'Write Visitation Record',
+                                onClick: (event, row) => {
+                                    const patient_id = row.user_id;
+                                    this.props.history.push("/write-visitation/"+patient_id);
+                                }
+                            },
+                            {
+                                icon: 'insert_chart',
+                                tooltip: 'Patient Visits',
+                                onClick: (event, row) => {
+                                    const patient_id = row.user_id;
+                                    this.props.history.push("/visitations/"+patient_id);
                                 }
                             }
                         ]

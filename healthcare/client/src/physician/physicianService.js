@@ -8,8 +8,8 @@ export const getPhysician = async () => {
     })
 }
 
-export const getPatients = async () => {
-    return client.get('/physician/patients').then(patients => {
+export const getPatients = async (physician_id) => {
+    return client.get('/physician/'+physician_id+'/patients').then(patients => {
         return patients;
     })
 }
@@ -20,11 +20,11 @@ export const getPatient = async (patient_id) => {
     });
 }
 
-export const savePrescription = async (physician_id, patient_id, prescriptions) => {
+export const savePrescription = async (physician, patient, prescriptions) => {
     return client.post("/physician/savePrescription",
     {
-        physician_id: physician_id,
-        patient_id: patient_id,
+        physician: physician,
+        patient: patient,
         prescriptions: prescriptions,
     }).then(response => {
         console.log("response: "+response);
@@ -38,4 +38,24 @@ export const getPatientPrescriptions = async (patient_id) => {
             return prescriptions;
         }
     )
+}
+
+export const getProcedures = async () => {
+    return client.get("/procedure/").then(
+        procedures => {
+            return procedures;
+        }
+    )
+}
+
+export const saveVisitation = async (physician, patient, procedures) => {
+    return client.post("/physician/saveVisitation",
+    {
+        physician: physician,
+        patient: patient,
+        procedures: procedures,
+    }).then(response => {
+        console.log("response: "+response);
+        return response;
+    });
 }

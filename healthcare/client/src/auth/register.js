@@ -355,6 +355,7 @@ export default class Register extends React.Component {
                                     <MenuItem value={'admin'}>Admin</MenuItem>
                                     <MenuItem value={'patient'}>Patient</MenuItem>
                                     <MenuItem value={'physician'}>Physician</MenuItem>
+                                    <MenuItem value={'staff member'}>Staff Member</MenuItem>
                                 </Select>
                             </Grid>
                         </Grid>

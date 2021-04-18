@@ -1,6 +1,8 @@
 const _userRepository = require('../data-repositories/users-repository');
 const sequelize = require('../db');
 const userType = require('../models/user');
+const pharmacyClient = require('../service-client/pharmacyClient');
+const insuranceClient = require('../service-client/insuaranceClient');
 
 async function getPatients(physician_id, cb){
     let result = await sequelize.query(
@@ -61,12 +63,14 @@ async function getPhysician(physician_id, cb){
 module.exports.getPhysician = getPhysician;
 
 async function savePrescription(prescription,cb){
+    var currTime = new Date();
     let queryRes = await sequelize.query(
-        'INSERT INTO prescription_order (physician_id, patient_id) VALUES (?, ?);',
+        'INSERT INTO prescription_order (physician_id, patient_id, creation_date) VALUES (?, ?, ?);',
         {
             replacements: [
-                prescription.physician_id,
-                prescription.patient_id,
+                prescription.physician.user_id,
+                prescription.patient.user_id,
+                currTime
             ],
             type: sequelize.QueryTypes.INSERT,
             returning: true
@@ -81,7 +85,10 @@ async function savePrescription(prescription,cb){
         cb(queryRes);
         return;
     }
+    prescription.date = currTime;
+    
     let insertId = queryRes[0];
+    prescription.prescription_id = insertId;
     prescription.prescriptions.forEach(async element => {
         await sequelize.query(
             'INSERT INTO prescription_medicine (prescription_order_id, prescription, dosage, quantity, refill) VALUES (?, ?, ?, ?, ?);',
@@ -103,11 +110,90 @@ async function savePrescription(prescription,cb){
                 return;
         });
     });
+
+    console.log(prescription);
     cb(null);
     return;
 }
 
 module.exports.savePrescription = savePrescription;
+
+async function sendPrescription(presciption, cb){
+    pharmacyClient.default.post('/healthcare/recieve/prescription', presciption).then(response => {
+        console.log("response: "+response);
+        cb(null);
+        return response;
+    });
+    cb(null);
+    return;
+}
+
+module.exports.sendPrescription = sendPrescription;
+
+async function saveVisitation(visitation,cb){
+    var currTime = new Date();
+    let queryRes = await sequelize.query(
+        'INSERT INTO visitation (physician_id, patient_id, visitation_date, status) VALUES (?, ?, ?, 2);',
+        {
+            replacements: [
+                visitation.physician.user_id,
+                visitation.patient.user_id,
+                currTime
+            ],
+            type: sequelize.QueryTypes.INSERT,
+            returning: true
+        }
+    ).catch(
+        function(e){
+            console.log("SQL error:");
+            console.log(e);
+            cb(e);
+    });
+    if (typeof queryRes === 'string' || queryRes instanceof String) {
+        cb(queryRes);
+        return;
+    }
+    visitation.date = currTime;
+    
+    let insertId = queryRes[0];
+    visitation.visitation_id = insertId;
+    visitation.procedures.forEach(async element => {
+        await sequelize.query(
+            'INSERT INTO visitation_procedure (visitation_id, procedure_id) VALUES (?, ?);',
+            {
+                replacements: [
+                    insertId,
+                    element.procedure_id
+                ],
+                type: sequelize.QueryTypes.INSERT
+            }
+        ).catch(
+            function(e){
+                console.log("SQL error:");
+                console.log(e);
+                cb(e);
+                return;
+        });
+    });
+
+    console.log(visitation);
+    cb(null);
+    return;
+}
+
+module.exports.saveVisitation = saveVisitation;
+
+async function sendVisitation(visitaition, cb){
+    insuranceClient.default.post('/insurance', visitation).then(response => {
+        console.log("response: "+response);
+        cb(null);
+        return response;
+    });
+    cb(null);
+    return;
+}
+
+module.exports.sendVisitation = sendVisitation;
 
 async function getPatientPrescriptions(patient_id, cb){
     let result = await sequelize.query('SELECT upat.first_name AS patient_first_name, upat.last_name AS patient_last_name, uphy.first_name AS physician_first_name, uphy.last_name AS physician_last_name, p.*, pm.* FROM prescription_order AS p INNER JOIN user AS upat ON upat.user_id = p.patient_id INNER JOIN user AS uphy ON uphy.user_id = p.physician_id INNER JOIN prescription_medicine AS pm ON pm.prescription_order_id = p.prescription_id WHERE patient_id = ?;',

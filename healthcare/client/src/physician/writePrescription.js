@@ -69,7 +69,7 @@ export class WritePrescription extends React.Component {
             return;
         }
 
-        let response = await savePrescription(this.props.user.user_id, this.props.match.params.patient, 
+        let response = await savePrescription(this.state.physician, this.state.patient, 
             this.state.prescriptions);
         if(response.err){
             this.setState({ error: response.err});

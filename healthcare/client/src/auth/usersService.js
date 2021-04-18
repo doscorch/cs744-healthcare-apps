@@ -187,3 +187,7 @@ export const getPatientInfo = async () => {
     return result;
 }
 
+export const getAllPatients = async () => {
+    let result = await client.get('/users/patients');
+    return result;
+}

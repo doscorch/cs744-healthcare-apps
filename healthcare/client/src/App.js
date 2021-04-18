@@ -19,6 +19,12 @@ import SearchPatients from './physician/searchPatients';
 import PatientPrescriptions from './physician/patientPrescriptions';
 import ViewPrescription from './prescription/viewPrescription';
 import ChangePhysician from './auth/changePhysician';
+import WriteVisitation from './physician/writeVisitation';
+import PatientVisitations from './visitation/patientVisitations';
+import ViewVisitation from './visitation/viewVisitation';
+import ViewAllPatients from './users/viewAllPatients';
+import ViewBill from './visitation/viewBill';
+import ViewAllPhysicians from './users/viewAllPhysicians';
 
 class App extends React.Component {
 
@@ -33,6 +39,7 @@ class App extends React.Component {
     const isAdmin = this.props.user.user_type === UserType.Admin;
     const isPhysician = this.props.user.user_type === UserType.Physician;
     const isPatient = this.props.user.user_type === UserType.Patient;
+    const isStaffMember = this.props.user.user_type === UserType.StaffMember;
     return (
       <div>
         <Navbar sticky="top" bg="light" variant="light" expand="lg" style={{ marginBottom: "10px" }}>
@@ -41,8 +48,11 @@ class App extends React.Component {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
               {hasUser && isAdmin ? <Nav.Link as={Link} to="/user-manager">Manage Users</Nav.Link> : ""}
-              {hasUser && isPhysician ? <Nav.Link as={Link} to="/search-patients">Patients</Nav.Link> : ""}
+              {hasUser && isPhysician ? <Nav.Link as={Link} to={"/search-patients/"+this.props.user.user_id}>Patients</Nav.Link> : ""}
               {hasUser && isPatient ? <Nav.Link as={Link} to={"/patient/"+this.props.user.user_id+"/prescriptions"}>Prescriptions</Nav.Link> : ""}
+              {hasUser && isPatient ? <Nav.Link as={Link} to={"/visitations/"+this.props.user.user_id}>Visitations</Nav.Link> : ""}
+              {hasUser && isStaffMember ? <Nav.Link as={Link} to={"/patients"}>Patients</Nav.Link> : ""}
+              {hasUser && isStaffMember ? <Nav.Link as={Link} to={"/physicians"}>Physicians</Nav.Link> : ""}
             </Nav>
             <Nav>
               {hasUser ? <Nav.Link as={Link} to="/" onClick={this.clickLogout}><i className="fas fa-sign-out-alt"></i> Logout</Nav.Link> : ""}
@@ -61,11 +71,17 @@ class App extends React.Component {
         <Route path="/changeSecurityQuestions" component={changeSecurityQuestions} />
         <Route path="/account" component={MyAccount} />
         <Route path="/user-manager" component={UserManager} />
-        <Route path="/search-patients" component={SearchPatients} />
+        <Route path="/search-patients/:physician" component={SearchPatients} />
         <Route path="/write-prescription/:patient" component={WritePrescription}/>
         <Route path="/patient/:patient/prescriptions" component={PatientPrescriptions}/>
         <Route path="/prescriptions/:prescription/medicine/:prescriptionmed" component={ViewPrescription}/>
         <Route path="/change-physician" component={ChangePhysician}/>
+        <Route path="/write-visitation/:patient" component={WriteVisitation}/>
+        <Route path="/visitations/:patient" component={PatientVisitations}/>
+        <Route exact path="/visit/:visit" component={ViewVisitation}/>
+        <Route path="/patients" component={ViewAllPatients}/>
+        <Route path="/physicians" component={ViewAllPhysicians}/>
+        <Route exact path="/visit/:visit/bill" component={ViewBill}/>
       </div>
     );
   }

@@ -5,6 +5,7 @@ CREATE TABLE visitation(
     physician_id INT NOT NULL,
     patient_id INT NOT NULL,
     visitation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    status INT NOT NULL,
     CONSTRAINT fk_physician_visitation
     FOREIGN KEY (physician_id)
     REFERENCES user(user_id),

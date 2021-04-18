@@ -3,7 +3,7 @@ const router = express.Router();
 const _userService = require('../services/users-service');
 const Token = require('../models/authToken');
 const dataUser = require('../data-repositories/dbmodels/user');
-const { User_Type_Admin } = require('../models/user')
+const { User_Type_Admin, User_Type_Staff_Member } = require('../models/user')
 const { isAuthenticated, isAdmin } = require('../middleware/auth');
 
 // auth status
@@ -72,6 +72,21 @@ router.get('/patient', isAuthenticated, function (req, res){
             return;
         }
         res.send(result[0]);
+        return;
+    });
+});
+
+router.get('/patients', isAuthenticated, function(req, res){
+    if(req.session.user.user_type !== User_Type_Staff_Member){
+        res.status('403').send({error: "Must be a staff member to access all patients"})
+    }
+    _userService.getPatients(function(error, result){
+        if(error){
+            console.log(error);
+            res.status('500').send();
+            return;
+        }
+        res.send(result);
         return;
     });
 });

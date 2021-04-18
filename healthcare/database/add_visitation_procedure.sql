@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS visitation_procedure;
 CREATE TABLE visitation_procedure(
     visitation_id INT NOT NULL,
     procedure_id VARCHAR(64) NOT NULL,
+    insurance_pays FLOAT,
     CONSTRAINT fk_visitation_procedure
     FOREIGN KEY (visitation_id)
     REFERENCES visitation(visitation_id),

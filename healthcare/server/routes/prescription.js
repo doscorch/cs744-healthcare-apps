@@ -5,6 +5,7 @@ const _userService = require('../services/users-service');
 const Token = require('../models/authToken');
 const dataUser = require('../data-repositories/dbmodels/user');
 const { isAuthenticated, isAdmin } = require('../middleware/auth');
+const { User_Type_Staff_Member } = require('../models/user');
 
 router.get('/:prescription/medicine/:prescriptionmed', isAuthenticated, function(req, res){
     console.log(req.params);
@@ -22,7 +23,7 @@ router.get('/:prescription/medicine/:prescriptionmed', isAuthenticated, function
         await _userService.getPatientInfo(prescription.patient_id, function(error, patient){
             console.log(patient);
             patient = patient[0];
-            if (!(req.session.user.user_id == prescription.patient_id || req.session.user.user_id == prescription.physician_id || (patient.physician_id == prescription.physician_id && req.session.user.user_type == 3))){
+            if (!(req.session.user.user_id == prescription.patient_id || req.session.user.user_id == prescription.physician_id || (patient.physician_id == prescription.physician_id && req.session.user.user_type == 3) || req.session.user.user_type == 4)){
                 console.log("here");
                 authorized = false;
             }
@@ -30,7 +31,6 @@ router.get('/:prescription/medicine/:prescriptionmed', isAuthenticated, function
         })
         console.log(authorized);
         if(!authorized){
-            console.log("here--send");
             res.status('403').send({error: "You are not this patient or the assigned physician for this patient"});
             return;
         }

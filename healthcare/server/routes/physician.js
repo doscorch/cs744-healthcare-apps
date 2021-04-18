@@ -6,8 +6,8 @@ const Token = require('../models/authToken');
 const dataUser = require('../data-repositories/dbmodels/user');
 const { isAuthenticated, isAdmin } = require('../middleware/auth');
 
-router.get('/patients', isAuthenticated, function (req, res) {
-    _physicianService.getPatients(req.session.user.user_id, function (err, users) {
+router.get('/:physician/patients', isAuthenticated, function (req, res) {
+    _physicianService.getPatients(req.params.physician, function (err, users) {
         if (err) {
             res.status('500').send();
             return;
@@ -67,7 +67,7 @@ router.get('/patients/:patient/prescriptions', isAuthenticated, async function(r
     await _userService.getPatientInfo(parseInt(req.params.patient), function(error, patient){
         console.log(patient);
         patient = patient[0];
-        if(!(req.session.user.user_id == parseInt(req.params.patient) || req.session.user.user_id == patient.physician_id)){
+        if(!(req.session.user.user_id == parseInt(req.params.patient) || req.session.user.user_id == patient.physician_id || req.session.user.user_type == 4)){
             auth = false;
         }
     })
@@ -85,14 +85,45 @@ router.get('/patients/:patient/prescriptions', isAuthenticated, async function(r
     })
 })
 
-router.post('/savePrescription', isAuthenticated, function(req, res){
-    _physicianService.savePrescription(req.body, function(err){
-        //Add send prescription to pharmacy
+router.post('/savePrescription', isAuthenticated, async function(req, res){
+    await _physicianService.savePrescription(req.body, async function(err){
+        
         if(err){
             res.status('500').send({ err: "Failed to save prescription."})
+            return;
         }else{
             res.send({ msg: "Prescription Saved!"});
         }   
+
+        await _physicianService.sendPrescription(req.body, async function(err){
+            if(err){
+                res.status('500').send({ err: "Failed to send prescription."})
+            }else{
+                res.send({ msg: "Prescription Saved!"});
+            } 
+            return;
+        })
+        return;
+    })
+})
+
+router.post('/saveVisitation', isAuthenticated, async function(req, res){
+    await _physicianService.saveVisitation(req.body, async function(err){
+        //Add send visitaiton to insurance
+        if(err){
+            res.status('500').send({ error: "Failed to save visitation."})
+            return;
+        }else{
+            res.send({ msg: "Prescription Saved!"});
+        }   
+        await _physicianService.sendVisitation(req.body, async function(err){
+            if(err){
+                res.status('500').send({ err: "Failed to send prescription."})
+            }else{
+                res.send({ msg: "Prescription Saved!"});
+            } 
+            return;
+        })
         return;
     })
 })

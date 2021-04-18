@@ -7,6 +7,9 @@ const auth = require('./routes/auth');
 const users = require('./routes/users');
 const physician = require('./routes/physician');
 const prescription = require('./routes/prescription');
+const procedure = require('./routes/procedure');
+const visitation = require('./routes/visitation');
+const insurance = require('./routes/insurance');
 
 
 var app = express();
@@ -44,6 +47,9 @@ app.use('/auth', auth);
 app.use('/users', users);
 app.use('/physician', physician);
 app.use('/prescription', prescription);
+app.use('/procedure', procedure);
+app.use('/visitation', visitation);
+app.use('/insurance',insurance);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
