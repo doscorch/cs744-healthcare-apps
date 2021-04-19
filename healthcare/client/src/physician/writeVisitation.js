@@ -54,6 +54,9 @@ export class WriteVisitation extends React.Component {
             return;
         }
         this.setState({success: "Visitation saved"})
+        if(this.state.require_prescription){
+            this.props.history.push("/write-prescription/"+this.state.patient.user_id);
+        }
     }
 
     async componentDidMount() {

@@ -121,7 +121,9 @@ export class ViewBill extends React.Component {
                         <label style={{fontWeight: "bold"}}>Physician: </label>
                         <p>{this.state.visitation.physician_first} {this.state.visitation.physician_last}</p>
                     </div>
+                    
                 </div>
+                
                 <div style={{display: "flex", justifyContent:"center"}}>
                 <table style={classes.table}>
                     <tr style={classes.lastRow}>
@@ -150,7 +152,9 @@ export class ViewBill extends React.Component {
                         <td style={classes.tableEntry}>${this.state.visitation.total}</td>
                     </tr>
                 </table>
+                
                 </div>
+                {this.state.visitation.status != 1 ? <Alert severity="error" style={{display: "flex", justifyContent:"center"}}>Insurance info not received yet</Alert> : ""}
             </div>
         );
     }

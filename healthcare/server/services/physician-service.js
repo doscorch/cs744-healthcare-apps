@@ -2,7 +2,7 @@ const _userRepository = require('../data-repositories/users-repository');
 const sequelize = require('../db');
 const userType = require('../models/user');
 const pharmacyClient = require('../service-client/pharmacyClient');
-const insuranceClient = require('../service-client/insuaranceClient');
+const insuranceClient = require('../service-client/insuranceClient');
 
 async function getPatients(physician_id, cb){
     let result = await sequelize.query(
@@ -119,7 +119,7 @@ async function savePrescription(prescription,cb){
 module.exports.savePrescription = savePrescription;
 
 async function sendPrescription(presciption, cb){
-    pharmacyClient.default.post('/healthcare/recieve/prescription', presciption).then(response => {
+    pharmacyClient.api.post('/healthcare/recieve/prescription', presciption).then(response => {
         console.log("response: "+response);
         cb(null);
         return response;
@@ -183,8 +183,8 @@ async function saveVisitation(visitation,cb){
 
 module.exports.saveVisitation = saveVisitation;
 
-async function sendVisitation(visitaition, cb){
-    insuranceClient.default.post('/policy/getPolicyByPatient', visitation).then(response => {
+async function sendVisitation(visitation, cb){
+    insuranceClient.insuranceAPI.post('/policy/getPolicyByPatient', visitation).then(response => {
         console.log("response: "+response);
         cb(null);
         return response;

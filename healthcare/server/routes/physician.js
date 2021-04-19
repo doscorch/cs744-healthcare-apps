@@ -91,9 +91,7 @@ router.post('/savePrescription', isAuthenticated, async function(req, res){
         if(err){
             res.status('500').send({ err: "Failed to save prescription."})
             return;
-        }else{
-            res.send({ msg: "Prescription Saved!"});
-        }   
+        } 
 
         await _physicianService.sendPrescription(req.body, async function(err){
             if(err){
