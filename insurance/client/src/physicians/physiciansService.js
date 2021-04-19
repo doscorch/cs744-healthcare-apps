@@ -30,5 +30,5 @@ export const patchPhysician = async (physicianId, physicianPartial) => {
 
 // call api to delete physician
 export const deletePhysician = async (physicianId) => {
-    return await client.delete(`/physicians/${physicianId}`);
+    return await client.post(`/physicians/delete/${physicianId}`);
 }

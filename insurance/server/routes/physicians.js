@@ -56,13 +56,14 @@ router.patch('/:physicianId', isAuthenticated, function (req, res) {
 });
 
 // delete a physician
-router.delete('/:physicianId', isAuthenticated, function (req, res) {
+router.post('/delete/:physicianId', isAuthenticated, function (req, res) {
+    console.log('I hear ya');
     if (!req.params.physicianId) {
         res.status('400').send();
         return;
     }
 
-    _physicianService.deletePhysician(req.params.physicianId, function (err, physician) {
+    _physicianService.deletePhysician(parseInt(req.params.physicianId), function (err, physician) {
         if (err) {
             console.log(err);
             res.status('500').send();

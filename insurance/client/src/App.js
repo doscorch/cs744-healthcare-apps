@@ -17,7 +17,7 @@ import changeSecurityQuestions from './auth/changeSecurityQuestions';
 import PolicyManager from './policy/policyManager';
 import CreatePolicy from './policy/create';
 import EditPolicy from './policy/edit';
-import PolicyHolderManager from './policyHolder/policyholderManager';
+import PolicyHolderManager from './policyHolder/policyHolderManager';
 import CreatePolicyHolder from './policyHolder/create';
 import EditPolicyHolder from './policyHolder/edit';
 import RequestManager from './request/requestManager';
