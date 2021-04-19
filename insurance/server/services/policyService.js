@@ -468,7 +468,7 @@ async function getPolicyByPatientPharmacy(payload, cb) {
                             prescription.patient_first_name,
                             prescription.patient_last_name,
                             prescription.patient_address,
-                            prescription.patient_date_of_birth,
+                            (new Date(prescription.patient_date_of_birth)).toISOString().slice(0, 19).replace('T', ' '),
                             payload.medicine.cost,
                             prescription.prescription_id,
                             payload.medicine.medicine_code
