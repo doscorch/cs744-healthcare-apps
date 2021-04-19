@@ -7,7 +7,7 @@ import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
 import Select from '@material-ui/core/Select';
-import CheckBox from '@material-ui/core/CheckBox';
+import CheckBox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import MaterialTable from 'material-table';
 import Alert from '@material-ui/lab/Alert';
