@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {getAllPolicyHolders} from './policyHolderService';
 
-export default class PolicyHolderManager extends React.Component {
+export default class PolicyHolderManagerNew extends React.Component {
     state = {
         policyHolders: []
     }

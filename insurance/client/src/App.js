@@ -17,7 +17,7 @@ import changeSecurityQuestions from './auth/changeSecurityQuestions';
 import PolicyManager from './policy/policyManager';
 import CreatePolicy from './policy/create';
 import EditPolicy from './policy/edit';
-import PolicyHolderManager from './policyHolder/policyHolderManager';
+import PolicyHolderManagerNew from './policyHolder/policyHolderManagerNew';
 import CreatePolicyHolder from './policyHolder/create';
 import EditPolicyHolder from './policyHolder/edit';
 import RequestManager from './request/requestManager';
@@ -47,7 +47,7 @@ class App extends React.Component {
             <Nav className="mr-auto">
               {hasUser && isAdmin ? <Nav.Link as={Link} to="/user-manager">Manage Users</Nav.Link> : ""}
               {hasUser && isAgent ? <Nav.Link as={Link} to="/manage-policies">Manage Policies</Nav.Link> : ""}
-              {hasUser && isAgent ? <Nav.Link as={Link} to="/manage-policy-holders">Manage Policy Holders</Nav.Link> : ""}
+              {hasUser && isAgent ? <Nav.Link as={Link} to="/manage-policyholders">Manage Policy Holders</Nav.Link> : ""}
               {hasUser && isAgent ? <Nav.Link as={Link} to="/manage-requests-pharmacy">Manage Pharmacy Requests</Nav.Link> : ""}
               {hasUser && isAgent ? <Nav.Link as={Link} to="/manage-requests-healthcare">Manage Healthcare Requests</Nav.Link> : ""}
               {hasUser && isAgent ? <Nav.Link as={Link} to="/manage-physicians">Manage Physicians</Nav.Link> : ""}
@@ -73,7 +73,7 @@ class App extends React.Component {
         <Route path="/manage-policies" component={PolicyManager} />
         <Route path="/policy/create" component={CreatePolicy}></Route>
         <Route path="/policy/edit" component={EditPolicy}></Route>
-        <Route path="/manage-policy-holders" component={PolicyHolderManager} />
+        <Route path="/manage-policyholders" component={PolicyHolderManagerNew} />
         <Route path="/policy-holder/create" component={CreatePolicyHolder} />
         <Route path="/policy-holder/edit" component={EditPolicyHolder} />
         <Route path="/manage-requests-pharmacy" component={RequestManager}/>
