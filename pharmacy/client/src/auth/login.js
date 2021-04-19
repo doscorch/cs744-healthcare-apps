@@ -23,15 +23,17 @@ class Login extends React.Component {
         e.preventDefault();
         let payload = {
             prescription: {
-                patient_first_name: 'Peter',
-                patient_last_name: 'Parker',
-                patient_date_of_birth: '1982-03-27',
-                patient_address: '746 23rd Ave. New York City, NY',
+                prescription_id: 1,
+                patient_first_name: 'Bobby',
+                patient_last_name: 'Fisher',
+                patient_date_of_birth: '1980-01-01',
+                patient_address: '123 Street',
               },
               medicine: {
-                medicine_code: 'AB17',
-                medical_name: 'Amoxicillin 50mg capsules',
-                commercial_name: 'amooxicillin',
+                medicine_code: 'AB01',
+                medical_name: 'Levothyoxine',
+                commercial_name: 'levo',
+                cost: 100
               }
         };
         let res = await getPolicyByPatientPharmacy(payload);
@@ -40,15 +42,17 @@ class Login extends React.Component {
 
         payload = {
             prescription: {
-                patient_first_name: 'Peter',
-                patient_last_name: 'Parker',
-                patient_date_of_birth: '1982-03-27',
-                patient_address: '746 23rd Ave. New York City, NY',
+                prescription_id: 1,
+                patient_first_name: 'Bobby',
+                patient_last_name: 'Fisher',
+                patient_date_of_birth: '1980-01-01',
+                patient_address: '123 Street',
               },
               medicine: {
-                medicine_code: '0000', // Code is not found in insurance
-                medical_name: 'Amoxicillin 50mg capsules',
-                commercial_name: 'amooxicillin',
+                medicine_code: 'AB00',
+                medical_name: 'Levothyoxine',
+                commercial_name: 'levo',
+                cost: 100
               }
         };
         res = await getPolicyByPatientPharmacy(payload);
@@ -57,15 +61,17 @@ class Login extends React.Component {
 
         payload = {
             prescription: {
-                patient_first_name: 'Ben', // name is not found in insurance
-                patient_last_name: 'Parker',
-                patient_date_of_birth: '1982-03-27',
-                patient_address: '746 23rd Ave. New York City, NY',
+                prescription_id: 1,
+                patient_first_name: 'Bob',
+                patient_last_name: 'Fisher',
+                patient_date_of_birth: '1980-01-01',
+                patient_address: '123 Street',
               },
               medicine: {
-                medicine_code: 'AB17',
-                medical_name: 'Amoxicillin 50mg capsules',
-                commercial_name: 'amooxicillin',
+                medicine_code: 'AB00',
+                medical_name: 'Levothyoxine',
+                commercial_name: 'levo',
+                cost: 100
               }
         };
         res = await getPolicyByPatientPharmacy(payload);
@@ -165,7 +171,7 @@ class Login extends React.Component {
                     </form>
                     {alert}
                 </div>
-                <Button
+                {/* <Button
                             type="submit"
                             fullWidth
                             variant="contained"
@@ -173,7 +179,7 @@ class Login extends React.Component {
                             style={classes.submit}
                             onClick={this.test}>
                             Test
-                        </Button>
+                        </Button> */}
             </Container>
         );
     }
