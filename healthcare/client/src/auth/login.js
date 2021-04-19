@@ -25,10 +25,10 @@ class Login extends React.Component {
         let payload = {
             patient: 
             {
-                first_name: 'Peter',
-                last_name: 'Parker',
-                date_of_birth: '1982-03-27T00:00:00.000Z',
-                address: '746 23rd Ave. New York City, NY'
+                first_name: 'Bobby',
+                last_name: 'Fisher',
+                date_of_birth: '1980-01-01',
+                address: '123 Street'
             },
             procedures:
                 [ 
@@ -44,7 +44,8 @@ class Login extends React.Component {
                         price: 450,
                         tableData: null 
                     } 
-                ]
+                ],
+                visitation_id: 3
         };
         let res = await getPolicyByPatient(payload);
         console.log('test!');
@@ -143,7 +144,7 @@ class Login extends React.Component {
                     </form>
                     {alert}
                 </div>
-                <Button
+                {/* <Button
                             type="submit"
                             fullWidth
                             variant="contained"
@@ -151,7 +152,7 @@ class Login extends React.Component {
                             style={classes.submit}
                             onClick={this.test}>
                             Test
-                        </Button>
+                        </Button> */}
             </Container>
         );
     }

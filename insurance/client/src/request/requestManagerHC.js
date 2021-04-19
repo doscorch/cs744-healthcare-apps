@@ -7,18 +7,18 @@ import { Navbar, Nav } from 'react-bootstrap';
 import { Route, Link } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import {getAllRequests, getDrug, requestAction, applyTransaction} from './requestService';
+import {getAllRequestsHC, getProcedure, requestActionHC, applyTransactionHC} from './requestService';
 import {getAllPolicies} from '../policy/policyService';
 import {getAllPolicyHolders, updatePolicyHolder} from '../policyHolder/policyHolderService';
 
 
-export default class RequestManager extends React.Component {
+export default class RequestManagerHC extends React.Component {
     state = {
         requests: []
     }
 
     showAcceptButton(r) {
-        if (r.request_status == 2) {
+        if (r.request_hc_status == 2) {
             return <Button
             type="submit"
             fullWidth
@@ -31,7 +31,7 @@ export default class RequestManager extends React.Component {
     }
 
     showDenyButton(r) {
-        if (r.request_status == 2) {
+        if (r.request_hc_status == 2) {
             return <Button
             type="submit"
             fullWidth
@@ -74,13 +74,13 @@ export default class RequestManager extends React.Component {
         console.log(policy);
         console.log(policyHolder);
 
-        request.request_status = 1;
+        request.request_hc_status = 1;
         request.policy = policy;
-        await requestAction(request);
+        await requestActionHC(request);
         this.componentDidMount();
 
         // handle transactions
-        applyTransaction(request);
+        applyTransactionHC(request);
 
         
 
@@ -151,15 +151,15 @@ export default class RequestManager extends React.Component {
         console.log(policy);
         console.log(policyHolder);
         request.policy = policy;
-        request.request_status = 0;
-        await requestAction(request);
+        request.request_hc_status = 0;
+        await requestActionHC(request);
         this.componentDidMount();
     }
 
     async componentDidMount() {
         console.log('getting requests');
 
-        let result = await getAllRequests();
+        let result = await getAllRequestsHC();
         console.log(result);
 
         let requests = result.data;
@@ -167,11 +167,10 @@ export default class RequestManager extends React.Component {
         // format date
         for (let i = 0; i < requests.length; i++) {
             requests[i]['date_of_birth'] = requests[i]['date_of_birth'].split('T')[0];
-            requests[i]['request_date'] = requests[i]['request_date'].split('T')[0];
-            result = await getDrug(requests[i]['drug_id']);
-            requests[i]['drug_name'] = result.data[0].drug_name;
-            requests[i]['drug_code'] = result.data[0].drug_code;
-            requests[i]['commercial_name'] = result.data[0].commercial_name;
+            requests[i]['request_hc_date'] = requests[i]['request_hc_date'].split('T')[0];
+            result = await getProcedure(requests[i]['procedure_id']);
+            requests[i]['procedure_id_hc'] = result.data[0].procedure_id_hc;
+            requests[i]['procedure_name'] = result.data[0].procedure_name;
         }
 
         this.setState({ requests: requests });
@@ -201,16 +200,14 @@ export default class RequestManager extends React.Component {
                     }}
                     title="Requests"
                     columns={[
-                        { title: 'Status', field: 'request_id', render: r => this.translateStatus(r.request_status) },
-                        { title: 'Request Date', field: 'request_date'},
+                        { title: 'Status', field: 'request_hc_status', render: r => this.translateStatus(r.request_hc_status) },
+                        { title: 'Request Date', field: 'request_hc_date'},
                         { title: 'First Name', field: 'first_name'},
                         { title: 'Last Name', field: 'last_name'},
                         { title: 'Address', field: 'address'},
                         { title: 'Date of Birth', field: 'date_of_birth'},
                         { title: 'Amount', field: 'amount', render: r => <p>${r.amount}</p>},
-                        { title: 'Name', field: 'drug_name'},
-                        { title: 'Commercial Name', field: 'commercial_name'},
-                        { title: 'Code', field: 'drug_code'},
+                        { title: 'Name', field: 'procedure_name'},
                         {
                             title: '',
                             field: '',

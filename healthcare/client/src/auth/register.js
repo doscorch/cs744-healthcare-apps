@@ -506,7 +506,7 @@ export default class Register extends React.Component {
                                     auto-complete='sq1'
                                     value={this.state.security_question_1}
                                     onChange={this.changeForm}>
-                                    {menuItems}
+                                    {menuItems.filter((item) => {return !(item.props.value == this.state.security_question_2 || item.props.value == this.state.security_question_3)})}
                                 </Select>
                             </Grid>
                             <Grid item xs={12}>
@@ -536,7 +536,7 @@ export default class Register extends React.Component {
                                     auto-complete='sq2'
                                     value={this.state.security_question_2}
                                     onChange={this.changeForm}>
-                                    {menuItems}
+                                    {menuItems.filter((item) => {return !(item.props.value == this.state.security_question_1 || item.props.value == this.state.security_question_3)})}
                                 </Select>
                             </Grid>
                             <Grid item xs={12}>
@@ -566,7 +566,7 @@ export default class Register extends React.Component {
                                     auto-complete='sq3'
                                     value={this.state.security_question_3}
                                     onChange={this.changeForm}>
-                                    {menuItems}
+                                    {menuItems.filter((item) => {return !(item.props.value == this.state.security_question_2 || item.props.value == this.state.security_question_1)})}
                                 </Select>
                             </Grid>
                             <Grid item xs={12}>

@@ -35,9 +35,32 @@ import client from "../serviceClient/apiClient";
 }
 
 /**
+ * Gets procedures of a policy
+ */
+ export const getProceduresFromPolicyId = async (policy_id) => {
+    return client.get('/policy/getProcedures/' + policy_id).then(res => {
+        return {
+            data: res.data
+        };
+    });
+}
+
+/**
+ * Gets all procedures
+ */
+ export const getAllProcedures = async () => {
+    return client.get('/policy/getAllProcedures').then(res => {
+        return {
+            data: res.data
+        };
+    });
+}
+
+
+/**
  * Create policy
  */
- export const createPolicy = async (code, policy_name, age_limit, max_coverage_per_year, percent_coverage, premium_per_month, selectedDrugIds) => {
+ export const createPolicy = async (code, policy_name, age_limit, max_coverage_per_year, percent_coverage, premium_per_month, selectedDrugIds, selectedProcedureIds) => {
     let args = {
         code,
         policy_name,
@@ -47,6 +70,7 @@ import client from "../serviceClient/apiClient";
         premium_per_month: Number(premium_per_month),
 
         selectedDrugIds,
+        selectedProcedureIds,
         policy_status: 1,
     };
 
@@ -57,7 +81,7 @@ import client from "../serviceClient/apiClient";
     });
 }
 
-export const updatePolicy = async (policy_id, code, policy_name, age_limit, max_coverage_per_year, percent_coverage, premium_per_month, policy_status, selectedDrugIds) => {
+export const updatePolicy = async (policy_id, code, policy_name, age_limit, max_coverage_per_year, percent_coverage, premium_per_month, policy_status, selectedDrugIds, selectedProcedureIds) => {
     let args = {
         policy_id,
         code,
@@ -69,6 +93,7 @@ export const updatePolicy = async (policy_id, code, policy_name, age_limit, max_
         policy_status,
 
         selectedDrugIds,
+        selectedProcedureIds
     };
 
     return client.post('/policy/updatePolicy', args).then(res => {

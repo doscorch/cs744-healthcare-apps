@@ -13,8 +13,8 @@ import MaterialTable from 'material-table';
 
 
 // import { registerUser, getAllSecurityQuestions } from './usersService';
-import { InputLabel } from '@material-ui/core';
-import { getAllDrugs, updatePolicy, getPolicyHoldersWithPolicy } from './policyService';
+import { Checkbox, InputLabel } from '@material-ui/core';
+import { getAllDrugs, updatePolicy, getAllProcedures, getPolicyHoldersWithPolicy } from './policyService';
 const initState = {
     code: '',
     policy_name: '',
@@ -22,35 +22,26 @@ const initState = {
     max_coverage_per_year: '',
     percent_coverage: '',
     premium_per_month: '',
+    num_policy_holders: '',
     status: '',
     drug: '',
-    num_policy_holders: '',
     error: '',
-    success: ''
+    success: '',
+    questions: null,
 }
 
-let drugMenuItems = [<MenuItem key={1}>Drug</MenuItem>];
-let fullDrugMenuItems = [];
-let selectedDrugs = [];
-let selectedDrugIds = [];
+let allDrugs = [];
+let allProcedures = [];
 let policy = null;
-export default class EditPolicy extends React.Component {
+export default class UpdatePolicy extends React.Component {
 
     state = {
         ...initState
     }
 
-    /**
-     * Called when the User clicks on the register button. Posts to server/auth/register
-     * 
-     * @param {*} e 
-     * @author Sahee Thao
-     * @date 03/21/2021
-     */
     updatePolicy = async (e) => {
 
         e.preventDefault();
-        // error handling
         // error handling
         if (!this.state.code) {
             this.setState({ error: "Please provide a code" });
@@ -61,6 +52,7 @@ export default class EditPolicy extends React.Component {
             this.setState({ error: "Please provide a name" });
             return;
         }
+
         if (!this.state.age_limit) {
             this.setState({ error: "Please provide an age limit" });
             return;
@@ -76,7 +68,7 @@ export default class EditPolicy extends React.Component {
             return;
         }
         let decCount = function (num) {
-            if (Number.isInteger(+num)) return 0;
+            if (Number.isInteger(num)) return 0;
             if (num.split(".")[1] == null) return 0;
             return num.split(".")[1].length || 0;
         }
@@ -117,8 +109,23 @@ export default class EditPolicy extends React.Component {
             return;
         }
 
-        if (selectedDrugIds.length === 0) {
-            this.setState({ error: "Please add at least one drug" });
+        let selectedDrugIds = [];
+
+        for (let i = 0; i < allDrugs.length; i++) {
+            if (allDrugs[i].selected) {
+                selectedDrugIds.push(allDrugs[i].drug_id);
+            }
+        }
+
+        let selectedProcedureIds = [];
+
+        for (let i = 0; i < allProcedures.length; i++) {
+            if (allProcedures[i].selected) {
+                selectedProcedureIds.push(allProcedures[i].procedure_id);
+            }
+        }
+        if (selectedProcedureIds.length === 0 && selectedDrugIds.length === 0) {
+            this.setState({ error: "Please add at least one drug or procedure" });
             return;
         }
 
@@ -133,10 +140,9 @@ export default class EditPolicy extends React.Component {
                 return;
             }
         }
-
         // create policy
         let res = await updatePolicy(policy.policy_id, this.state.code, this.state.policy_name, this.state.age_limit, this.state.max_coverage_per_year,
-            this.state.percent_coverage, this.state.premium_per_month, this.state.status, selectedDrugIds);
+            this.state.percent_coverage, this.state.premium_per_month, this.state.status, selectedDrugIds, selectedProcedureIds);
 
         if (res.data == null) {
             this.setState({ success: "Policy successfully updated!" });
@@ -147,70 +153,12 @@ export default class EditPolicy extends React.Component {
         }
     }
 
-    addDrug = (e) => {
-        if (e != null) {
-            e.preventDefault();
-        }
-
-        if (!this.state.drug) {
-            this.setState({ error: "Please select a drug" });
-            return;
-        }
-
-        selectedDrugIds.push(this.state.drug.drug_id);
-        selectedDrugs.push(this.state.drug);
-
-        let cur = [];
-
-        for (let i = 0; i < fullDrugMenuItems.length; i++) {
-            let key = fullDrugMenuItems[i].key;
-            if (selectedDrugIds.includes(Number.parseInt(key))) {
-                //console.log('key ' + key + 'in ids');
-            } else {
-                cur.push(fullDrugMenuItems[i]);
-            }
-        }
-        let state = { ...this.state };
-        state['drug'] = '';
-        this.setState(state);
-
-        drugMenuItems = cur;
-        this.forceUpdate();
-    }
-
     changeForm = (e) => {
         let propName = e.target.name;
         let propValue = e.target.value;
         let state = { ...this.state };
         state[propName] = propValue;
         this.setState(state);
-    }
-
-    deleteDrug = (e) => {
-        e.preventDefault();
-        let id = e.currentTarget.value;
-        selectedDrugIds = selectedDrugIds.filter(function (val) {
-            return val != id;
-        });
-
-        selectedDrugs = selectedDrugs.filter(function (val) {
-            return val.drug_id != id;
-        });
-
-        let cur = [];
-
-        for (let i = 0; i < fullDrugMenuItems.length; i++) {
-            let key = fullDrugMenuItems[i].key;
-            if (selectedDrugIds.includes(Number.parseInt(key))) {
-                console.log('key ' + key + 'in ids');
-            } else {
-                cur.push(fullDrugMenuItems[i]);
-            }
-        }
-
-
-        drugMenuItems = cur;
-        this.forceUpdate();
     }
 
     generateDrugs = () => {
@@ -221,14 +169,93 @@ export default class EditPolicy extends React.Component {
                     tableRef={tableRef}
                     title=''
                     columns={[
+                        { title: 'Code', field: 'drug_code'},
                         { title: 'Drug Name', field: 'drug_name' },
+                        { title: 'Commercial Name', field: 'commercial_name'},
                         {
                             title: '',
                             field: '',
-                            render: d => <Button value={d.drug_id} onClick={this.deleteDrug}>Remove</Button>
+                            render: d => <Button value={d.drug_id} onClick={(e) => {d.selected = false; this.forceUpdate();}}>Remove</Button>
                         }
                     ]}
-                    data={selectedDrugs}
+                    data={allDrugs.filter(function (val) {
+                        return val.selected;
+                    })}
+                />
+            </div>
+        )
+    }
+
+    generateProcedures = () => {
+        const tableRef = React.createRef();
+        return (
+            <div>
+                <MaterialTable
+                    tableRef={tableRef}
+                    title=''
+                    columns={[
+                        { title: 'Code', field: 'procedure_id_hc'},
+                        { title: 'Procedure Name', field: 'procedure_name' },
+                        {
+                            title: '',
+                            field: '',
+                            render: d => <Button value={d.procedure_id} onClick={(e) => {d.selected = false; this.forceUpdate();}}>Remove</Button>
+                        }
+                    ]}
+                    data={allProcedures.filter(function (val) {
+                        return val.selected;
+                    })}
+                />
+            </div>
+        )
+    }
+    
+    generateDrugsCheckbox = () => {
+        
+        const tableRef = React.createRef();
+
+
+        return (
+            <div>
+                <MaterialTable
+                    tableRef={tableRef}
+                    title=''
+                    columns={[
+                        { title: 'Code', field: 'drug_code'},
+                        { title: 'Drug Name', field: 'drug_name' },
+                        { title: 'Commercial Name', field: 'commercial_name'},
+                        {
+                            title: 'Select',
+                            field: '',
+                            render: d => <Checkbox key={d.drug_id} color='primary' checked={d.selected} onChange={(e) => {d.selected = !d.selected; console.log(allDrugs); this.forceUpdate();}}/>
+                        }
+                    ]}
+                    data={allDrugs}
+                />
+            </div>
+        )
+    }
+
+    generateProceduresCheckbox = () => {
+        
+        const tableRef = React.createRef();
+
+
+        return (
+            <div>
+                <MaterialTable
+                    tableRef={tableRef}
+                    title=''
+                    columns={[
+                        { title: 'Code', field: 'procedure_id_hc'},
+                        { title: 'Procedure Name', field: 'procedure_name' },
+                        {
+                            title: 'Select',
+                            field: '',
+                            render: d => <Checkbox key={d.procedure_id} color='primary' checked={d.selected} onChange={(e) => {d.selected = !d.selected; this.forceUpdate();}}/>
+                        }
+                    ]}
+                    data={allProcedures}
                 />
             </div>
         )
@@ -236,12 +263,17 @@ export default class EditPolicy extends React.Component {
 
     async componentDidMount() {
         let result = await getAllDrugs();
-        let data = result.data;
-        fullDrugMenuItems = [];
-        for (let i = 0; i < data.length; i++) {
-            fullDrugMenuItems.push(<MenuItem key={data[i].drug_id} value={{ drug_name: data[i].drug_name, drug_id: data[i].drug_id }}>{data[i].drug_name}</MenuItem>);
+        allDrugs = result.data;
+        for (let i = 0; i < allDrugs.length; i++) {
+            allDrugs[i].selected = false;
         }
-        drugMenuItems = fullDrugMenuItems;
+
+        result = await getAllProcedures();
+        allProcedures = result.data;
+        for (let i = 0; i < allProcedures.length; i++) {
+            allProcedures[i].selected = false;
+        }
+
         policy = this.props.location.state.policy;
         let state = { ...this.state };
         state['code'] = policy.code;
@@ -254,26 +286,35 @@ export default class EditPolicy extends React.Component {
         this.setState(state);
 
         let drugsArr = policy.drugs.split(',');
-
+        console.log('drugsArr');
         for (let i = 0; i < drugsArr.length; i++) {
             drugsArr[i] = drugsArr[i].trim();
-            for (let j = 0; j < fullDrugMenuItems.length; j++) {
-                let drug_name = fullDrugMenuItems[j].props.value.drug_name;
-                if (drug_name == drugsArr[i]) {
-                    let drug_id = fullDrugMenuItems[j].props.value.drug_id;
-                    let state = { ...this.state };
-                    state['drug'] = { drug_name: drug_name, drug_id: drug_id };
-                    this.setState(state);
-                    this.addDrug(null);
+            for (let j = 0; j < allDrugs.length; j++) {
+                if (allDrugs[j].drug_name == drugsArr[i]) {
+                    allDrugs[j].selected = true;
+                    break;
                 }
-
             }
         }
 
+        let proceduresArr = policy.procedures.split(',');
+        for (let i = 0; i < proceduresArr.length; i++) {
+            proceduresArr[i] = proceduresArr[i].trim();
+            for (let j = 0; j < allProcedures.length; j++) {
+                if (allProcedures[j].procedure_name == proceduresArr[i]) {
+                    allProcedures[j].selected = true;
+                    break;
+                }
+            }
+        }
+        console.log('procedures');
+        console.log(proceduresArr);
+        console.log(allProcedures);
 
         let policyHolders = await getPolicyHoldersWithPolicy(policy.policy_id);
         state['num_policy_holders'] = policyHolders.data.length;
         this.setState(state);
+
         this.forceUpdate();
     }
 
@@ -300,7 +341,7 @@ export default class EditPolicy extends React.Component {
         let success = this.state.success ? <Alert severity="success">{this.state.success}</Alert> : "";
 
         return (
-            <Container component="main" maxWidth="xs" >
+            <Container component="main" maxWidth="lg" >
                 <div style={classes.paper}>
 
                     <Typography component="h1" variant="h5">Edit Policy</Typography>
@@ -308,12 +349,12 @@ export default class EditPolicy extends React.Component {
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
                                 <TextField
-                                    disabled
                                     autoComplete="code"
                                     name="code"
                                     variant="outlined"
-                                    required = {true} readOnly = {true}
-                                    fullWidth
+                                    required
+                                    fullWidth 
+                                    disabled
                                     id="code"
                                     label="Code"
                                     autoFocus
@@ -324,12 +365,12 @@ export default class EditPolicy extends React.Component {
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
-                                    disabled
                                     autoComplete="policyName"
                                     name="policy_name"
                                     variant="outlined"
                                     required
-                                    fullWidth
+                                    fullWidth 
+                                    disabled
                                     id="policy_name"
                                     label="Name"
                                     required
@@ -389,36 +430,6 @@ export default class EditPolicy extends React.Component {
                                     onChange={this.changeForm}
                                 />
                             </Grid>
-
-                            <Grid item xs={12}>
-                                <InputLabel id='sq1-user-type-label'>Drugs</InputLabel>
-                                <Select
-                                    labelId="sq1-user-type-label"
-                                    required
-                                    fullWidth
-                                    name="drug"
-                                    id="drug"
-                                    auto-complete='sq1'
-                                    value={this.state.drug}
-                                    onChange={this.changeForm}>
-                                    {drugMenuItems}
-                                </Select>
-                            </Grid>
-
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                                style={classes.submit}
-                                onClick={this.addDrug}>
-                                Add Drug
-                            </Button>
-
-                            <div style={classes.center}>
-                                {this.generateDrugs()}
-                            </div>
-
                             <Grid item xs={12}>
                                 <InputLabel id='status'>Status</InputLabel>
                                 <Select
@@ -434,7 +445,29 @@ export default class EditPolicy extends React.Component {
                                     <MenuItem value="0">Inactive</MenuItem>
                                 </Select>
                             </Grid>
-
+                            <Grid item xs={6}>
+                            <div style={classes.center}>
+                                {this.generateDrugsCheckbox()}
+                            </div>
+                            </Grid>
+                            <Grid item xs={6}>
+                            <div style={classes.center}>
+                                <h3>Selected Drug(s)</h3>
+                                {this.generateDrugs()}
+                            </div>
+                            </Grid>
+                            <Grid item xs={6}>
+                            <div style={classes.center}>
+                                {this.generateProceduresCheckbox()}
+                            </div>
+                            </Grid>
+                            <Grid item xs={6}>
+                            <div style={classes.center}>
+                                <h3>Selected Procedure(s)</h3>
+                                {this.generateProcedures()}
+                            </div>
+                            </Grid>
+                            
                             <Button
                                 type="submit"
                                 fullWidth
