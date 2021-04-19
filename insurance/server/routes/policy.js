@@ -64,4 +64,16 @@ router.post('/getPolicyByPatientPharmacy', function (req, res, next) {
     });
 });
 
+router.get('/getProcedures/:policy_id', isAuthenticated, function (req, res, next) {
+    _policyService.getProceduresFromPolicyId(parseInt(req.params.policy_id), function (result) {
+        res.send({ data: result});
+    })
+});
+
+router.get('/getAllProcedures', isAuthenticated, function (req, res, next) {
+    _policyService.getAllProcedures(function(data) {
+        res.send({ data: data });
+    });
+});
+
 module.exports = router;

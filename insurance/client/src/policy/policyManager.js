@@ -5,7 +5,7 @@ import { getUsers, patchUser } from '../auth/usersService';
 import { UserType, UserStatus } from '../models/user';
 import { Navbar, Nav } from 'react-bootstrap';
 import { Route, Link } from 'react-router-dom';
-import {getAllPolicies, getDrugsFromPolicyId} from '../policy/policyService';
+import {getAllPolicies, getDrugsFromPolicyId, getProceduresFromPolicyId} from '../policy/policyService';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
@@ -38,6 +38,14 @@ export default class PolicyManager extends React.Component {
                 drugs.push(drug);
             }
             policies[i]['drugs'] = drugs.join(', ');
+
+            result = await getProceduresFromPolicyId(policy_id);
+            let procedures = [];
+            for (let j = 0; j < result.data.length; j++) {
+              let procedure = result.data[j]['procedure_name'];
+              procedures.push(procedure);
+           }
+           policies[i]['procedures'] = procedures.join(', ');
         }
 
         this.setState({ policies: policies });
@@ -81,6 +89,22 @@ export default class PolicyManager extends React.Component {
                             </AccordionDetails>
                           </Accordion>
                         },
+                        { 
+                          title: 'Procedures Covered',
+                          field: 'policy_id',
+                          render: p => <Accordion>
+                          <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                          >
+                            <Typography>Expand</Typography>
+                          </AccordionSummary>
+                          <AccordionDetails>
+                            <Typography>
+                              {p.procedures}
+                            </Typography>
+                          </AccordionDetails>
+                        </Accordion>
+                      },
                         {
                           title: 'Status',
                           field: 'policy_status',

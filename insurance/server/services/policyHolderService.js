@@ -76,7 +76,7 @@ async function getTransactions(policy_holder_id, cb) {
     console.log('final');
     console.log(policy_holder_id);
     let result = await sequelize.query(
-        'SELECT * FROM transaction JOIN request ON request.request_id=transaction.request_id JOIN drug ON drug.drug_id=request.drug_id WHERE transaction.policy_holder_id=?;',
+        'SELECT * FROM transaction JOIN request ON request.request_id=transaction.request_id JOIN drug ON drug.drug_id=request.drug_id JOIN policy_holder ON policy_holder.policy_holder_id=transaction.policy_holder_id JOIN policy ON policy.policy_id=policy_holder.policy_id WHERE transaction.policy_holder_id=?;',
         {
             replacements: [
                 policy_holder_id
@@ -88,7 +88,25 @@ async function getTransactions(policy_holder_id, cb) {
         console.log(e);
         return null;
     });
-    cb(result);
+
+    let returnResult = {transactions: result, transactions_hc: null};
+
+    result = await sequelize.query(
+        'SELECT * FROM transaction_hc JOIN request_hc ON request_hc.request_hc_id=transaction_hc.request_hc_id JOIN `procedure` ON procedure.procedure_id=request_hc.procedure_id JOIN policy_holder ON policy_holder.policy_holder_id=transaction_hc.policy_holder_id JOIN policy ON policy.policy_id=policy_holder.policy_id WHERE transaction_hc.policy_holder_id=?;',
+        {
+            replacements: [
+                policy_holder_id
+            ],
+            type: sequelize.QueryTypes.SELECT
+        }
+    ).catch(function(e){
+        console.log('SQL Error:');
+        console.log(e);
+        return null;
+    });
+
+    returnResult.transactions_hc = result;
+    cb(returnResult);
 }
 
 module.exports.getTransactions = getTransactions;

@@ -48,6 +48,39 @@ async function getAllDrugs(cb) {
 }
 module.exports.getAllDrugs = getAllDrugs;
 
+async function getProceduresFromPolicyId(policy_id, cb) {
+    let result = await sequelize.query(
+        'SELECT * FROM policy_procedure JOIN `procedure` ON policy_procedure.procedure_id=`procedure`.procedure_id WHERE policy_id=? ORDER BY procedure_name;',
+        {
+            replacements: [
+                policy_id
+            ],
+            type: sequelize.QueryTypes.SELECT
+        }
+    ).catch(function(e){
+        console.log('SQL Error:');
+        console.log(e);
+        return null;
+    });
+    cb(result);
+}
+module.exports.getProceduresFromPolicyId = getProceduresFromPolicyId;
+
+async function getAllProcedures(cb) {
+    let result = await sequelize.query(
+        'SELECT * FROM `procedure`;',
+        {
+            type: sequelize.QueryTypes.SELECT
+        }
+    ).catch(function(e){
+        console.log('SQL Error:');
+        console.log(e);
+        return null;
+    });
+    cb(result);
+}
+module.exports.getAllProcedures = getAllProcedures;
+
 async function createPolicy(policy, cb) {
 
     let queryRes = await sequelize.query(
@@ -100,7 +133,35 @@ async function createPolicy(policy, cb) {
             console.log('sql error (policy_drug):');
             if (e.errors != null) {
                 console.log('some error');
-                return 'The code must be unique';
+                return 'Database error';
+            } else {
+                console.log('unknown error');
+                return 'Unknown error';
+            }
+        });
+        if (typeof queryRes === 'string' || queryRes instanceof String) {
+            cb(queryRes);
+            return;
+        }
+    }
+    // procedures
+    for (let i = 0; i < policy.selectedProcedureIds.length; i++) {
+        queryRes = await sequelize.query(
+            'INSERT INTO policy_procedure (policy_id, procedure_id) VALUES (?, ?);',
+            {
+                replacements: [
+                    policyId,
+                    policy.selectedProcedureIds[i]
+                ],
+                type: sequelize.QueryTypes.INSERT,
+                returning: true
+            }
+        ).catch(function (e) {
+            // error handling
+            console.log('sql error (policy_drug):');
+            if (e.errors != null) {
+                console.log('some error');
+                return 'Database error';
             } else {
                 console.log('unknown error');
                 return 'Unknown error';
@@ -195,6 +256,54 @@ async function updatePolicy(policy, cb) {
         }
     }
 
+    // procedure
+    // delete rows
+    queryRes = await sequelize.query(
+        'DELETE FROM policy_procedure WHERE policy_id=?',
+        {
+            replacements: [
+                policy.policy_id
+            ],
+            type: sequelize.QueryTypes.DELETE,
+            returning: true
+        }
+    ).catch(function (e) {
+        // error handling
+        console.log('sql error (delete policy_procedure):');
+        console.log(e);
+        return 'Database error';
+    });
+    if (typeof queryRes === 'string' || queryRes instanceof String) {
+        err = queryRes;
+    }
+
+    for (let i = 0; i < policy.selectedProcedureIds.length; i++) {
+        queryRes = await sequelize.query(
+            'INSERT INTO policy_procedure (policy_id, procedure_id) VALUES (?, ?);',
+            {
+                replacements: [
+                    policy.policy_id,
+                    policy.selectedProcedureIds[i]
+                ],
+                type: sequelize.QueryTypes.INSERT,
+                returning: true
+            }
+        ).catch(function (e) {
+            // error handling
+            console.log('sql error insert (policy_procedure):');
+            if (e.errors != null) {
+                console.log('some error');
+                return 'Database error';
+            } else {
+                console.log('unknown error');
+                return 'Unknown error';
+            }
+        });
+        if (typeof queryRes === 'string' || queryRes instanceof String) {
+            cb(queryRes);
+            return;
+        }
+    }
     cb(null);
 }
 
@@ -220,6 +329,8 @@ async function getPolicyHoldersWithPolicy(policy, cb) {
 module.exports.getPolicyHoldersWithPolicy = getPolicyHoldersWithPolicy;
 
 async function getPolicyByPatient(payload, cb) {
+    console.log('PAYLOAD');
+    console.log(payload);
     let returnPayload = {policy: null, procedures: null};
 
     let patient = payload.patient;
@@ -256,6 +367,50 @@ async function getPolicyByPatient(payload, cb) {
             console.log(e);
             return null;
         });
+
+        for (let i = 0; i < payload.procedures.length; i++) {
+            let procedure = payload.procedures[i];
+            // check to see if procedure of payload is covered
+            let coveredProcedures = resultProcedure;
+            for (let j = 0; j < coveredProcedures.length; j++) {
+                if (procedure.procedure_id == coveredProcedures[i].procedure_id_hc) {
+                    // make a request
+                    let patient = payload.patient;
+                    let queryRes = await sequelize.query(
+                        'INSERT INTO request_hc (request_hc_status, request_hc_date, first_name, last_name, address, date_of_birth, amount, other_id, procedure_id) VALUES (2, CURDATE(), ?, ?, ?, ?, ?, ?, (SELECT procedure_id FROM `procedure` WHERE procedure_id_hc=?));',
+                        {
+                            replacements: [
+                                patient.first_name,
+                                patient.last_name,
+                                patient.address,
+                                patient.date_of_birth,
+                                procedure.price,
+                                payload.visitation_id,
+                                procedure.procedure_id
+                            ],
+                            type: sequelize.QueryTypes.INSERT,
+                            returning: true
+                        }
+                    ).catch(function (e) {
+                        // error handling
+                        console.log('sql error insert (policy_drug):');
+                        if (e.errors != null) {
+                            console.log('Database error');
+                            return 'Database error';
+                        } else {
+                            console.log('unknown error');
+                            console.log(e);
+                            return 'Unknown error';
+                        }
+                    });
+    
+
+
+                    break;
+                }
+            }
+        }
+
         returnPayload.procedures = resultProcedure;
     }
     cb(returnPayload);    
@@ -305,6 +460,33 @@ async function getPolicyByPatientPharmacy(payload, cb) {
         for (let i = 0; i < returnPayload.medicines.length; i++) {
             if (returnPayload.medicines[i].drug_code == payload.medicine.medicine_code) {
                 returnPayload.covered_medicine = true;
+                // create drug request
+                queryRes = await sequelize.query(
+                    'INSERT INTO request (request_status, request_date, first_name, last_name, address, date_of_birth, amount, other_id, drug_id) VALUES (2, CURDATE(), ?, ?, ?, ?, ?, ?, (SELECT drug_id FROM drug WHERE drug_code=?));',
+                    {
+                        replacements: [
+                            prescription.patient_first_name,
+                            prescription.patient_last_name,
+                            prescription.patient_address,
+                            prescription.patient_date_of_birth,
+                            payload.medicine.cost,
+                            prescription.prescription_id,
+                            payload.medicine.medicine_code
+                        ],
+                        type: sequelize.QueryTypes.INSERT,
+                        returning: true
+                    }
+                ).catch(function (e) {
+                    // error handling
+                    console.log('sql error insert (policy_drug):');
+                    if (e.errors != null) {
+                        console.log('some error');
+                        return 'The code must be unique';
+                    } else {
+                        console.log('unknown error');
+                        return 'Unknown error';
+                    }
+                });
                 break;
             }
         }

@@ -13,8 +13,8 @@ import MaterialTable from 'material-table';
 
 
 // import { registerUser, getAllSecurityQuestions } from './usersService';
-import { InputLabel } from '@material-ui/core';
-import { getAllDrugs, createPolicy } from './policyService';
+import { Checkbox, InputLabel } from '@material-ui/core';
+import { getAllDrugs, createPolicy, getAllProcedures } from './policyService';
 const initState = {
     code: '',
     policy_name: '',
@@ -28,10 +28,9 @@ const initState = {
     questions: null,
 }
 
-let drugMenuItems = [<MenuItem key={1}>Drug</MenuItem>];
-let fullDrugMenuItems = [];
-let selectedDrugs = [];
-let selectedDrugIds = [];
+let allDrugs = [];
+let allProcedures = [];
+
 export default class CreatePolicy extends React.Component {
 
     state = {
@@ -115,49 +114,44 @@ export default class CreatePolicy extends React.Component {
             return;
         }
 
-        if (selectedDrugIds.length === 0) {
-            this.setState({ error: "Please add at least one drug" });
+        let selectedDrugIds = [];
+
+        for (let i = 0; i < allDrugs.length; i++) {
+            if (allDrugs[i].selected) {
+                selectedDrugIds.push(allDrugs[i].drug_id);
+            }
+        }
+
+        let selectedProcedureIds = [];
+
+        for (let i = 0; i < allProcedures.length; i++) {
+            if (allProcedures[i].selected) {
+                selectedProcedureIds.push(allProcedures[i].procedure_id);
+            }
+        }
+        if (selectedProcedureIds.length === 0 && selectedDrugIds.length === 0) {
+            this.setState({ error: "Please add at least one drug or procedure" });
             return;
         }
         // create policy
         let res = await createPolicy(this.state.code, this.state.policy_name, this.state.age_limit, this.state.max_coverage_per_year,
-            this.state.percent_coverage, this.state.premium_per_month, selectedDrugIds);
+            this.state.percent_coverage, this.state.premium_per_month, selectedDrugIds, selectedProcedureIds);
 
         if (res.data == null) {
-            this.setState({ ...initState, success: "Policy successfully created!" });
-            drugMenuItems = [];
-            selectedDrugs = [];
-            selectedDrugIds = [];
+            this.setState({ ...initState, success: "Policy successfully created!", error: '' });
+
+            for (let i = 0; i < allDrugs.length; i++) {
+                allDrugs[i].selected = false;
+            }
+
+            for (let i = 0; i < allProcedures.length; i++) {
+                allProcedures[i].selected = false;
+            }
+            
             this.forceUpdate();
         } else {
             this.setState({ error: res.data });
         }
-    }
-
-    addDrug = (e) => {
-        e.preventDefault();
-        if (!this.state.drug) {
-            this.setState({ error: "Please select a drug" });
-            return;
-        }
-
-        selectedDrugIds.push(this.state.drug.drug_id);
-        selectedDrugs.push(this.state.drug);
-
-        let cur = [];
-
-        for (let i = 0; i < fullDrugMenuItems.length; i++) {
-            let key = fullDrugMenuItems[i].key;
-            if (selectedDrugIds.includes(Number.parseInt(key))) {
-                console.log('key ' + key + 'in ids');
-            } else {
-                cur.push(fullDrugMenuItems[i]);
-            }
-        }
-
-
-        drugMenuItems = cur;
-        this.forceUpdate();
     }
 
     changeForm = (e) => {
@@ -168,33 +162,6 @@ export default class CreatePolicy extends React.Component {
         this.setState(state);
     }
 
-    deleteDrug = (e) => {
-        e.preventDefault();
-        let id = e.currentTarget.value;
-        selectedDrugIds = selectedDrugIds.filter(function (val) {
-            return val != id;
-        });
-
-        selectedDrugs = selectedDrugs.filter(function (val) {
-            return val.drug_id != id;
-        });
-
-        let cur = [];
-
-        for (let i = 0; i < fullDrugMenuItems.length; i++) {
-            let key = fullDrugMenuItems[i].key;
-            if (selectedDrugIds.includes(Number.parseInt(key))) {
-                console.log('key ' + key + 'in ids');
-            } else {
-                cur.push(fullDrugMenuItems[i]);
-            }
-        }
-
-
-        drugMenuItems = cur;
-        this.forceUpdate();
-    }
-
     generateDrugs = () => {
         const tableRef = React.createRef();
         return (
@@ -203,14 +170,93 @@ export default class CreatePolicy extends React.Component {
                     tableRef={tableRef}
                     title=''
                     columns={[
+                        { title: 'Code', field: 'drug_code'},
                         { title: 'Drug Name', field: 'drug_name' },
+                        { title: 'Commercial Name', field: 'commercial_name'},
                         {
                             title: '',
                             field: '',
-                            render: d => <Button value={d.drug_id} onClick={this.deleteDrug}>Remove</Button>
+                            render: d => <Button value={d.drug_id} onClick={(e) => {d.selected = false; this.forceUpdate();}}>Remove</Button>
                         }
                     ]}
-                    data={selectedDrugs}
+                    data={allDrugs.filter(function (val) {
+                        return val.selected;
+                    })}
+                />
+            </div>
+        )
+    }
+
+    generateProcedures = () => {
+        const tableRef = React.createRef();
+        return (
+            <div>
+                <MaterialTable
+                    tableRef={tableRef}
+                    title=''
+                    columns={[
+                        { title: 'Code', field: 'procedure_id_hc'},
+                        { title: 'Procedure Name', field: 'procedure_name' },
+                        {
+                            title: '',
+                            field: '',
+                            render: d => <Button value={d.procedure_id} onClick={(e) => {d.selected = false; this.forceUpdate();}}>Remove</Button>
+                        }
+                    ]}
+                    data={allProcedures.filter(function (val) {
+                        return val.selected;
+                    })}
+                />
+            </div>
+        )
+    }
+    
+    generateDrugsCheckbox = () => {
+        
+        const tableRef = React.createRef();
+
+
+        return (
+            <div>
+                <MaterialTable
+                    tableRef={tableRef}
+                    title=''
+                    columns={[
+                        { title: 'Code', field: 'drug_code'},
+                        { title: 'Drug Name', field: 'drug_name' },
+                        { title: 'Commercial Name', field: 'commercial_name'},
+                        {
+                            title: 'Select',
+                            field: '',
+                            render: d => <Checkbox key={d.drug_id} color='primary' checked={d.selected} onChange={(e) => {d.selected = !d.selected; console.log(allDrugs); this.forceUpdate();}}/>
+                        }
+                    ]}
+                    data={allDrugs}
+                />
+            </div>
+        )
+    }
+
+    generateProceduresCheckbox = () => {
+        
+        const tableRef = React.createRef();
+
+
+        return (
+            <div>
+                <MaterialTable
+                    tableRef={tableRef}
+                    title=''
+                    columns={[
+                        { title: 'Code', field: 'procedure_id_hc'},
+                        { title: 'Procedure Name', field: 'procedure_name' },
+                        {
+                            title: 'Select',
+                            field: '',
+                            render: d => <Checkbox key={d.procedure_id} color='primary' checked={d.selected} onChange={(e) => {d.selected = !d.selected; this.forceUpdate();}}/>
+                        }
+                    ]}
+                    data={allProcedures}
                 />
             </div>
         )
@@ -218,12 +264,17 @@ export default class CreatePolicy extends React.Component {
 
     async componentDidMount() {
         let result = await getAllDrugs();
-        let data = result.data;
-        fullDrugMenuItems = [];
-        for (let i = 0; i < data.length; i++) {
-            fullDrugMenuItems.push(<MenuItem key={data[i].drug_id} value={{ drug_name: data[i].drug_name, drug_id: data[i].drug_id }}>{data[i].drug_name}</MenuItem>);
+        allDrugs = result.data;
+        for (let i = 0; i < allDrugs.length; i++) {
+            allDrugs[i].selected = false;
         }
-        drugMenuItems = fullDrugMenuItems;
+
+        result = await getAllProcedures();
+        allProcedures = result.data;
+        for (let i = 0; i < allProcedures.length; i++) {
+            allProcedures[i].selected = false;
+        }
+
         this.forceUpdate();
     }
 
@@ -250,7 +301,7 @@ export default class CreatePolicy extends React.Component {
         let success = this.state.success ? <Alert severity="success">{this.state.success}</Alert> : "";
 
         return (
-            <Container component="main" maxWidth="xs" >
+            <Container component="main" maxWidth="lg" >
                 <div style={classes.paper}>
 
                     <Typography component="h1" variant="h5">Create Policy</Typography>
@@ -337,35 +388,29 @@ export default class CreatePolicy extends React.Component {
                                     onChange={this.changeForm}
                                 />
                             </Grid>
-
-                            <Grid item xs={12}>
-                                <InputLabel id='sq1-user-type-label'>Drugs</InputLabel>
-                                <Select
-                                    labelId="sq1-user-type-label"
-                                    required
-                                    fullWidth
-                                    name="drug"
-                                    id="drug"
-                                    auto-complete='sq1'
-                                    value={this.state.drug}
-                                    onChange={this.changeForm}>
-                                    {drugMenuItems}
-                                </Select>
-                            </Grid>
-
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                                style={classes.submit}
-                                onClick={this.addDrug}>
-                                Add Drug
-                            </Button>
-
+                            <Grid item xs={6}>
                             <div style={classes.center}>
+                                {this.generateDrugsCheckbox()}
+                            </div>
+                            </Grid>
+                            <Grid item xs={6}>
+                            <div style={classes.center}>
+                                <h3>Selected Drug(s)</h3>
                                 {this.generateDrugs()}
                             </div>
+                            </Grid>
+                            <Grid item xs={6}>
+                            <div style={classes.center}>
+                                {this.generateProceduresCheckbox()}
+                            </div>
+                            </Grid>
+                            <Grid item xs={6}>
+                            <div style={classes.center}>
+                                <h3>Selected Procedure(s)</h3>
+                                {this.generateProcedures()}
+                            </div>
+                            </Grid>
+                            
                             <Button
                                 type="submit"
                                 fullWidth
