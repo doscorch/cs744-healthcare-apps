@@ -120,9 +120,9 @@ module.exports.savePrescription = savePrescription;
 
 async function sendPrescription(presciption, cb){
     pharmacyClient.api.post('/healthcare/recieve/prescription', presciption).then(response => {
-        console.log("response: "+response);
+        console.log(response);
         cb(null);
-        return response;
+        return;
     });
     cb(null);
     return;
@@ -147,10 +147,10 @@ async function saveVisitation(visitation,cb){
         function(e){
             console.log("SQL error:");
             console.log(e);
-            cb(e);
+            cb(e, null);
     });
     if (typeof queryRes === 'string' || queryRes instanceof String) {
-        cb(queryRes);
+        cb(queryRes, null);
         return;
     }
     visitation.date = currTime;
@@ -171,13 +171,13 @@ async function saveVisitation(visitation,cb){
             function(e){
                 console.log("SQL error:");
                 console.log(e);
-                cb(e);
+                cb(e, null);
                 return;
         });
     });
 
     console.log(visitation);
-    cb(null);
+    cb(null, visitation);
     return;
 }
 
@@ -185,9 +185,10 @@ module.exports.saveVisitation = saveVisitation;
 
 async function sendVisitation(visitation, cb){
     insuranceClient.insuranceAPI.post('/policy/getPolicyByPatient', visitation).then(response => {
-        console.log("response: "+response);
-        cb(null);
-        return response;
+        console.log("response: ");
+        console.log(response);
+        cb(null, response);
+        return;
     });
     cb(null);
     return;
@@ -214,3 +215,26 @@ async function getPatientPrescriptions(patient_id, cb){
 }
 
 module.exports.getPatientPrescriptions = getPatientPrescriptions;
+
+async function firstVisitationResponse(visitation, response, cb){
+    console.log(response);
+    let res = response.data;
+    if(res.policy == null || res.procedures == null){
+        await sequelize.query('UPDATE visitation SET status = 1 WHERE visitation_id = ?;',
+        {
+            replacements:[
+                visitation.visitation_id
+            ],
+            type: sequelize.QueryTypes.UPDATE
+        }).catch(
+            function(e){
+                console.log("SQL error:");
+                console.log(e);
+                cb(e, null);
+            }
+        );
+        return;
+    }
+}
+
+module.exports.firstVisitationResponse = firstVisitationResponse;

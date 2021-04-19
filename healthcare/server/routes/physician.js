@@ -92,6 +92,7 @@ router.post('/savePrescription', isAuthenticated, async function(req, res){
             res.status('500').send({ err: "Failed to save prescription."})
             return;
         } 
+        console.log("sending prescription")
 
         await _physicianService.sendPrescription(req.body, async function(err){
             if(err){
@@ -106,18 +107,23 @@ router.post('/savePrescription', isAuthenticated, async function(req, res){
 })
 
 router.post('/saveVisitation', isAuthenticated, async function(req, res){
-    await _physicianService.saveVisitation(req.body, async function(err){
+    await _physicianService.saveVisitation(req.body, async function(err, visitation){
         //Add send visitaiton to insurance
         if(err){
             res.status('500').send({ error: "Failed to save visitation."})
             return;
-        }else{
-            res.send({ msg: "Prescription Saved!"});
-        }   
-        await _physicianService.sendVisitation(req.body, async function(err){
+        } 
+        await _physicianService.sendVisitation(visitation, async function(err, response){
             if(err){
                 res.status('500').send({ err: "Failed to send prescription."})
+                return;
             }else{
+                await _physicianService.firstVisitationResponse(visitation, response, async function(err, res){
+                    if(err){
+                        res.status('500').send({ error: "Failed to save visitation."})
+                        return;
+                    } 
+                })
                 res.send({ msg: "Prescription Saved!"});
             } 
             return;

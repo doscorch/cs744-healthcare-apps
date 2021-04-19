@@ -22,7 +22,7 @@ export class PatientVisitations extends React.Component {
         if(status == 2){
             return "Waiting for insurance";
         }else{
-            return "Complete"
+            return "Ready"
         }
     }
 
