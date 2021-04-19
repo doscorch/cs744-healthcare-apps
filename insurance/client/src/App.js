@@ -22,7 +22,7 @@ import CreatePolicyHolder from './policyHolder/create';
 import EditPolicyHolder from './policyHolder/edit';
 import RequestManager from './request/requestManager';
 import RequestManagerHC from './request/requestManagerHC';
-
+import PhysicianManager from './physicians/physicianManager';
 import ViewTransactions from './policyHolder/viewTransactions';
 
 class App extends React.Component {
@@ -50,6 +50,8 @@ class App extends React.Component {
               {hasUser && isAgent ? <Nav.Link as={Link} to="/manage-policy-holders">Manage Policy Holders</Nav.Link> : ""}
               {hasUser && isAgent ? <Nav.Link as={Link} to="/manage-requests-pharmacy">Manage Pharmacy Requests</Nav.Link> : ""}
               {hasUser && isAgent ? <Nav.Link as={Link} to="/manage-requests-healthcare">Manage Healthcare Requests</Nav.Link> : ""}
+              {hasUser && isAgent ? <Nav.Link as={Link} to="/manage-physicians">Manage Physicians</Nav.Link> : ""}
+
             </Nav>
             <Nav>
               {hasUser ? <Nav.Link as={Link} to="/" onClick={this.clickLogout}><i className="fas fa-sign-out-alt"></i> Logout</Nav.Link> : ""}
@@ -77,6 +79,8 @@ class App extends React.Component {
         <Route path="/manage-requests-pharmacy" component={RequestManager}/>
         <Route path="/manage-requests-healthcare" component={RequestManagerHC}/>
         <Route path="/policy-holder/view-transactions" component={ViewTransactions}/>
+        <Route path="/manage-physicians" component={PhysicianManager}/>
+
         
       </div>
     );

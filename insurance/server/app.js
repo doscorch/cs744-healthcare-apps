@@ -8,6 +8,7 @@ const users = require('./routes/users');
 const policy = require('./routes/policy');
 const policyHolder = require('./routes/policyHolder');
 const request = require('./routes/request');
+const physicians = require('./routes/physicians');
 
 
 var app = express();
@@ -68,6 +69,7 @@ app.use('/users', users);
 app.use('/policy', policy);
 app.use('/policyHolder', policyHolder);
 app.use('/request', request);
+app.use('/physicians', physicians);
 
 
 // catch 404 and forward to error handler
