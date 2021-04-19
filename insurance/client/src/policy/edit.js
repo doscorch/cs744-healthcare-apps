@@ -136,7 +136,7 @@ export default class UpdatePolicy extends React.Component {
 
         if (this.state.status == 0) {
             if (this.state.num_policy_holders != 0) {
-                this.setState({ error: "This policy may not be inactive. " + this.state.num_policy_holders + " policy holder(s) still use this policy!" });
+                this.setState({ error: "This policy may not be inactive. " + this.state.num_policy_holders + " policy holder(s) still use(s) this policy!" });
                 return;
             }
         }
