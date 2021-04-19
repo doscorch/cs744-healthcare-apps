@@ -39,6 +39,7 @@ export class VerifyPatient extends React.Component {
 
         getMedicines()
             .then(medicines => {
+                medicines = medicines.filter(m => m.requires_prescription)
                 this.setState({ medicines: medicines })
             })
     }
@@ -98,10 +99,15 @@ export class VerifyPatient extends React.Component {
                                     tooltip: 'Fill',
                                     onClick: (event, row) => {
                                         const prescription = this.state.prescriptions[0];
-                                        patchMedicine(row.medicine_id, { quantity: row.quantity - prescription.quantity })
-                                        patchPrescription(prescription.prescription_id, { medicine_id: row.medicine_id, order_status: PrescriptionStatus.Filled }).then(_ => {
-                                            this.props.history.push("/verify-insurance-request/" + prescription.prescription_id);
-                                        })
+                                        if ((row.quantity - prescription.quantity) < 0) {
+                                            alert("There is not enough medicine in stock to fill this prescription")
+                                        }
+                                        else {
+                                            patchMedicine(row.medicine_id, { quantity: row.quantity - prescription.quantity })
+                                            patchPrescription(prescription.prescription_id, { medicine_id: row.medicine_id, order_status: PrescriptionStatus.Filled }).then(_ => {
+                                                this.props.history.push("/verify-insurance-request/" + prescription.prescription_id);
+                                            })
+                                        }
                                     }
                                 },
                             ]}

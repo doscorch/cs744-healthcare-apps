@@ -20,5 +20,5 @@ CREATE TABLE prescriptions(
 	patient_id INT NOT NULL,
 	physician_id INT NOT NULL,
     medicine_id INT NOT NULL,
-	insurance_id INT NOT NULL
+	insurance_coverage DECIMAL(4,2) NOT NULL
 );

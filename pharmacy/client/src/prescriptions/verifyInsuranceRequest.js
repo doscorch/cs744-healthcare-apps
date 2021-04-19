@@ -51,9 +51,7 @@ export class VerifyInsuranceRequest extends React.Component {
     send = () => {
         const prescription = this.state.prescription;
         sendInsuranceRequest(prescription.prescription_id).then(_ => {
-            patchPrescription(prescription.prescription_id, { order_status: PrescriptionStatus.Pending_Insurance }).then(_ => {
-                this.setState({ success: "Insurance Request Sent" })
-            })
+            this.setState({ success: "Insurance Request Sent" })
         })
     }
 

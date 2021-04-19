@@ -39,6 +39,7 @@ export class VerifyPatient extends React.Component {
 
         getPatients()
             .then(patients => {
+                patients = patients.map(p => { return { ...p, name: p.first_name + " " + p.last_name, address: `${p.address} ${p.city} ${p.state} ${p.zipcode}` } })
                 this.setState({ patients: patients })
             })
     }
@@ -85,9 +86,9 @@ export class VerifyPatient extends React.Component {
                             }}
                             title="Patient in System"
                             columns={[
-                                { title: 'Name', render: p => (`${p.first_name} ${p.last_name}`) },
+                                { title: 'Name', field: "name" },
                                 { title: 'Date of birth', type: 'date', field: 'birth_date' },
-                                { title: 'Address', render: p => (`${p.address} ${p.city} ${p.state} ${p.zipcode}`) },
+                                { title: 'Address', field: "address" },
                             ]}
                             data={this.state.patients}
                             actions={[

@@ -65,7 +65,8 @@ export default class PrescriptionManager extends React.Component {
     getData = () => {
         return getPrescriptions()
             .then(prescriptions => {
-                const taskPrescriptions = prescriptions.filter(p => p.order_status == PrescriptionStatus.Ready || p.order_status == PrescriptionStatus.Verified_Patient || p.order_status == PrescriptionStatus.Verified_Physician || p.order_status == PrescriptionStatus.Verified_Physician);
+                prescriptions = prescriptions.map(p => { return { ...p, name: p.patient_first_name + ' ' + p.patient_last_name } })
+                const taskPrescriptions = prescriptions.filter(p => p.order_status == PrescriptionStatus.Ready || p.order_status == PrescriptionStatus.Verified_Patient || p.order_status == PrescriptionStatus.Verified_Physician || p.order_status == PrescriptionStatus.Verified_Physician || p.order_status == PrescriptionStatus.Filled);
                 const pendingPrescriptions = prescriptions.filter(p => p.order_status == PrescriptionStatus.Pending_Insurance);
                 const completePrescriptions = prescriptions.filter(p => p.order_status == PrescriptionStatus.Processed);
                 this.setState({ taskPrescriptions, pendingPrescriptions, completePrescriptions, allPrescriptions: prescriptions })
@@ -83,7 +84,7 @@ export default class PrescriptionManager extends React.Component {
                     <Tabs value={this.state.tab} onChange={this.handleChange} aria-label="prescription menu" style={{ backgroundColor: "lightslategrey" }}>
                         <Tab label="Tasks" {...a11yProps(0)} />
                         <Tab label="Pending" {...a11yProps(1)} />
-                        <Tab label="Complete" {...a11yProps(2)} />
+                        <Tab label="Processed" {...a11yProps(2)} />
                         <Tab label="All" {...a11yProps(3)} />
                     </Tabs>
                 </AppBar>
@@ -99,7 +100,7 @@ export default class PrescriptionManager extends React.Component {
                             title="Prescriptions"
                             columns={[
                                 { title: 'Order date', field: 'order_date' },
-                                { title: 'Patient name', render: p => (p.patient_first_name + " " + p.patient_last_name) },
+                                { title: 'Patient name', field: 'name' },
                                 { title: 'Prescription', field: 'prescription' },
                                 { title: 'Status', render: p => (PrescriptionStatus.GetTranslation(p.order_status)) },
                             ]}
@@ -158,7 +159,7 @@ export default class PrescriptionManager extends React.Component {
                             title="Prescriptions"
                             columns={[
                                 { title: 'Order date', field: 'order_date' },
-                                { title: 'Patient name', render: p => (p.patient_first_name + " " + p.patient_last_name) },
+                                { title: 'Patient name', field: 'name' },
                                 { title: 'Prescription', field: 'prescription' },
                                 { title: 'Status', render: p => (PrescriptionStatus.GetTranslation(p.order_status)) },
                             ]}
@@ -194,7 +195,7 @@ export default class PrescriptionManager extends React.Component {
                             title="Prescriptions"
                             columns={[
                                 { title: 'Order date', field: 'order_date' },
-                                { title: 'Patient name', render: p => (p.patient_first_name + " " + p.patient_last_name) },
+                                { title: 'Patient name', field: 'name' },
                                 { title: 'Prescription', field: 'prescription' },
                                 { title: 'Status', render: p => (PrescriptionStatus.GetTranslation(p.order_status)) },
                             ]}
@@ -238,7 +239,7 @@ export default class PrescriptionManager extends React.Component {
                             title="Prescriptions"
                             columns={[
                                 { title: 'Order date', field: 'order_date' },
-                                { title: 'Patient name', render: p => (p.patient_first_name + " " + p.patient_last_name) },
+                                { title: 'Patient name', field: 'name' },
                                 { title: 'Prescription', field: 'prescription' },
                                 { title: 'Status', render: p => (PrescriptionStatus.GetTranslation(p.order_status)) },
                             ]}

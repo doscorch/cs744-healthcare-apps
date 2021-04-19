@@ -136,7 +136,7 @@ router.post('/recieve/prescription', async function (req, res) {
                 patient_id: -1,
                 physician_id: -1,
                 medicine_id: -1,
-                insurance_id: -1,
+                insurance_coverage: -1,
             }
             console.log(order);
 

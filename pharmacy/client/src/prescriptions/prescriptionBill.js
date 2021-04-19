@@ -31,6 +31,16 @@ export class PrescriptionBill extends React.Component {
 
         if (prescription && prescription.medicine_id != -1) {
             const medicine = await getMedicine(prescription.medicine_id)
+            // const bill = {
+            //     medicine_code: medicine.medicine_code, 
+            //     medical_name: medicine.medical_name, 
+            //     commercial_name: medicine.commercial_name, 
+            //     quantity: prescription.quantity, 
+            //     cost: medicine.cost, 
+            //     insurance: medicine.commercial_name, 
+
+
+            // }
             if (medicine) {
                 this.setState({ medicine });
             }
@@ -105,15 +115,68 @@ export class PrescriptionBill extends React.Component {
                     <hr></hr>
                 </div>
                 <div>
-                    {/* <label style={classes.p_label}>Prescription: </label>
-                    <p>{this.state.prescription.prescription}</p>
-                    <label style={classes.p_label}>Dosage: </label>
-                    <p>{this.state.prescription.dosage}</p>
-                    <label style={classes.p_label}>Quantity: </label>
-                    <p>{this.state.prescription.quantity}</p>
-                    <label style={classes.p_label}>Refill: </label>
-                    <p>{this.state.prescription.refill}</p>
-                    <label style={{ marginBottom: "40px" }}>Signature: </label> */}
+                    <table className="bill" style={{ width: "100%" }}>
+                        <tr>
+                            <th>Item Code</th>
+                            <th>Medical Name</th>
+                            <th>Commercial Name</th>
+                            <th>Quantity</th>
+                            <th>Cost of Medicine</th>
+                            <th>Insurance Payment</th>
+                            <th>Patient Pays</th>
+
+                        </tr>
+                        <tr>
+                            <td>{medicine.medicine_code}</td>
+                            <td>{medicine.medical_name}</td>
+                            <td>{medicine.commercial_name}</td>
+                            <td>{prescription.quantity}</td>
+                            <td>{currencyFormatter.format(medicine.cost * prescription.quantity)}</td>
+                            <td>{currencyFormatter.format(medicine.cost * prescription.quantity * prescription.insurance_coverage)}</td>
+                            <td>{currencyFormatter.format((medicine.cost * prescription.quantity) - (medicine.cost * prescription.quantity * prescription.insurance_coverage))}</td>
+                        </tr>
+                        <tr>
+                            <td><pre> </pre></td>
+                            <td><pre> </pre></td>
+                            <td><pre> </pre></td>
+                            <td><pre> </pre></td>
+                            <td><pre> </pre></td>
+                            <td><pre> </pre></td>
+                            <td><pre> </pre></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>Subtotal:</td>
+                            <td>{currencyFormatter.format((medicine.cost * prescription.quantity) - (medicine.cost * prescription.quantity * prescription.insurance_coverage))}</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>Tax (5.5%):</td>
+                            <td>{currencyFormatter.format(((medicine.cost * prescription.quantity) - (medicine.cost * prescription.quantity * prescription.insurance_coverage)) * .055)}</td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>Total:</td>
+                            <td>{currencyFormatter.format(((medicine.cost * prescription.quantity) - (medicine.cost * prescription.quantity * prescription.insurance_coverage)) * 1.055)}</td>
+                        </tr>
+                        {/* <tr>
+                            <td>Patient Pays</td>
+                            <td>Jackson</td>
+                            <td>94</td>
+                        </tr> */}
+                    </table>
                 </div>
             </div>)
             : ""

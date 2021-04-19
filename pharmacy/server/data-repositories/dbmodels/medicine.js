@@ -44,6 +44,10 @@ const Medicine = sequelize.define('Medicine', {
         type: DataTypes.DECIMAL,
         allowNull: false
     },
+    requires_prescription: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false
+    }
 }, {
     timestamps: false,
     tableName: 'medicines'
