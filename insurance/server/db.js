@@ -12,4 +12,8 @@ const sequelize = new Sequelize(schema, user, password, {
 })
 sequelize.authenticate();
 
+Sequelize.DATE.prototype._stringify = function _stringify(date, options) {
+    return this._applyTimezone(date, options).format('YYYY-MM-DD HH:mm:ss.SSS');
+  };
+
 module.exports = sequelize;

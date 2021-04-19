@@ -7,7 +7,7 @@ async function updateVisitation(response, cb){
     await sequelize.query('UPDATE visitation SET status = 1 WHERE visitation_id = ?;',
         {
             replacements:[
-                response.data.visitation_id
+                response.prescription_id
             ],
             type: sequelize.QueryTypes.UPDATE
         }).catch(
@@ -18,12 +18,13 @@ async function updateVisitation(response, cb){
             }
         );
     
-        response.data.procedures.filter( async (procedure) => {
+        response.procedures.r.filter( async (procedure) => {
+            console.log(procedure);
             await sequelize.query('UPDATE visitation_procedure SET insurance_pays = ? WHERE visitation_id = ? AND procedure_id = ?;',
             {
                 replacements:[
-                    procedure.price * (response.data.policy.percent_coverage / 100),
-                    response.data.visitation_id,
+                    procedure.procedure_price * (parseFloat(response.policy.percent_coverage) / 100),
+                    response.prescription_id,
                     procedure.procedure_id_hc
                 ],
                 type: sequelize.QueryTypes.UPDATE

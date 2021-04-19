@@ -61,7 +61,10 @@ export default class RequestManagerHC extends React.Component {
             }
         }
 
+        console.log(policyHolder)
+
         let policies = await getAllPolicies();
+        console.log(policies);
         policies = policies.data;
         let policy = null;
 

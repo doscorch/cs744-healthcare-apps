@@ -383,7 +383,7 @@ async function getPolicyByPatient(payload, cb) {
                                 patient.first_name,
                                 patient.last_name,
                                 patient.address,
-                                patient.date_of_birth,
+                                (new Date(patient.date_of_birth)).toISOString().slice(0, 19).replace('T', ' '),
                                 procedure.price,
                                 payload.visitation_id,
                                 procedure.procedure_id
