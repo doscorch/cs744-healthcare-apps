@@ -290,8 +290,8 @@ export default class UpdatePolicy extends React.Component {
         for (let i = 0; i < drugsArr.length; i++) {
             drugsArr[i] = drugsArr[i].trim();
             for (let j = 0; j < allDrugs.length; j++) {
-                if (allDrugs[i].drug_name == drugsArr[i]) {
-                    allDrugs[i].selected = true;
+                if (allDrugs[j].drug_name == drugsArr[i]) {
+                    allDrugs[j].selected = true;
                     break;
                 }
             }
@@ -301,12 +301,15 @@ export default class UpdatePolicy extends React.Component {
         for (let i = 0; i < proceduresArr.length; i++) {
             proceduresArr[i] = proceduresArr[i].trim();
             for (let j = 0; j < allProcedures.length; j++) {
-                if (allProcedures[i].procedure_name == proceduresArr[i]) {
-                    allProcedures[i].selected = true;
+                if (allProcedures[j].procedure_name == proceduresArr[i]) {
+                    allProcedures[j].selected = true;
                     break;
                 }
             }
         }
+        console.log('procedures');
+        console.log(proceduresArr);
+        console.log(allProcedures);
 
         let policyHolders = await getPolicyHoldersWithPolicy(policy.policy_id);
         state['num_policy_holders'] = policyHolders.data.length;
