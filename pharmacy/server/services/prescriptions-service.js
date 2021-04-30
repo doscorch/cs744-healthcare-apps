@@ -18,6 +18,12 @@ function getPrescription(id, cb) {
 }
 module.exports.getPrescription = getPrescription;
 
+// get prescription
+function getPrescriptionsByOrderId(id, cb) {
+    _prescriptionRepository.getPrescriptionsByOrderId(id, (err, prescriptions) => cb(err, prescriptions));
+}
+module.exports.getPrescriptionsByOrderId = getPrescriptionsByOrderId;
+
 // partial update of prescription
 function patchPrescription(prescriptionId, prescriptionPartial, cb) {
     _prescriptionRepository.patchPrescription(prescriptionId, prescriptionPartial, (err, prescription) => cb(err, prescription));

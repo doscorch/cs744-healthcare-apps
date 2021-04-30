@@ -9,6 +9,8 @@ const patients = require('./routes/patients');
 const physicians = require('./routes/physicians');
 const medicines = require('./routes/medicines');
 const prescriptions = require('./routes/prescriptions');
+const orders = require('./routes/orders');
+const sales = require('./routes/sales');
 const healthcare = require('./routes/healthcare');
 const insurance = require('./routes/insurance');
 
@@ -49,6 +51,8 @@ app.use('/patients', patients);
 app.use('/physicians', physicians);
 app.use('/medicines', medicines);
 app.use('/prescriptions', prescriptions);
+app.use('/orders', orders);
+app.use('/sales', sales);
 app.use('/healthcare', healthcare);
 app.use('/insurance', insurance);
 

@@ -2,6 +2,7 @@ const express = require('express');
 const { request } = require('../app');
 const router = express.Router();
 const _prescriptionService = require('../services/prescriptions-service');
+const _orderService = require('../services/orders-service');
 
 /*
 { physician:
@@ -108,6 +109,13 @@ router.post('/recieve/prescription', async function (req, res) {
         res.status('400').send(new Error('missing prescriptions'));
         return;
     }
+    const o = {
+        patient_first_name,
+        patient_last_name,
+        order_date,
+        order_id
+    }
+    _orderService.createOrder(o, (err, _) => { if (err) console.log(err) });
 
     for (let i = 0; i < prescriptions.length; i++) {
         const p = prescriptions[i];

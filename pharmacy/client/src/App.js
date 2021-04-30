@@ -14,6 +14,7 @@ import PhysicianManager from './physicians/physicianManager'
 import PatientManager from './patients/patientManager'
 import MedicineManager from './medicines/medicineManager'
 import PrescriptionManager from './prescriptions/prescriptionManager'
+import OrderManager from './orders/ordersManager'
 import MyAccount from './auth/myAccount';
 import SecurityQuestion from './auth/securityQuestion';
 import { UserType } from './models/user';
@@ -25,6 +26,9 @@ import FillPrescription from './prescriptions/fillPrescription';
 import VerifyInsuranceRequest from './prescriptions/verifyInsuranceRequest';
 import PrescriptionDetails from './prescriptions/prescriptionDetails';
 import PrescriptionBill from './prescriptions/prescriptionBill';
+import OrderDetails from './orders/orderDetails';
+import ADDOTC from './orders/addOTC';
+import OrderBill from './orders/orderBill';
 
 class App extends React.Component {
 
@@ -46,6 +50,7 @@ class App extends React.Component {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="mr-auto">
+              {hasUser && isPharmacist ? <Nav.Link as={Link} to="/order-manager">Orders</Nav.Link> : ""}
               {hasUser && isPharmacist ? <Nav.Link as={Link} to="/prescription-manager">Prescriptions</Nav.Link> : ""}
               {hasUser && isPharmacist ? <Nav.Link as={Link} to="/medicine-manager">Medicines</Nav.Link> : ""}
               {hasUser && isAdmin ? <Nav.Link as={Link} to="/user-manager">Manage Users</Nav.Link> : ""}
@@ -73,6 +78,7 @@ class App extends React.Component {
         <Route path="/physician-manager" component={PhysicianManager} />
         <Route path="/patient-manager" component={PatientManager} />
         <Route path="/medicine-manager" component={MedicineManager} />
+        <Route path="/order-manager" component={OrderManager} />
 
         <Route path="/prescriptions/:prescription" component={ViewPrescription} />
         <Route path="/prescription-details/:prescription" component={PrescriptionDetails} />
@@ -81,6 +87,10 @@ class App extends React.Component {
         <Route path="/verify-physician/:prescription" component={VerifyPhysician} />
         <Route path="/fill-prescription/:prescription" component={FillPrescription} />
         <Route path="/verify-insurance-request/:prescription" component={VerifyInsuranceRequest} />
+        <Route path="/order-details/:order" component={OrderDetails} />
+        <Route path="/order-add/:order" component={ADDOTC} />
+        <Route path="/order-bill/:order" component={OrderBill} />
+
 
       </div>
     );

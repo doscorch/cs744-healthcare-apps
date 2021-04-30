@@ -56,6 +56,26 @@ router.get('/:prescriptionId', isAuthenticated, isPharmacist, function (req, res
     });
 });
 
+// get prescriptions by order id
+router.get('/order/:orderId', isAuthenticated, isPharmacist, function (req, res) {
+    if (!req.params.orderId || !req.body) {
+        res.status('400').send();
+        return;
+    }
+
+    _prescriptionService.getPrescriptionsByOrderId(req.params.orderId, function (err, prescriptions) {
+        if (err) {
+            console.log(err);
+            res.status('500').send();
+            return;
+        }
+
+        res.send(prescriptions);
+        return;
+    });
+});
+
+
 // patch a prescription
 router.patch('/:prescriptionId', isAuthenticated, isPharmacist, function (req, res) {
     if (!req.params.prescriptionId || !req.body) {

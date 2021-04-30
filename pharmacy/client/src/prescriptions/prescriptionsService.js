@@ -16,6 +16,12 @@ export const getPrescriptions = async () => {
         return prescriptions;
     })
 }
+// call api to get prescriptions by order id
+export const getPrescriptionsByOrderId = async (orderId) => {
+    return await client.get('/prescriptions/order/' + orderId).then(prescriptions => {
+        return prescriptions;
+    })
+}
 // call api to get prescription
 export const getPrescription = async (id) => {
     return await client.get('/prescriptions/' + id).then(prescription => {
