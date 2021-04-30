@@ -211,7 +211,7 @@ async function requestActionHC(request, cb) {
 
         // get all requests and procedures
         let r = await sequelize.query(
-            'SELECT * FROM request_hc JOIN `procedure` ON request_hc.procedure_id=`procedure`.procedure_id JOIN transaction_hc ON transaction_hc.request_hc_id = request_hc.request_hc_id WHERE other_id=20;',
+            'SELECT * FROM request_hc JOIN `procedure` ON request_hc.procedure_id=`procedure`.procedure_id JOIN transaction_hc ON transaction_hc.request_hc_id = request_hc.request_hc_id WHERE other_id=?;',
             {
                 replacements: [
                     request.other_id
@@ -227,12 +227,12 @@ async function requestActionHC(request, cb) {
         console.log(r);
 
         for (let i = 0; i < r.length; i++) {
-            r[i].is_approved = r.request_hc_status == 1;
+            r[i].is_approved = r[i].request_hc_status == 1;
             r[i].reason = null;
-            r[i].insurace_pays = r[i].amount;
+            r[i].insurance_pays = r[i].amount;
 
             if (!r[i].is_approved) {
-                r[i].insurace_pays = 0;
+                r[i].insurance_pays = 0;
                 if (r[i].request_hc_status == 5) {
                     r[i].reason = 'Not insured';
                 } else if (r[i].request_hc_status == 6) {

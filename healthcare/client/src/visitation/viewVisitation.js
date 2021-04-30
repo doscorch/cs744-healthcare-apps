@@ -61,12 +61,6 @@ export class ViewVisitation extends React.Component {
             this.setState({error: visitation.error});
             return;
         }
-        let d = new Date(visitation.visitation_date);
-        let dateString = d.getMonth()+1+"-"+d.getUTCDate()+"-"+d.getFullYear();
-        visitation.date = dateString;
-        let dob = new Date(visitation.date_of_birth);
-        let dobString = dob.getMonth()+1+"-"+dob.getUTCDate()+"-"+dob.getFullYear();
-        visitation.date_of_birth = dobString;
         let state = { ...this.state };
         state['visitation'] = visitation;
         this.setState(state);
@@ -95,6 +89,14 @@ export class ViewVisitation extends React.Component {
                 display: "inline"
             }
         };
+
+        const convertDoB = (dob_string) =>{
+            console.log(dob_string);
+            let d = new Date(dob_string);
+            let dateString = d.getMonth()+1+"-"+d.getUTCDate()+"-"+d.getFullYear();
+            return dateString;
+        }
+
         let error = this.state.error ? <Alert severity="error">{this.state.error}</Alert> : "";
         let success = this.state.success ? <Alert severity="success">{this.state.success}</Alert> : "";
         let isStaffMember = this.props.user.user_type === UserType.StaffMember;
@@ -116,7 +118,7 @@ export class ViewVisitation extends React.Component {
                         </div>
                         <div>
                             <label style={classes.p_label}>Date: </label>
-                            <p class="entry">{this.state.visitation.date}</p>
+                            <p class="entry">{convertDoB(this.state.visitation.visitation_date)}</p>
                             <hr></hr>
                         </div>
                         <div>
@@ -130,7 +132,7 @@ export class ViewVisitation extends React.Component {
                             <label style={classes.p_label}>Patient: </label>
                             <p>{this.state.visitation.patient_first} {this.state.visitation.patient_last}</p>
                             <label style={classes.p_label}>Date of Birth: </label>
-                            <p>{this.state.visitation.date_of_birth}</p>
+                            <p>{convertDoB(this.state.visitation.date_of_birth)}</p>
                             <label style={classes.p_label}>Address: </label>
                             <p>{this.state.visitation.address}</p>
                             <hr></hr>
