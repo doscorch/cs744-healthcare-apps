@@ -211,7 +211,7 @@ async function requestActionHC(request, cb) {
 
         // get all requests and procedures
         let r = await sequelize.query(
-            'SELECT * FROM request_hc JOIN `procedure` ON request_hc.procedure_id=`procedure`.procedure_id JOIN transaction_hc ON transaction_hc.request_hc_id = request_hc.request_hc_id WHERE other_id=20;',
+            'SELECT * FROM request_hc JOIN `procedure` ON request_hc.procedure_id=`procedure`.procedure_id JOIN transaction_hc ON transaction_hc.request_hc_id = request_hc.request_hc_id WHERE other_id=?;',
             {
                 replacements: [
                     request.other_id
