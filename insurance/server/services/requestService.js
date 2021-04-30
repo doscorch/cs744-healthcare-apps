@@ -132,10 +132,68 @@ async function requestActionHC(request, cb) {
         return null;
     });
 
+    // Create transaction IF approved
+
+    if (request.request_hc_status == 1) {
+        result = await sequelize.query(
+            'INSERT INTO transaction_hc (transaction_hc_date, request_hc_id, policy_holder_id, amount) VALUES (CURDATE(), ?, (SELECT policy_holder_id FROM policy_holder WHERE policy_holder.first_name=? AND policy_holder.last_name=? AND policy_holder.address=? AND policy_holder.date_of_birth=? LIMIT 1), ?)',
+            {
+                replacements: [
+                    request.request_hc_id,
+                    request.first_name,
+                    request.last_name,
+                    request.address,
+                    request.date_of_birth,
+                    request.covered
+                ],
+                type: sequelize.QueryTypes.INSERT
+            }
+        ).catch(function(e){
+            console.log('SQL Error:');
+            console.log(e);
+            return null;
+        });
+        // update policy holder with amount paid and remaining
+        result = await sequelize.query(
+            'UPDATE policy_holder SET amount_paid=?, amount_remaining=? WHERE policy_holder_id=?;',
+            {
+                replacements: [
+                    request.paid,
+                    request.remaining,
+                    request.policy_holder.policy_holder_id,
+                ],
+                type: sequelize.QueryTypes.UPDATE
+            }
+        ).catch(function(e){
+            console.log('SQL Error (update policy holder):');
+            console.log(e);
+            return null;
+        });    
+    } else {
+        result = await sequelize.query(
+            'INSERT INTO transaction_hc (transaction_hc_date, request_hc_id, policy_holder_id, amount) VALUES (CURDATE(), ?, (SELECT policy_holder_id FROM policy_holder WHERE policy_holder.first_name=? AND policy_holder.last_name=? AND policy_holder.address=? AND policy_holder.date_of_birth=? LIMIT 1), 0)',
+            {
+                replacements: [
+                    request.request_hc_id,
+                    request.first_name,
+                    request.last_name,
+                    request.address,
+                    request.date_of_birth
+                ],
+                type: sequelize.QueryTypes.INSERT
+            }
+        ).catch(function(e){
+            console.log('SQL Error:');
+            console.log(e);
+            return null;
+        });
+    }
+    
+
     // check to see if for all other requests of the same visitation id, are NOT pending
 
     let count = await sequelize.query(
-        'SELECT COUNT(*) FROM request_hc WHERE other_id=? AND request_hc_status = 2;',
+        'SELECT COUNT(*) FROM request_hc WHERE other_id=? AND (request_hc_status = 2 OR request_hc_status = 3 OR request_hc_status = 4);',
         {
             replacements: [
                 request.other_id
@@ -153,7 +211,7 @@ async function requestActionHC(request, cb) {
 
         // get all requests and procedures
         let r = await sequelize.query(
-            'SELECT * FROM request_hc JOIN `procedure` ON request_hc.procedure_id=procedure.procedure_id WHERE other_id=?;',
+            'SELECT * FROM request_hc JOIN `procedure` ON request_hc.procedure_id=`procedure`.procedure_id JOIN transaction_hc ON transaction_hc.request_hc_id = request_hc.request_hc_id WHERE other_id=20;',
             {
                 replacements: [
                     request.other_id
@@ -170,14 +228,25 @@ async function requestActionHC(request, cb) {
 
         for (let i = 0; i < r.length; i++) {
             r[i].is_approved = r.request_hc_status == 1;
+            r[i].reason = null;
+            r[i].insurace_pays = r[i].amount;
+
+            if (!r[i].is_approved) {
+                r[i].insurace_pays = 0;
+                if (r[i].request_hc_status == 5) {
+                    r[i].reason = 'Not insured';
+                } else if (r[i].request_hc_status == 6) {
+                    r[i].reason = 'No coverage';
+                } else {
+                    r[i].reason = 'Other';
+                }
+            }
         }
 
         let payload = {
-            prescription_id: request.other_id,
-            policy: request.policy,
-            procedures: {
-                r
-            }
+            visitation_id: request.other_id,
+            percent_coverage: request.policy.percent_coverage,
+            procedures: r
         };
         fetch(`${healthcareURL}${healthcarePath}`, {
             method: 'POST',
@@ -187,13 +256,12 @@ async function requestActionHC(request, cb) {
             body: JSON.stringify(payload),
           });
         console.log('PAYLOAD');
+        console.log(payload);
         console.log(JSON.stringify(payload));
+        cb(payload);
+    } else {
+        cb(null);
     }
-
-
-    
-
-    cb(result);
 }
 module.exports.requestActionHC = requestActionHC;
 
@@ -202,7 +270,7 @@ async function applyTransaction(request, cb) {
     console.log('REQUEST');
     console.log(request);
     let result = await sequelize.query(
-        'INSERT INTO transaction (transaction_date, request_id, policy_holder_id) VALUES (CURDATE(), ?, (SELECT policy_holder_id FROM policy_holder WHERE policy_holder.first_name=? AND policy_holder.last_name=? AND policy_holder.address=? AND policy_holder.date_of_birth=? LIMIT 1))',
+        'INSERT INTO transaction (transaction_date, request_id, policy_holder_id, amount) VALUES (CURDATE(), ?, (SELECT policy_holder_id FROM policy_holder WHERE policy_holder.first_name=? AND policy_holder.last_name=? AND policy_holder.address=? AND policy_holder.date_of_birth=? LIMIT 1))',
         {
             replacements: [
                 request.request_id,

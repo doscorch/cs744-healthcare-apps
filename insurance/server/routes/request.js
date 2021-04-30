@@ -38,25 +38,25 @@ router.get('/getProcedure/:procedure_id', isAuthenticated, function (req, res, n
 
 router.post('/requestAction', isAuthenticated, function (req, res, next) {
     _requestService.requestAction(req.body, function (data) {
-        res.send({ data: data});
+        res.send({data});
     })
 });
 
 router.post('/requestActionHC', isAuthenticated, function (req, res, next) {
     _requestService.requestActionHC(req.body, function (data) {
-        res.send({ data: data});
+        res.send({data});
     })
 });
 
 router.post('/applyTransaction', isAuthenticated, function (req, res, next) {
     _requestService.applyTransaction(req.body, function (data) {
-        res.send({ data: data});
+        res.send({data});
     })
 });
 
 router.post('/applyTransactionHC', isAuthenticated, function (req, res, next) {
     _requestService.applyTransactionHC(req.body, function (data) {
-        res.send({ data: data});
+        res.send({data});
     })
 });
 module.exports = router;

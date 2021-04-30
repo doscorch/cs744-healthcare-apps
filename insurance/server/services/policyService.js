@@ -331,17 +331,16 @@ module.exports.getPolicyHoldersWithPolicy = getPolicyHoldersWithPolicy;
 async function getPolicyByPatient(payload, cb) {
     console.log('PAYLOAD');
     console.log(payload);
-    let returnPayload = {policy: null, procedures: null};
 
-    let patient = payload.patient;
+    // Get the policy and policy holder
     let resultPolicy = await sequelize.query(
         'SELECT * FROM policy JOIN policy_holder ON policy.policy_id = policy_holder.policy_id WHERE first_name=? AND last_name=? AND date_of_birth=? AND address=?;',
         {
             replacements: [
-                patient.first_name,
-                patient.last_name,
-                patient.date_of_birth,
-                patient.address,
+                payload.patient_first,
+                payload.patient_last,
+                payload.date_of_birth,
+                payload.address,
             ],
             type: sequelize.QueryTypes.SELECT
         }
@@ -351,9 +350,10 @@ async function getPolicyByPatient(payload, cb) {
         return null;
     });
 
+    
     if (resultPolicy.length > 0) {
+        // A policy and policy holder has been found
         resultPolicy = resultPolicy[0];
-        returnPayload.policy = resultPolicy;
         let resultProcedure = await sequelize.query(
             'SELECT * FROM `procedure` JOIN policy_procedure ON `procedure`.procedure_id = policy_procedure.procedure_id WHERE policy_id=?;',
             {
@@ -368,32 +368,43 @@ async function getPolicyByPatient(payload, cb) {
             return null;
         });
 
+        // For each procedure in the payload
         for (let i = 0; i < payload.procedures.length; i++) {
             let procedure = payload.procedures[i];
+
             // check to see if procedure of payload is covered
             let coveredProcedures = resultProcedure;
+
+            // For each covered procedure
+            let flag = false;
             for (let j = 0; j < coveredProcedures.length; j++) {
-                if (procedure.procedure_id == coveredProcedures[i].procedure_id_hc) {
+
+                if (procedure.procedure_id == coveredProcedures[j].procedure_id_hc) {
+                    // If the procedure's ID is equal to the covered procedure...
                     // make a request
+                    payload['procedure'] = procedure;
+                    console.log('Make a 2 request');
+                    flag = true;
                     let patient = payload.patient;
                     let queryRes = await sequelize.query(
-                        'INSERT INTO request_hc (request_hc_status, request_hc_date, first_name, last_name, address, date_of_birth, amount, other_id, procedure_id) VALUES (2, CURDATE(), ?, ?, ?, ?, ?, ?, (SELECT procedure_id FROM `procedure` WHERE procedure_id_hc=?));',
+                        'INSERT INTO request_hc (request_hc_status, request_hc_date, first_name, last_name, address, date_of_birth, amount, other_id, procedure_id, payload) VALUES (2, CURDATE(), ?, ?, ?, ?, ?, ?, (SELECT procedure_id FROM `procedure` WHERE procedure_id_hc=?), ?);',
                         {
                             replacements: [
-                                patient.first_name,
-                                patient.last_name,
-                                patient.address,
-                                (new Date(patient.date_of_birth)).toISOString().slice(0, 19).replace('T', ' '),
+                                payload.patient_first,
+                                payload.patient_last,
+                                payload.address,
+                                (new Date(payload.date_of_birth)).toISOString().slice(0, 19).replace('T', ' '),
                                 procedure.price,
                                 payload.visitation_id,
-                                procedure.procedure_id
+                                procedure.procedure_id,
+                                JSON.stringify(payload)
                             ],
                             type: sequelize.QueryTypes.INSERT,
                             returning: true
                         }
                     ).catch(function (e) {
                         // error handling
-                        console.log('sql error insert (policy_drug):');
+                        console.log('sql error insert (request 2):');
                         if (e.errors != null) {
                             console.log('Database error');
                             return 'Database error';
@@ -409,12 +420,114 @@ async function getPolicyByPatient(payload, cb) {
                     break;
                 }
             }
+
+            // Check to see if procedure was covered
+            if (flag) {
+                // procedure is covered and a request was sent
+            } else {
+                // procedure is NOT covered. Send a request to DENY
+                console.log('Make a 4 request');
+                payload['procedure'] = procedure;
+                let queryRes = await sequelize.query(
+                    'INSERT INTO request_hc (request_hc_status, request_hc_date, first_name, last_name, address, date_of_birth, amount, other_id, procedure_id, payload) VALUES (4, CURDATE(), ?, ?, ?, ?, ?, ?, ?, ?);',
+                    {
+                        replacements: [
+                            payload.patient_first,
+                            payload.patient_last,
+                            payload.address,
+                            (new Date(payload.date_of_birth)).toISOString().slice(0, 19).replace('T', ' '),
+                            procedure.price,
+                            payload.visitation_id,
+                            null,
+                            JSON.stringify(payload)
+                        ],
+                        type: sequelize.QueryTypes.INSERT,
+                        returning: true
+                    }
+                ).catch(function (e) {
+                    // error handling
+                    console.log('sql error insert (request 3):');
+                    if (e.errors != null) {
+                        console.log('Database error');
+                        return 'Database error';
+                    } else {
+                        console.log('unknown error');
+                        console.log(e);
+                        return 'Unknown error';
+                    }
+                });
+            }
         }
 
-        returnPayload.procedures = resultProcedure;
+    } else {
+        // No policy holder
+        console.log('Make a 3 request');
+        for (let i = 0; i < payload.procedures.length; i++) {
+            let procedure = payload.procedures[i];
+            payload['procedure'] = procedure;
+            let queryRes = await sequelize.query(
+                'INSERT INTO request_hc (request_hc_status, request_hc_date, first_name, last_name, address, date_of_birth, amount, other_id, procedure_id, payload) VALUES (3, CURDATE(), ?, ?, ?, ?, ?, ?, ?, ?);',
+                {
+                    replacements: [
+                        payload.patient_first,
+                        payload.patient_last,
+                        payload.address,
+                        (new Date(payload.date_of_birth)).toISOString().slice(0, 19).replace('T', ' '),
+                        procedure.price,
+                        payload.visitation_id,
+                        null,
+                        JSON.stringify(payload)
+                    ],
+                    type: sequelize.QueryTypes.INSERT,
+                    returning: true
+                }
+            ).catch(function (e) {
+                // error handling
+                console.log('sql error insert (request 3):');
+                if (e.errors != null) {
+                    console.log('Database error');
+                    return 'Database error';
+                } else {
+                    console.log('unknown error');
+                    console.log(e);
+                    return 'Unknown error';
+                }
+            });
+        }
+        
     }
-    cb(returnPayload);    
+    cb('200');    
 }
+/*
+{ visitation_id: 18,
+  physician_id: 8,
+  patient_id: 11,
+  visitation_date: 2021-04-18T22: 30: 37.000Z,
+  status: 2,
+  patient_first: 'Bobby',
+  patient_last: 'Fisher',
+  physician_first: 'Meg',
+  physician_last: 'White',
+  address: '123 Street',
+  date_of_birth: 1980-01-01,
+  physician_state: 'MI',
+  license_number: '152352',
+  procedures: [
+        { visitation_id: 30,
+       procedure_id: '90785-90899',
+       insurance_pays: null,
+       name: 'Psychiatry Services and Procedures',
+       price: 350
+        },
+        { visitation_id: 30,
+       procedure_id: '92920-93799',
+       insurance_pays: null,
+       name: 'Cardiovascular Procedures',
+       price: 450
+        }
+    ]
+}
+*/
 
 module.exports.getPolicyByPatient = getPolicyByPatient;
 

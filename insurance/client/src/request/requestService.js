@@ -46,9 +46,7 @@ export const requestAction = async (request) => {
 
 export const requestActionHC = async (request) => {
     return client.post('/request/requestActionHC', request).then(res => {
-        return {
-            data: res.data
-        };
+        return res;
     });
 }
 

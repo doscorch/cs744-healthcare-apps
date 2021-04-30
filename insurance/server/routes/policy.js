@@ -53,6 +53,7 @@ router.post('/getPolicyHoldersWithPolicy', isAuthenticated, function (req, res, 
 });
 
 router.post('/getPolicyByPatient', function (req, res, next) {
+    console.log('recieved');
     _policyService.getPolicyByPatient(req.body, function (data) {
         res.send({data: data});
     });
