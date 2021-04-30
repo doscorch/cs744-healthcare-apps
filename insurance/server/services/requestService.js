@@ -227,9 +227,9 @@ async function requestActionHC(request, cb) {
         console.log(r);
 
         for (let i = 0; i < r.length; i++) {
-            r[i].is_approved = r.request_hc_status == 1;
+            r[i].is_approved = r[i].request_hc_status == 1;
             r[i].reason = null;
-            r[i].insurace_pays = r[i].amount;
+            r[i].insurance_pays = r[i].amount;
 
             if (!r[i].is_approved) {
                 r[i].insurace_pays = 0;
