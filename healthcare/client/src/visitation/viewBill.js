@@ -47,10 +47,10 @@ export class ViewBill extends React.Component {
             return;
         }
         let d = new Date(visitation.visitation_date);
-        let dateString = d.getMonth()+1+"-"+d.getDate()+"-"+d.getFullYear();
+        let dateString = d.getMonth()+1+"-"+d.getUTCDate()+"-"+d.getFullYear();
         visitation.date = dateString;
         let dob = new Date(visitation.date_of_birth);
-        let dobString = dob.getMonth()+1+"-"+dob.getDate()+"-"+dob.getFullYear();
+        let dobString = dob.getMonth()+1+"-"+dob.getUTCDate()+"-"+dob.getFullYear();
         visitation.date_of_birth = dobString;
         visitation.total = 0;
         visitation.procedures.filter((element,idx) => visitation.total+= (element.price - element.insurance_pays));

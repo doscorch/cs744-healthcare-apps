@@ -60,7 +60,7 @@ export default class ViewAllPAtients extends React.Component {
                         { title: 'Address', field: 'address', validate: u => u.address == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
                         { title: 'Date of Birth', render: (entry) => { 
                             let d = new Date(entry.date_of_birth);
-                            return d.getMonth()+1+"-"+d.getDate()+"-"+d.getFullYear();
+                            return d.getMonth()+1+"-"+d.getUTCDate()+"-"+d.getFullYear();
                             }, validate: u => u.date_of_birth == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
                             { title: 'Physician', render: (patient)=> {return patient.physician_first+" "+patient.physician_last}, validate: u => u.physician_first == "" ? { isValid: false, helperText: "required" } : { isValid: true } }
                     ]}

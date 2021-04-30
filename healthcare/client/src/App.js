@@ -25,6 +25,8 @@ import ViewVisitation from './visitation/viewVisitation';
 import ViewAllPatients from './users/viewAllPatients';
 import ViewBill from './visitation/viewBill';
 import ViewAllPhysicians from './users/viewAllPhysicians';
+import EditPhysicianInfo from './users/editPhysicianInfo';
+import EditPatientInfo from './users/editPatientInfo';
 
 class App extends React.Component {
 
@@ -74,7 +76,7 @@ class App extends React.Component {
         <Route path="/search-patients/:physician" component={SearchPatients} />
         <Route path="/write-prescription/:patient" component={WritePrescription}/>
         <Route path="/patient/:patient/prescriptions" component={PatientPrescriptions}/>
-        <Route path="/prescriptions/:prescription/medicine/:prescriptionmed" component={ViewPrescription}/>
+        <Route path="/prescriptions/:prescription" component={ViewPrescription}/>
         <Route path="/change-physician" component={ChangePhysician}/>
         <Route path="/write-visitation/:patient" component={WriteVisitation}/>
         <Route path="/visitations/:patient" component={PatientVisitations}/>
@@ -82,6 +84,8 @@ class App extends React.Component {
         <Route path="/patients" component={ViewAllPatients}/>
         <Route path="/physicians" component={ViewAllPhysicians}/>
         <Route exact path="/visit/:visit/bill" component={ViewBill}/>
+        <Route exact path="/users/physician/:id" component={EditPhysicianInfo}/>
+        <Route exact path="/users/patient/:id" component={EditPatientInfo}/>
       </div>
     );
   }

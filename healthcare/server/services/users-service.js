@@ -510,6 +510,27 @@ async function getPhysicianInfo(physician_id, cb){
 
 module.exports.getPhysicianInfo = getPhysicianInfo;
 
+async function updatePhysicianInfo(physician_id,physicianInfo, cb){
+    let result = await sequelize.query(
+        'UPDATE physician_info SET license_number = ?, physician_state = ? WHERE user_id = ?',
+        {
+            replacements: [
+                physicianInfo.license_number,
+                physicianInfo.physician_state,
+                physician_id
+            ],
+            type: sequelize.QueryTypes.UPDATE
+        }
+    ).catch(function(e){
+        console.log("SQL error:");
+        console.log(e);
+        cb(e, null);
+    });
+    cb(null,result);
+}
+
+module.exports.updatePhysicianInfo = updatePhysicianInfo;
+
 async function getPatientInfo(patient_id, cb){
     let result = await sequelize.query(
         'SELECT pati.date_of_birth, pati.address, u.first_name AS physician_first, u.last_name as physician_last, u.user_id as physician_id FROM patient_info AS pati INNER JOIN patient_physician AS pp ON pp.patient_id = pati.user_id INNER JOIN user AS u ON u.user_id = pp.physician_id WHERE pati.user_id = ?',
@@ -528,6 +549,27 @@ async function getPatientInfo(patient_id, cb){
 }
 
 module.exports.getPatientInfo = getPatientInfo;
+
+async function updatePatientInfo(patient_id, patientInfo, cb){
+    let result = await sequelize.query(
+        'UPDATE patient_info SET address = ?, date_of_birth = ? WHERE user_id = ?',
+        {
+            replacements: [
+                patientInfo.address,
+                patientInfo.date_of_birth,
+                patient_id
+            ],
+            type: sequelize.QueryTypes.UPDATE
+        }
+    ).catch(function(e){
+        console.log("SQL error:");
+        console.log(e);
+        cb(e, null);
+    });
+    cb(null,result);
+}
+
+module.exports.updatePatientInfo = updatePatientInfo;
 
 async function getPatients(cb){
     let result = await sequelize.query(

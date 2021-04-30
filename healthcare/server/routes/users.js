@@ -64,6 +64,30 @@ router.get('/physician', isAuthenticated, function (req, res){
     });
 });
 
+router.get('/physician/:id', isAuthenticated, function (req, res){
+    _userService.getPhysicianInfo(req.params.id, function(error, result){
+        if(error){
+            console.log(error);
+            res.status('500').send();
+            return;
+        }
+        res.send(result[0]);
+        return;
+    });
+});
+
+router.post('/physician/:id', isAuthenticated,isAdmin, function (req, res){
+    _userService.updatePhysicianInfo(req.params.id, req.body, function(error, result){
+        if(error){
+            console.log(error);
+            res.status('500').send({err: "Failed to update physician"});
+            return;
+        }
+        res.send({msg: "Update Successful"});
+        return;
+    });
+});
+
 router.get('/patient', isAuthenticated, function (req, res){
     _userService.getPatientInfo(req.session.user.user_id, function(error, result){
         if(error){
@@ -72,6 +96,30 @@ router.get('/patient', isAuthenticated, function (req, res){
             return;
         }
         res.send(result[0]);
+        return;
+    });
+});
+
+router.get('/patient/:id', isAuthenticated, function (req, res){
+    _userService.getPatientInfo(req.params.id, function(error, result){
+        if(error){
+            console.log(error);
+            res.status('500').send();
+            return;
+        }
+        res.send(result[0]);
+        return;
+    });
+});
+
+router.post('/patient/:id', isAuthenticated, isAdmin, function (req, res){
+    _userService.updatePatientInfo(req.params.id, req.body, function(error, result){
+        if(error){
+            console.log(error);
+            res.status('500').send({err: "Failed to update physician"});
+            return;
+        }
+        res.send({msg: "Update Successful"});
         return;
     });
 });

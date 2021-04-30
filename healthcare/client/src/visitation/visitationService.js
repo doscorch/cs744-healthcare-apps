@@ -12,3 +12,9 @@ export const getVisitation = async (visit) => {
         return visitation;
     });
 }
+
+export const sendVisitation = async (visit) => {
+    return client.post("/visitation/visit/send", visit).then(visitation => {
+        return visitation;
+    });
+}

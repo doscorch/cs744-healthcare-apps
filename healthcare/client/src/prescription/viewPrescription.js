@@ -40,9 +40,8 @@ export class ViewPrescription extends React.Component {
 
     async componentDidMount() {
         const prescription_id = this.props.match.params.prescription;
-        const prescription_med_id = this.props.match.params.prescriptionmed;
         console.log(this.props.match.params);
-        let prescription = await getPrescription(prescription_id, prescription_med_id);
+        let prescription = await getPrescription(prescription_id);
         console.log(prescription);
         if(prescription.error){
             this.setState({error: prescription.error});
@@ -75,7 +74,8 @@ export class ViewPrescription extends React.Component {
             },
             p_label:{
                 float: "left",
-                marginRight: "10px"
+                marginRight: "10px",
+                fontWeight: "bold"
             },
             entry:{
                 display: "inline"
@@ -85,7 +85,7 @@ export class ViewPrescription extends React.Component {
         let success = this.state.success ? <Alert severity="success">{this.state.success}</Alert> : "";
 
         return (
-            <Container component="main" maxWidth="xs" >
+            <Container component="main" maxWidth="lg" >
                 <div style={classes.paper}>
                     <Icon>medication</Icon>
                     <Typography component="h1" variant="h5">Prescription</Typography>
@@ -121,14 +121,22 @@ export class ViewPrescription extends React.Component {
                             <hr></hr>
                         </div>
                         <div>
-                            <label style={classes.p_label}>Prescription: </label>
-                            <p>{this.state.prescription.prescription}</p>
-                            <label style={classes.p_label}>Dosage: </label>
-                            <p>{this.state.prescription.dosage}</p>
-                            <label style={classes.p_label}>Quantity: </label>
-                            <p>{this.state.prescription.quantity}</p>
-                            <label style={classes.p_label}>Refill: </label>
-                            <p>{this.state.prescription.refill}</p>
+                            <div style={{fontWeight: "bold"}}>Prescriptions</div>
+                            {this.state.prescription.medications.map(function(element, idx){
+                                return <div style={{border: '1px solid #ff9999', margin: '2px', padding: '2px'}}>
+                                        <label style={classes.p_label}>Prescription: </label>
+                                        <p>{element.prescription}</p>
+                                        <label style={classes.p_label}>Dosage: </label>
+                                        <p>{element.dosage}</p>
+                                        <label style={classes.p_label}>Quantity: </label>
+                                        <p>{element.quantity}</p>
+                                        <label style={classes.p_label}>Refill: </label>
+                                        <p>{element.refill}</p>
+                                    </div>;
+                            })}
+                        </div>
+                        <div>
+                        <hr></hr>
                             <label style={{marginBottom: "40px"}}>Signature: </label>
                         </div>
                     </div>

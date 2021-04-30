@@ -14,8 +14,10 @@ import { Row, Col, Card } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { app_login } from '../redux/actions/userActions';
 
-import { getVisitation } from './visitationService';
+import { getVisitation, sendVisitation } from './visitationService';
 import Icon from '@material-ui/core/Icon';
+
+import { UserType } from '../models/user';
 const initState = {
     visitation: {procedures:[]}
 }
@@ -37,6 +39,19 @@ export class ViewVisitation extends React.Component {
         this.setState(state);
     }
 
+    sendToInsurance = async (e) => {
+        let response = await sendVisitation(this.state.visitation);
+        if(response.err){
+            this.setState({error: response.err});
+        }else{
+            let v = this.state.visitation;
+            v.status = 2;
+            let state = { ...this.state };
+            state['visitation'] = v;
+            this.setState(state);
+        }
+    }
+
     async componentDidMount() {
         const visit_id = this.props.match.params.visit;
         console.log(this.props.match.params);
@@ -47,10 +62,10 @@ export class ViewVisitation extends React.Component {
             return;
         }
         let d = new Date(visitation.visitation_date);
-        let dateString = d.getMonth()+1+"-"+d.getDate()+"-"+d.getFullYear();
+        let dateString = d.getMonth()+1+"-"+d.getUTCDate()+"-"+d.getFullYear();
         visitation.date = dateString;
         let dob = new Date(visitation.date_of_birth);
-        let dobString = dob.getMonth()+1+"-"+dob.getDate()+"-"+dob.getFullYear();
+        let dobString = dob.getMonth()+1+"-"+dob.getUTCDate()+"-"+dob.getFullYear();
         visitation.date_of_birth = dobString;
         let state = { ...this.state };
         state['visitation'] = visitation;
@@ -73,7 +88,8 @@ export class ViewVisitation extends React.Component {
             },
             p_label:{
                 float: "left",
-                marginRight: "10px"
+                marginRight: "10px",
+                fontWeight: "bold"
             },
             entry:{
                 display: "inline"
@@ -81,6 +97,7 @@ export class ViewVisitation extends React.Component {
         };
         let error = this.state.error ? <Alert severity="error">{this.state.error}</Alert> : "";
         let success = this.state.success ? <Alert severity="success">{this.state.success}</Alert> : "";
+        let isStaffMember = this.props.user.user_type === UserType.StaffMember;
 
         return (
             <Container component="main" maxWidth="xs" >
@@ -118,7 +135,7 @@ export class ViewVisitation extends React.Component {
                             <p>{this.state.visitation.address}</p>
                             <hr></hr>
                         </div>
-                        <div style={{ float: "left", clear: "right",display:"block"}}>Procedures: </div>
+                        <div style={{ float: "left", clear: "right",display:"block", fontWeight: "bold"}}>Procedures: </div>
                         <div>
                             
                             <ul style={{listStyleType: "none", display: "block"}}>
@@ -128,10 +145,18 @@ export class ViewVisitation extends React.Component {
                             </ul>
                         </div>
                         <div>
-                            <label style={{marginBottom: "40px"}}>Signature: </label>
+                            <label style={{marginBottom: "40px", fontWeight: "bold"}}>Signature: </label>
                         </div>
                     </div>
                     : ""}
+                    {isStaffMember && this.state.visitation.status == 3? 
+                    <Button
+                    style={classes.submit}
+                    variant="contained"
+                    color="primary"
+                    onClick={this.sendToInsurance}>
+                    Send to Insurance System
+                    </Button>: ""}
                     {error}
                     {success}
                 </div>

@@ -182,9 +182,39 @@ export const getPhysicianInfo = async () => {
     return result;
 }
 
+export const getPhysicianInfoById = async (id) => {
+    let result  = await client.get('/users/physician/'+id);
+    return result;
+}
+
+export const updatePhysicianInfo = async (id, license_number, physician_state) => {
+    let response = await client.post('/users/physician/'+id,
+    {
+        physician_state: physician_state,
+        license_number: license_number
+    });
+    console.log(response);
+    return response;
+}
+
 export const getPatientInfo = async () => {
     let result = await client.get('/users/patient');
     return result;
+}
+
+export const getPatientInfoById = async (id) => {
+    let result = await client.get('/users/patient/'+id);
+    return result;
+}
+
+export const updatePatientInfo = async (id, address, date_of_birth) => {
+    let response = await client.post('/users/patient/'+id,
+    {
+        address: address,
+        date_of_birth: date_of_birth
+    });
+    console.log(response);
+    return response;
 }
 
 export const getAllPatients = async () => {

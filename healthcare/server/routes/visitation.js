@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const _visitationService = require('../services/visitation-service');
+const _physicianService = require('../services/physician-service');
 const _userService = require('../services/users-service');
 const Token = require('../models/authToken');
 const dataUser = require('../data-repositories/dbmodels/user');
@@ -42,6 +43,33 @@ router.get('/visit/:visit', isAuthenticated, async function(req, res){
     }
     console.log(ret_visit)
     res.send(ret_visit);
+    return;
+});
+
+router.post('/visit/send', isAuthenticated, async function(req, res){
+    let error_found = false;
+    await _physicianService.sendVisitation(req.body, async function(err, response){
+        if(!response){
+            res.status('500').send({ err: "Failed to send prescription."})
+            error_found = true;
+            return;
+        }else{
+            await _physicianService.firstVisitationResponse(req.body, response, async function(err, res){
+                if(err){
+                    res.status('500').send({ error: "Failed to save visitation."})
+                    error_found = true;
+                    return;
+                } 
+            })
+            res.status.apply('200').send({ msg: "Prescription Saved!"});
+            return;
+        } 
+        return;
+    })
+    if(error_found){
+        res.status('500').send();
+        return;
+    }
     return;
 });
 

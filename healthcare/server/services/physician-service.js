@@ -133,7 +133,7 @@ module.exports.sendPrescription = sendPrescription;
 async function saveVisitation(visitation,cb){
     var currTime = new Date();
     let queryRes = await sequelize.query(
-        'INSERT INTO visitation (physician_id, patient_id, visitation_date, status) VALUES (?, ?, ?, 2);',
+        'INSERT INTO visitation (physician_id, patient_id, visitation_date, status) VALUES (?, ?, ?, 3);',
         {
             replacements: [
                 visitation.physician.user_id,
@@ -189,8 +189,9 @@ async function sendVisitation(visitation, cb){
         console.log(response);
         cb(null, response);
         return;
+    }).catch((e)=>{
+        cb(e, null);
     });
-    cb(null);
     return;
 }
 
@@ -217,10 +218,7 @@ async function getPatientPrescriptions(patient_id, cb){
 module.exports.getPatientPrescriptions = getPatientPrescriptions;
 
 async function firstVisitationResponse(visitation, response, cb){
-    console.log(response);
-    let res = response.data;
-    if(res.policy == null || res.procedures == null){
-        await sequelize.query('UPDATE visitation SET status = 1 WHERE visitation_id = ?;',
+        await sequelize.query('UPDATE visitation SET status = 2 WHERE visitation_id = ?;',
         {
             replacements:[
                 visitation.visitation_id
@@ -233,8 +231,6 @@ async function firstVisitationResponse(visitation, response, cb){
                 cb(e, null);
             }
         );
-        return;
-    }
 }
 
 module.exports.firstVisitationResponse = firstVisitationResponse;

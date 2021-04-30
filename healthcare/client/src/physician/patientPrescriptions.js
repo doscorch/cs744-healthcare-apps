@@ -43,7 +43,7 @@ export default class PatientPrescriptions extends React.Component {
                                 onClick: (event, row) => {
                                     const prescription_id = row.prescription_id;
                                     const prescription_med_id = row.prescription_medicine_id;
-                                    this.props.history.push("/prescriptions/"+prescription_id+"/medicine/"+prescription_med_id);
+                                    this.props.history.push("/prescriptions/"+prescription_id);
                                 }
                             },
 
@@ -59,7 +59,7 @@ export default class PatientPrescriptions extends React.Component {
                         { title: 'Refill', field: 'refill', validate: p => p.refill == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
                         { title: 'Creation Date', render: (entry) => { 
                             let d = new Date(entry.creation_date);
-                            return d.getMonth()+1+"-"+d.getDate()+"-"+d.getFullYear();
+                            return d.getMonth()+1+"-"+d.getUTCDate()+"-"+d.getFullYear();
                             }, validate: p => p.creation_date == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
                     ]}
                     data={this.state.prescriptions}

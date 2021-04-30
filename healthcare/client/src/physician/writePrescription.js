@@ -96,12 +96,20 @@ export class WritePrescription extends React.Component {
             this.setState({ error: "Please enter a quantity amount"});
             return;
         }
-        if(!this.state.refill.match(/^[1-9]+[0-9]*$/)){
+        if(!this.state.refill.match(/^[0-9]+[0-9]*$/)){
             this.setState({ error: "Please enter a whole number refill amount"});
             return;
         }
+        if(parseInt(this.state.refill)<0){
+            this.setState({ error: "Please enter a whole number greater than or equal to zero refill amount"});
+            return;
+        }
         if(!this.state.quantity.match(/^[1-9]+[0-9]*$/)){
-            this.setState({ error: "Please enter a whole number quntity amount"});
+            this.setState({ error: "Please enter a positive whole number quantity amount"});
+            return;
+        }
+        if(parseInt(this.state.quantity)<1){
+            this.setState({ error: "Please enter a positive whole number quantity amount"});
             return;
         }
         let currMeds = [...this.state.prescriptions];

@@ -34,6 +34,20 @@ export default class UserManager extends React.Component {
                         search: true,
                         paging: false,
                     }}
+                    actions={[
+                        rowData => ({
+                            icon: 'medical_services',
+                            tooltip: 'Edit Healthcare Details',
+                            onClick: (event, rowData) => {
+                                if(rowData.user_type == UserType.Physician){
+                                    this.props.history.push("/users/physician/"+rowData.user_id);
+                                }else if(rowData.user_type == UserType.Patient){
+                                    this.props.history.push("/users/patient/"+rowData.user_id);
+                                }
+                            },
+                            disabled: rowData.user_type != UserType.Patient && rowData.user_type != UserType.Physician
+                          })
+                    ]}
                     title="Users"
                     columns={[
                         // { title: 'Id', field: '_id' },
