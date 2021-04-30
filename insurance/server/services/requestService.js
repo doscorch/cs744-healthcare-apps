@@ -232,7 +232,7 @@ async function requestActionHC(request, cb) {
             r[i].insurance_pays = r[i].amount;
 
             if (!r[i].is_approved) {
-                r[i].insurace_pays = 0;
+                r[i].insurance_pays = 0;
                 if (r[i].request_hc_status == 5) {
                     r[i].reason = 'Not insured';
                 } else if (r[i].request_hc_status == 6) {
