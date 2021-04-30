@@ -43,16 +43,7 @@ router.post('/request/:prescriptionId', function (req, res) {
             .then(response => response.json())
             .then(result => {
               console.log('Success:', result);
-              let patch = {};
-              if (!result.covered_medicine) {
-                // medicine is not covered
-                patch = { order_status: 5, insurance_coverage: 0 };
-              }
-              else {
-                // policy is pending
-                patch = { order_status: 4 };
-              }
-
+              let patch = { order_status: 4 };
               _prescriptionService.patchPrescription(prescription.prescription_id, patch, (err, prescription) => {
                 if (err) {
                   console.log(err);

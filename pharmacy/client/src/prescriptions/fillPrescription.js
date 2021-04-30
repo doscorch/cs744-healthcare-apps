@@ -12,7 +12,7 @@ const initState = {
     prescription: ""
 }
 
-export class VerifyPatient extends React.Component {
+export class FillPrescription extends React.Component {
 
     state = {
         ...initState,
@@ -124,4 +124,4 @@ export class VerifyPatient extends React.Component {
 const mapState = (state) => { return { user: state.user } };
 const mapDispatch = { app_login };
 
-export default connect(mapState, mapDispatch)(VerifyPatient);
+export default connect(mapState, mapDispatch)(FillPrescription);

@@ -56,13 +56,7 @@ export default class MedicineManager extends React.Component {
                         {
                             title: 'Medicine Code',
                             field: 'medicine_code',
-                            render: u => <span>{u.medicine_code}</span>,
                             validate: u => u.medicine_code == "" ? { isValid: false, helperText: "required" } : { isValid: true },
-                            editComponent: props => (
-                                <div>
-                                    <span>{props.value}</span>
-                                    <button className="btn btn-sm btn-default" onClick={e => props.onChange(this.generateCode())}><i className="fas fa-sync"></i></button>
-                                </div>),
                         },
                         { title: 'Medical Name', field: 'medical_name', validate: u => u.medical_name == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
                         { title: 'Commercial Name', field: 'commercial_name', validate: u => u.commercial_name == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
@@ -81,6 +75,7 @@ export default class MedicineManager extends React.Component {
                             return patchMedicine(newData.medicine_id, newData).then(_ => this.getData())
                         },
                         onRowAdd: newData => {
+                            newData.requires_prescription = !!newData.requires_prescription;
                             return createMedicine(newData).then(_ => this.getData())
                         },
                         onRowDelete: oldData => {
