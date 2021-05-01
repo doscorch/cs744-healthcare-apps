@@ -18,7 +18,7 @@ async function updateVisitation(response, cb){
             }
         );
     
-        response.procedures.r.filter( async (procedure) => {
+        response.procedures.filter( async (procedure) => {
             console.log(procedure);
             await sequelize.query('UPDATE visitation_procedure SET insurance_pays = ? WHERE visitation_id = ? AND procedure_id = ?;',
             {
