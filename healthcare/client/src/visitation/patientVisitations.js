@@ -36,6 +36,12 @@ export class PatientVisitations extends React.Component {
     }
 
     render() {
+        const convertDoB = (dob_string) =>{
+            console.log(dob_string);
+            let d = new Date(dob_string);
+            let dateString = d.getMonth()+1+"-"+d.getUTCDate()+"-"+d.getFullYear();
+            return dateString;
+        }
         const tableRef = React.createRef();
         const phyActions = [
             {
@@ -83,13 +89,10 @@ export class PatientVisitations extends React.Component {
                     actions={this.props.user.user_type === UserType.Physician? phyActions : otherActions}
                     columns={[
                         // { title: 'Id', field: '_id' },
-                        { title: 'Patient Name', render: (entry) => { return entry.patient_first + " " + entry.patient_last}, validate: v => v.patient_first == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
-                        { title: 'Physician Name', render: (entry) => { return entry.physician_first + " " + entry.physician_last}, validate: v => v.patient_last == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
+                        { title: 'Patient Name', field:'patient_last', render: (entry) => { return entry.patient_first + " " + entry.patient_last}, validate: v => v.patient_first == "" ? { isValid: false, helperText: "required" } : { isValid: true }, customFilterAndSearch: (term,row) => (row.patient_first+" "+row.patient_last).indexOf(term) != -1 },
+                        { title: 'Physician Name',field: 'physician_last', render: (entry) => { return entry.physician_first + " " + entry.physician_last}, validate: v => v.patient_last == "" ? { isValid: false, helperText: "required" } : { isValid: true }, customFilterAndSearch: (term,row) => (row.physician_first+" "+row.physician_last).indexOf(term) != -1 },
                         { title: 'Status', field: 'status', render: (entry) => {return this.translateStatus(entry.status)}, validate: v => v.status == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
-                        { title: 'Visitation Date', render: (entry) => { 
-                            let d = new Date(entry.visitation_date);
-                            return d.getMonth()+1+"-"+d.getUTCDate()+"-"+d.getFullYear();
-                            }, validate: v => v.creation_date == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
+                        { title: 'Visitation Date',field:'visitation_date', render: (entry) => convertDoB(entry.visitation_date), validate: v => v.visitation_date == "" ? { isValid: false, helperText: "required" } : { isValid: true }, customFilterAndSearch: (term,row) => (convertDoB(row.visitation_date)).indexOf(term) != -1 },
                     ]}
                     data={this.state.visitations}
                 />

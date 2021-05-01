@@ -48,8 +48,8 @@ export default class ViewAllPAtients extends React.Component {
                     title="Physicians"
                     columns={[
                         // { title: 'Id', field: '_id' },
-                        { title: 'Physician Name', render: (physician)=> {return physician.first_name+" "+physician.last_name}, validate: u => u.first_name == "" ? { isValid: false, helperText: "required" } : { isValid: true }, customFilterAndSearch: (term,row) => (row.first_name+" "+row.last_name).indexOf(term) != -1 },
-                        { title: 'License Number', render: (physician)=> {return physician.physician_state+"-"+physician.license_number}, validate: u => u.license_number == "" ? { isValid: false, helperText: "required" } : { isValid: true }, customFilterAndSearch: (term,row) => (row.physician_state+"-"+row.license_number).indexOf(term) != -1 },
+                        { title: 'Physician Name', field:'last_name', render: (physician)=> {return physician.first_name+" "+physician.last_name}, validate: u => u.first_name == "" ? { isValid: false, helperText: "required" } : { isValid: true }, customFilterAndSearch: (term,row) => (row.first_name+" "+row.last_name).indexOf(term) != -1 },
+                        { title: 'License Number', field: 'physician_state', render: (physician)=> {return physician.physician_state+"-"+physician.license_number}, validate: u => u.license_number == "" ? { isValid: false, helperText: "required" } : { isValid: true }, customFilterAndSearch: (term,row) => (row.physician_state+"-"+row.license_number).indexOf(term) != -1 },
                     ]}
                     data={this.state.physicians}
                 />

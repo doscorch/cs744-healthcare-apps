@@ -48,6 +48,7 @@ export class ViewVisitation extends React.Component {
             v.status = 2;
             let state = { ...this.state };
             state['visitation'] = v;
+            state['success'] = "Visitation successfully sent";
             this.setState(state);
         }
     }

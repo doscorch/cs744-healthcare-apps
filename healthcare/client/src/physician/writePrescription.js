@@ -148,6 +148,12 @@ export class WritePrescription extends React.Component {
         this.setState(state);
     }
     render() {
+        const convertDoB = (dob_string) =>{
+            console.log(dob_string);
+            let d = new Date(dob_string);
+            let dateString = d.getMonth()+1+"-"+d.getUTCDate()+"-"+d.getFullYear();
+            return dateString;
+        }
         const classes = {
             paper: {
                 marginTop: "10px",
@@ -189,7 +195,7 @@ export class WritePrescription extends React.Component {
                                     <h6>Address</h6>
                                     <p>{this.state.patient.address}</p>
                                     <h6>Date of Birth</h6>
-                                    <p>{this.state.patient.date_of_birth}</p>
+                                    <p>{convertDoB(this.state.patient.date_of_birth)}</p>
                                 </Col>
                             </Row>
                         </Card>

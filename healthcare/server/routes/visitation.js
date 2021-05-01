@@ -61,7 +61,7 @@ router.post('/visit/send', isAuthenticated, async function(req, res){
                     return;
                 } 
             })
-            res.status.apply('200').send({ msg: "Prescription Saved!"});
+            res.status('200').send({ msg: "Prescription Saved!"});
             return;
         } 
         return;

@@ -2,7 +2,7 @@ ALTER TABLE `request`
 ADD payload LONGTEXT;
 
 ALTER TABLE `request`
-MODIFY COLUMN policy_holder_id INT NULL;
+ADD policy_holder_id INT NULL;
 
 ALTER TABLE `request_hc`
 ADD payload LONGTEXT;

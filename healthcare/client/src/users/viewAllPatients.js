@@ -23,6 +23,12 @@ export default class ViewAllPAtients extends React.Component {
     }
 
     render() {
+        const convertDoB = (dob_string) =>{
+            console.log(dob_string);
+            let d = new Date(dob_string);
+            let dateString = d.getMonth()+1+"-"+d.getUTCDate()+"-"+d.getFullYear();
+            return dateString;
+        }
         const tableRef = React.createRef();
         return (
             <div>
@@ -56,13 +62,10 @@ export default class ViewAllPAtients extends React.Component {
                     title="Patients"
                     columns={[
                         // { title: 'Id', field: '_id' },
-                        { title: 'Patient Name', render: (patient)=> {return patient.patient_first+" "+patient.patient_last}, validate: u => u.patient_first == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
+                        { title: 'Patient Name',field:'patient_last', render: (patient)=> {return patient.patient_first+" "+patient.patient_last}, validate: u => u.patient_first == "" ? { isValid: false, helperText: "required" } : { isValid: true }, customFilterAndSearch: (term,row) => (row.patient_first+" "+row.patient_last).indexOf(term) != -1 },
                         { title: 'Address', field: 'address', validate: u => u.address == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
-                        { title: 'Date of Birth', render: (entry) => { 
-                            let d = new Date(entry.date_of_birth);
-                            return d.getMonth()+1+"-"+d.getUTCDate()+"-"+d.getFullYear();
-                            }, validate: u => u.date_of_birth == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
-                            { title: 'Physician', render: (patient)=> {return patient.physician_first+" "+patient.physician_last}, validate: u => u.physician_first == "" ? { isValid: false, helperText: "required" } : { isValid: true } }
+                        { title: 'Date of Birth',field: 'date_of_birth', render: (entry) => convertDoB(entry.date_of_birth), validate: u => u.date_of_birth == "" ? { isValid: false, helperText: "required" } : { isValid: true }, customFilterAndSearch: (term,row) => (convertDoB(row.date_of_birth)).indexOf(term) != -1 },
+                            { title: 'Physician',field:'physician_last', render: (patient)=> {return patient.physician_first+" "+patient.physician_last}, validate: u => u.physician_first == "" ? { isValid: false, helperText: "required" } : { isValid: true }, customFilterAndSearch: (term,row) => (row.physician_first+" "+row.physician_last).indexOf(term) != -1 }
                     ]}
                     data={this.state.patients}
                 />

@@ -24,6 +24,12 @@ export default class PatientPrescriptions extends React.Component {
     }
 
     render() {
+        const convertDoB = (dob_string) =>{
+            console.log(dob_string);
+            let d = new Date(dob_string);
+            let dateString = d.getMonth()+1+"-"+d.getUTCDate()+"-"+d.getFullYear();
+            return dateString;
+        }
         const tableRef = React.createRef();
         return (
             <div>
@@ -51,16 +57,13 @@ export default class PatientPrescriptions extends React.Component {
                     }
                     columns={[
                         // { title: 'Id', field: '_id' },
-                        { title: 'Patient Name', render: (entry) => { return entry.patient_first_name + " " + entry.patient_last_name}, validate: p => p.patient_first_name == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
-                        { title: 'Physician Name', render: (entry) => { return entry.physician_first_name + " " + entry.physician_last_name}, validate: p => p.patient_last_name == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
+                        { title: 'Patient Name',field:'patient_last_name', render: (entry) => { return entry.patient_first_name + " " + entry.patient_last_name}, validate: p => p.patient_first_name == "" ? { isValid: false, helperText: "required" } : { isValid: true }, customFilterAndSearch: (term,row) => (row.patient_first_name+" "+row.patient_last_name).indexOf(term) != -1 },
+                        { title: 'Physician Name',field:'physician_last_name', render: (entry) => { return entry.physician_first_name + " " + entry.physician_last_name}, validate: p => p.patient_last_name == "" ? { isValid: false, helperText: "required" } : { isValid: true }, customFilterAndSearch: (term,row) => (row.physician_first_name+" "+row.physician_last_name).indexOf(term) != -1 },
                         { title: 'Prescription', field: 'prescription', validate: p => p.prescription == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
                         { title: 'Dosage', field: 'dosage', validate: p => p.dosage == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
                         { title: 'Quantity', field: 'quantity', validate: p => p.quantity == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
                         { title: 'Refill', field: 'refill', validate: p => p.refill == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
-                        { title: 'Creation Date', render: (entry) => { 
-                            let d = new Date(entry.creation_date);
-                            return d.getMonth()+1+"-"+d.getUTCDate()+"-"+d.getFullYear();
-                            }, validate: p => p.creation_date == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
+                        { title: 'Creation Date',field:'creation_date', render: (entry) => convertDoB(entry.creation_date), validate: p => p.creation_date == "" ? { isValid: false, helperText: "required" } : { isValid: true }, customFilterAndSearch: (term,row) => (convertDoB(row.creation_date)).indexOf(term) != -1 },
                     ]}
                     data={this.state.prescriptions}
                 />

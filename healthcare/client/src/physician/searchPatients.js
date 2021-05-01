@@ -25,6 +25,12 @@ export default class searchPatients extends React.Component {
     }
 
     render() {
+        const convertDoB = (dob_string) =>{
+            console.log(dob_string);
+            let d = new Date(dob_string);
+            let dateString = d.getMonth()+1+"-"+d.getUTCDate()+"-"+d.getFullYear();
+            return dateString;
+        }
         const tableRef = React.createRef();
         return (
             <div>
@@ -76,7 +82,7 @@ export default class searchPatients extends React.Component {
                         // { title: 'Id', field: '_id' },
                         { title: 'First Name', field: 'first_name', validate: u => u.first_name == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
                         { title: 'Last Name', field: 'last_name', validate: u => u.last_name == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
-                        { title: 'Date of Birth', field: 'date_of_birth', validate: u => u.date_of_birth == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
+                        { title: 'Date of Birth', field: 'date_of_birth', render: u => convertDoB(u.date_of_birth), validate: u => u.date_of_birth == "" ? { isValid: false, helperText: "required" } : { isValid: true }, customFilterAndSearch: (term,row) => (convertDoB(row.date_of_birth)).indexOf(term) != -1 },
                         { title: 'Address', field: 'address', validate: u => u.address == "" ? { isValid: false, helperText: "required" } : { isValid: true } }
                     ]}
                     data={this.state.users}

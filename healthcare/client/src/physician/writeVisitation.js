@@ -107,6 +107,12 @@ export class WriteVisitation extends React.Component {
                 margin: "10px"
             },
         };
+        const convertDoB = (dob_string) =>{
+            console.log(dob_string);
+            let d = new Date(dob_string);
+            let dateString = d.getMonth()+1+"-"+d.getUTCDate()+"-"+d.getFullYear();
+            return dateString;
+        }
         let error = this.state.error ? <Alert severity="error">{this.state.error}</Alert> : "";
         let success = this.state.success ? <Alert severity="success">{this.state.success}</Alert> : "";
         const tableRef = React.createRef();
@@ -134,7 +140,7 @@ export class WriteVisitation extends React.Component {
                                     <h6>Address</h6>
                                     <p>{this.state.patient.address}</p>
                                     <h6>Date of Birth</h6>
-                                    <p>{this.state.patient.date_of_birth}</p>
+                                    <p>{convertDoB(this.state.patient.date_of_birth)}</p>
                                 </Col>
                             </Row>
                         </Card>
