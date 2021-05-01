@@ -132,8 +132,8 @@ export class PrescriptionBill extends React.Component {
                             <td>{medicine.commercial_name}</td>
                             <td>{prescription.quantity}</td>
                             <td>{currencyFormatter.format(medicine.cost * prescription.quantity)}</td>
-                            <td>{currencyFormatter.format(medicine.cost * prescription.quantity * (prescription.insurance_coverage / 100))}</td>
-                            <td>{currencyFormatter.format((medicine.cost * prescription.quantity) - (medicine.cost * prescription.quantity * (prescription.insurance_coverage / 100)))}</td>
+                            <td>{currencyFormatter.format(medicine.cost * prescription.quantity - (prescription.insurance_coverage))}</td>
+                            <td>{currencyFormatter.format((medicine.cost * prescription.quantity) - (medicine.cost * prescription.quantity - (prescription.insurance_coverage)))}</td>
                         </tr>
                         <tr>
                             <td><pre> </pre></td>
@@ -151,7 +151,7 @@ export class PrescriptionBill extends React.Component {
                             <td></td>
                             <td></td>
                             <td>Subtotal:</td>
-                            <td>{currencyFormatter.format((medicine.cost * prescription.quantity) - (medicine.cost * prescription.quantity * (prescription.insurance_coverage / 100)))}</td>
+                            <td>{currencyFormatter.format((medicine.cost * prescription.quantity) - (medicine.cost * prescription.quantity - (prescription.insurance_coverage)))}</td>
                         </tr>
                         <tr>
                             <td></td>
@@ -160,7 +160,7 @@ export class PrescriptionBill extends React.Component {
                             <td></td>
                             <td></td>
                             <td>Tax (5.5%):</td>
-                            <td>{currencyFormatter.format(((medicine.cost * prescription.quantity) - (medicine.cost * prescription.quantity * (prescription.insurance_coverage / 100))) * .055)}</td>
+                            <td>{currencyFormatter.format(((medicine.cost * prescription.quantity) - (medicine.cost * prescription.quantity - (prescription.insurance_coverage))) * .055)}</td>
                         </tr>
                         <tr>
                             <td></td>
@@ -169,7 +169,7 @@ export class PrescriptionBill extends React.Component {
                             <td></td>
                             <td></td>
                             <td>Total:</td>
-                            <td>{currencyFormatter.format(((medicine.cost * prescription.quantity) - (medicine.cost * prescription.quantity * (prescription.insurance_coverage / 100))) * 1.055)}</td>
+                            <td>{currencyFormatter.format(((medicine.cost * prescription.quantity) - (medicine.cost * prescription.quantity - (prescription.insurance_coverage))) * 1.055)}</td>
                         </tr>
                         {/* <tr>
                             <td>Patient Pays</td>

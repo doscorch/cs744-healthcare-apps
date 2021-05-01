@@ -79,7 +79,7 @@ router.post('/receive/policy', function (req, res) {
 
   let coverage = 0;
   if (req.body.is_approved && req.body.policy) {
-    coverage = req.body.policy.percent_coverage;
+    coverage = req.body.drug.insurance_pays;
   }
 
   _prescriptionService.patchPrescription(req.body.prescription_id, { order_status: 5, insurance_coverage: coverage }, (err, prescription) => {
