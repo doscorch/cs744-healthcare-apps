@@ -77,8 +77,13 @@ router.post('/receive/policy', function (req, res) {
     return;
   }
 
+  if (!req.body.drug) {
+    res.status('400').send(new Error('missing drug'));
+    return;
+  }
+
   let coverage = 0;
-  if (req.body.is_approved && req.body.policy) {
+  if (req.body.drug) {
     coverage = req.body.drug.insurance_pays;
   }
 

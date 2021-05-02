@@ -32,15 +32,17 @@ export class OrderDetails extends React.Component {
             if (prescriptions) {
                 this.setState({ prescriptions });
             }
-            let sales = await getSalesByOrderId(order.medicine_order_id)
-            if (sales) {
-                for (var i = 0; i < sales.length; i++) {
-                    const sale = sales[i];
-                    sale.medicine = await getMedicine(sale.medicine_id);
-                }
-                this.setState({ sales });
-            }
         }
+
+        let sales = await getSalesByOrderId(order.medicine_order_id)
+        if (sales) {
+            for (var i = 0; i < sales.length; i++) {
+                const sale = sales[i];
+                sale.medicine = await getMedicine(sale.medicine_id);
+            }
+            this.setState({ sales });
+        }
+
     }
     render() {
         const classes = {

@@ -86,11 +86,18 @@ router.post('/recieve/prescription', async function (req, res) {
         res.status('400').send(new Error('missing physician last name'));
         return;
     }
-    const physician_license_number = req.body.physician.license_number;
+    let physician_license_number = req.body.physician.license_number;
     if (!physician_license_number) {
         res.status('400').send(new Error('missing physician license number'));
         return;
     }
+    const physician_state = req.body.physician.physician_state;
+    if (!physician_state) {
+        res.status('400').send(new Error('missing physician state'));
+        return;
+    }
+    physician_license_number = physician_state + "-" + physician_license_number;
+
     const physician_institution = "Peach Healthcare"
 
     const order_date = req.body.date;
