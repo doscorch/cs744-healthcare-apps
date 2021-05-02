@@ -71,6 +71,8 @@ module.exports.getDrug = getDrug;
 const pharmacyURL = 'http://localhost:5001'; //CHANGE ME
 const pharmacyPath = '/insurance/receive/policy';
 async function requestAction(request, cb) {
+    console.log('REQUEST');
+    console.log(request);
     let result = await sequelize.query(
         'UPDATE request SET request_status=? WHERE request_id=?',
         {
@@ -86,16 +88,90 @@ async function requestAction(request, cb) {
         return null;
     });
 
-    let payload = {
-        is_approved: request.request_status == 1,
-        prescription_id: request.other_id,
-        policy: request.policy,
-        drug: {
-            drug_code: request.drug_code,
-            drug_name: request.drug_name,
-            commercial_name: request.commercial_name
+    // Create transaction IF approved
+
+    if (request.request_status == 1) {
+        result = await sequelize.query(
+            'INSERT INTO transaction (transaction_date, request_id, policy_holder_id, amount) VALUES (CURDATE(), ?, ?, ?)',
+            {
+                replacements: [
+                    request.request_id,
+                    request.policy_holder.policy_holder_id,
+                    request.covered
+                ],
+                type: sequelize.QueryTypes.INSERT
+            }
+        ).catch(function(e){
+            console.log('SQL Error:');
+            console.log(e);
+            return null;
+        });
+        // update policy holder with amount paid and remaining
+        result = await sequelize.query(
+            'UPDATE policy_holder SET amount_paid=?, amount_remaining=? WHERE policy_holder_id=?;',
+            {
+                replacements: [
+                    request.paid,
+                    request.remaining,
+                    request.policy_holder.policy_holder_id,
+                ],
+                type: sequelize.QueryTypes.UPDATE
+            }
+        ).catch(function(e){
+            console.log('SQL Error (update policy holder):');
+            console.log(e);
+            return null;
+        });    
+    } else {
+        // IF NOT APPROVED
+
+        let ph_id = null;
+        if (request.policy_holder != null) {
+            ph_id = request.policy_holder.policy_holder_id;
         }
-    };
+        result = await sequelize.query(
+            'INSERT INTO transaction (transaction_date, request_id, policy_holder_id, amount) VALUES (CURDATE(), ?, ?, 0)',
+            {
+                replacements: [
+                    request.request_id,
+                    ph_id
+                ],
+                type: sequelize.QueryTypes.INSERT
+            }
+        ).catch(function(e){
+            console.log('SQL Error:');
+            console.log(e);
+            return null;
+        });
+    }
+
+    
+    request.is_approved = request.request_status == 1;
+    request.reason = null;
+    request.insurance_pays = request.covered;
+
+    if (!request.is_approved) {
+        request.insurance_pays = 0;
+        if (request.request_status == 5) {
+            request.reason = 'Not insured';
+        } else if (request.request_status == 6) {
+            request.reason = 'No coverage';
+        } else {
+            request.reason = 'Other';
+        }
+    }
+
+    let pc = null;
+    if (request.policy != null) {
+        pc = request.policy.percent_coverage;
+    }
+    
+    let payload = {
+        prescription_id: request.other_id,
+        percent_coverage: pc,
+        drug: request,
+      }
+
     fetch(`${pharmacyURL}${pharmacyPath}`, {
         method: 'POST',
         headers: {
@@ -105,8 +181,8 @@ async function requestAction(request, cb) {
       });
     console.log('PAYLOAD');
     console.log(payload);
-
-    cb(result);
+    console.log(JSON.stringify(payload));
+    cb(payload);
 }
 module.exports.requestAction = requestAction;
 
@@ -136,14 +212,11 @@ async function requestActionHC(request, cb) {
 
     if (request.request_hc_status == 1) {
         result = await sequelize.query(
-            'INSERT INTO transaction_hc (transaction_hc_date, request_hc_id, policy_holder_id, amount) VALUES (CURDATE(), ?, (SELECT policy_holder_id FROM policy_holder WHERE policy_holder.first_name=? AND policy_holder.last_name=? AND policy_holder.address=? AND policy_holder.date_of_birth=? LIMIT 1), ?)',
+            'INSERT INTO transaction_hc (transaction_hc_date, request_hc_id, policy_holder_id, amount) VALUES (CURDATE(), ?, ?, ?)',
             {
                 replacements: [
                     request.request_hc_id,
-                    request.first_name,
-                    request.last_name,
-                    request.address,
-                    request.date_of_birth,
+                    request.policy_holder.policy_holder_id,
                     request.covered
                 ],
                 type: sequelize.QueryTypes.INSERT
@@ -170,15 +243,17 @@ async function requestActionHC(request, cb) {
             return null;
         });    
     } else {
+        let ph_id = null;
+
+        if (request.policy_holder != null) {
+            ph_id = policy_holder_id;
+        }
         result = await sequelize.query(
-            'INSERT INTO transaction_hc (transaction_hc_date, request_hc_id, policy_holder_id, amount) VALUES (CURDATE(), ?, (SELECT policy_holder_id FROM policy_holder WHERE policy_holder.first_name=? AND policy_holder.last_name=? AND policy_holder.address=? AND policy_holder.date_of_birth=? LIMIT 1), 0)',
+            'INSERT INTO transaction_hc (transaction_hc_date, request_hc_id, policy_holder_id, amount) VALUES (CURDATE(), ?, ?, 0)',
             {
                 replacements: [
                     request.request_hc_id,
-                    request.first_name,
-                    request.last_name,
-                    request.address,
-                    request.date_of_birth
+                    ph_id
                 ],
                 type: sequelize.QueryTypes.INSERT
             }
@@ -243,9 +318,13 @@ async function requestActionHC(request, cb) {
             }
         }
 
+        let pc = null;
+        if (request.policy != null) {
+            pc = request.policy.percent_coverage;
+        }
         let payload = {
             visitation_id: request.other_id,
-            percent_coverage: request.policy.percent_coverage,
+            percent_coverage: pc,
             procedures: r
         };
         fetch(`${healthcareURL}${healthcarePath}`, {

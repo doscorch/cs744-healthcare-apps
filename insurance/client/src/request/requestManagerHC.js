@@ -63,37 +63,42 @@ export default class RequestManagerHC extends React.Component {
 
         console.log(policyHolder)
 
-        let policies = await getAllPolicies();
-        console.log(policies);
-        policies = policies.data;
-        let policy = null;
-
-        for (let i = 0; i < policies.length; i++) {
-            if (policies[i].policy_id == policyHolder.policy_id) {
-                policy = policies[i];
-                break;
-            }
-        }
-
-        let remaining = Number(policyHolder.amount_remaining);
-        let paid = Number(policyHolder.amount_paid);
-        console.log(paid);
-        let amount = request.amount;
-        let per = policy.percent_coverage / 100;
-
-        let covered = amount * per;
-
-
-        if (remaining < covered) {
-            covered = remaining;
-        }
-
-        paid += covered;
-        remaining -= covered;
         
-        request.paid = paid;
-        request.remaining = remaining;
-        request.covered = covered;
+        request.covered = 0;
+        request.policy = null;
+        if (policyHolder != null) {
+            let policies = await getAllPolicies();
+            console.log(policies);
+            policies = policies.data;
+            let policy = null;
+
+            for (let i = 0; i < policies.length; i++) {
+                if (policies[i].policy_id == policyHolder.policy_id) {
+                    policy = policies[i];
+                    break;
+                }
+            }
+            let remaining = Number(policyHolder.amount_remaining);
+            let paid = Number(policyHolder.amount_paid);
+            console.log(paid);
+            let amount = request.amount;
+            let per = policy.percent_coverage / 100;
+
+            let covered = amount * per;
+            if (remaining < covered) {
+                covered = remaining;
+            }
+            
+            paid += covered;
+            remaining -= covered;
+        
+            request.paid = paid;
+            request.remaining = remaining;
+            request.covered = covered;
+            request.policy = policy;
+        }
+
+
         request.policy_holder = policyHolder;
         request.old_request_hc_status = request.request_hc_status;
 
@@ -108,7 +113,6 @@ export default class RequestManagerHC extends React.Component {
                 request.request_hc_status = 6;
             }
         }
-        request.policy = policy;
 
         console.log('request!');
         console.log(request);

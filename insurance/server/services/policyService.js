@@ -532,9 +532,11 @@ async function getPolicyByPatient(payload, cb) {
 module.exports.getPolicyByPatient = getPolicyByPatient;
 
 async function getPolicyByPatientPharmacy(payload, cb) {
-    let returnPayload = {policy: null, medicines: null, covered_medicine: false};
-
+    console.log('payload');
+    console.log(payload);
     let prescription = payload.prescription;
+
+    // Get the policy holder and policy
     let resultPolicy = await sequelize.query(
         'SELECT * FROM policy JOIN policy_holder ON policy.policy_id = policy_holder.policy_id WHERE first_name=? AND last_name=? AND date_of_birth=? AND address=?;',
         {
@@ -553,9 +555,9 @@ async function getPolicyByPatientPharmacy(payload, cb) {
     });
     
     if (resultPolicy.length > 0) {
+        // A policy and policy holder has been found
         resultPolicy = resultPolicy[0];
-        returnPayload.policy = resultPolicy;
-        let resultMedicine= await sequelize.query(
+        let resultMedicine = await sequelize.query(
             'SELECT * FROM drug JOIN policy_drug ON drug.drug_id = policy_drug.drug_id WHERE policy_id=?;',
             {
                 replacements: [
@@ -568,14 +570,16 @@ async function getPolicyByPatientPharmacy(payload, cb) {
             console.log(e);
             return null;
         });
-        returnPayload.medicines = resultMedicine;
 
-        for (let i = 0; i < returnPayload.medicines.length; i++) {
-            if (returnPayload.medicines[i].drug_code == payload.medicine.medicine_code) {
-                returnPayload.covered_medicine = true;
+        // for each drug in the policy
+        let flag = false;
+        for (let i = 0; i < resultMedicine.length; i++) {
+            if (resultMedicine[i].drug_code == payload.medicine.medicine_code) {
+                console.log('Make a 2 request');
+                flag = true;
                 // create drug request
                 queryRes = await sequelize.query(
-                    'INSERT INTO request (request_status, request_date, first_name, last_name, address, date_of_birth, amount, other_id, drug_id) VALUES (2, CURDATE(), ?, ?, ?, ?, ?, ?, (SELECT drug_id FROM drug WHERE drug_code=?));',
+                    'INSERT INTO request (request_status, request_date, first_name, last_name, address, date_of_birth, amount, other_id, drug_id, payload) VALUES (2, CURDATE(), ?, ?, ?, ?, ?, ?, (SELECT drug_id FROM drug WHERE drug_code=?), ?);',
                     {
                         replacements: [
                             prescription.patient_first_name,
@@ -584,7 +588,8 @@ async function getPolicyByPatientPharmacy(payload, cb) {
                             (new Date(prescription.patient_date_of_birth)).toISOString().slice(0, 19).replace('T', ' '),
                             payload.medicine.cost,
                             prescription.prescription_id,
-                            payload.medicine.medicine_code
+                            payload.medicine.medicine_code,
+                            JSON.stringify(payload)
                         ],
                         type: sequelize.QueryTypes.INSERT,
                         returning: true
@@ -594,17 +599,80 @@ async function getPolicyByPatientPharmacy(payload, cb) {
                     console.log('sql error insert (policy_drug):');
                     if (e.errors != null) {
                         console.log('some error');
-                        return 'The code must be unique';
                     } else {
                         console.log('unknown error');
-                        return 'Unknown error';
                     }
+                    console.log(e);
+                    return null;
                 });
                 break;
             }
         }
+
+        if (flag) {
+            // drug is covered and request already made
+        } else {
+            // drug is NOT covered
+            console.log('Make a 4 request');
+            queryRes = await sequelize.query(
+                'INSERT INTO request (request_status, request_date, first_name, last_name, address, date_of_birth, amount, other_id, drug_id, payload) VALUES (4, CURDATE(), ?, ?, ?, ?, ?, ?, (SELECT drug_id FROM drug WHERE drug_code=?), ?);',
+                {
+                    replacements: [
+                        prescription.patient_first_name,
+                        prescription.patient_last_name,
+                        prescription.patient_address,
+                        (new Date(prescription.patient_date_of_birth)).toISOString().slice(0, 19).replace('T', ' '),
+                        payload.medicine.cost,
+                        prescription.prescription_id,
+                        payload.medicine.medicine_code,
+                        JSON.stringify(payload)
+                    ],
+                    type: sequelize.QueryTypes.INSERT,
+                    returning: true
+                }
+            ).catch(function (e) {
+                // error handling
+                console.log('sql error insert (policy_drug):');
+                if (e.errors != null) {
+                    console.log('some error');
+                    return 'The code must be unique';
+                } else {
+                    console.log('unknown error');
+                    return 'Unknown error';
+                }
+            });
+        }
+    } else {
+        console.log('Make a 3 request');
+        queryRes = await sequelize.query(
+            'INSERT INTO request (request_status, request_date, first_name, last_name, address, date_of_birth, amount, other_id, drug_id, payload) VALUES (3, CURDATE(), ?, ?, ?, ?, ?, ?, (SELECT drug_id FROM drug WHERE drug_code=?), ?);',
+            {
+                replacements: [
+                    prescription.patient_first_name,
+                    prescription.patient_last_name,
+                    prescription.patient_address,
+                    (new Date(prescription.patient_date_of_birth)).toISOString().slice(0, 19).replace('T', ' '),
+                    payload.medicine.cost,
+                    prescription.prescription_id,
+                    payload.medicine.medicine_code,
+                    JSON.stringify(payload)
+                ],
+                type: sequelize.QueryTypes.INSERT,
+                returning: true
+            }
+        ).catch(function (e) {
+            // error handling
+            console.log('sql error insert (policy_drug):');
+            if (e.errors != null) {
+                console.log('some error');
+                return 'The code must be unique';
+            } else {
+                console.log('unknown error');
+                return 'Unknown error';
+            }
+        });
     }
-    cb(returnPayload);    
+    cb('200');    
 }
 
 module.exports.getPolicyByPatientPharmacy = getPolicyByPatientPharmacy;
