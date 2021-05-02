@@ -8,8 +8,8 @@ import { Route, Link } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {getAllRequests, getDrug, requestAction, applyTransaction} from './requestService';
-import {getAllPolicies} from '../policy/policyService';
-import {getAllPolicyHolders, updatePolicyHolder} from '../policyHolder/policyHolderService';
+import {getAllPolicies, getPolicyByPatientPharmacyUpdate} from '../policy/policyService';
+import {getAllPolicyHolders} from '../policyHolder/policyHolderService';
 
 
 export default class RequestManager extends React.Component {
@@ -127,7 +127,23 @@ export default class RequestManager extends React.Component {
         let result = await getAllRequests();
         console.log(result);
 
+        console.log('update requests');
         let requests = result.data;
+
+        // format date
+        for (let i = 0; i < requests.length; i++) {
+            let payload = JSON.parse(requests[i]['payload']);
+            payload.request_id = requests[i].request_id;
+            if (requests[i].request_status == 2 || requests[i].request_status == 3 || requests[i].request_status == 4) {
+                await getPolicyByPatientPharmacyUpdate(payload);
+            }
+        }
+        
+        console.log('getting requests (again)');
+
+        result = await getAllRequests();
+        console.log(result);
+        requests = result.data;
 
         // format date
         for (let i = 0; i < requests.length; i++) {

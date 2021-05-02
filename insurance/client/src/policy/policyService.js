@@ -121,3 +121,18 @@ export const getPolicyByPatient = async(payload) => {
     });
 }
 
+export const getPolicyByPatientPharmacyUpdate = async(payload) => {
+    return client.post('/policy/getPolicyByPatientPharmacyUpdate', payload).then(res => {
+        return {
+            data: res.data
+        };
+    });
+}
+
+export const getPolicyByPatientUpdate = async(payload) => {
+    return client.post('/policy/getPolicyByPatientUpdate', payload).then(res => {
+        return {
+            data: res.data
+        };
+    });
+}

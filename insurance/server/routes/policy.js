@@ -65,6 +65,18 @@ router.post('/getPolicyByPatientPharmacy', function (req, res, next) {
     });
 });
 
+router.post('/getPolicyByPatientPharmacyUpdate', function (req, res, next) {
+    _policyService.getPolicyByPatientPharmacyUpdate(req.body, function (data) {
+        res.send({data: data});
+    });
+});
+
+router.post('/getPolicyByPatientUpdate', function (req, res, next) {
+    _policyService.getPolicyByPatientUpdate(req.body, function (data) {
+        res.send({data: data});
+    });
+});
+
 router.get('/getProcedures/:policy_id', isAuthenticated, function (req, res, next) {
     _policyService.getProceduresFromPolicyId(parseInt(req.params.policy_id), function (result) {
         res.send({ data: result});

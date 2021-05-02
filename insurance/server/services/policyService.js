@@ -329,18 +329,23 @@ async function getPolicyHoldersWithPolicy(policy, cb) {
 module.exports.getPolicyHoldersWithPolicy = getPolicyHoldersWithPolicy;
 
 async function getPolicyByPatient(payload, cb) {
+    let today = new Date();
+    payload.request_date = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
     console.log('PAYLOAD');
     console.log(payload);
 
     // Get the policy and policy holder
     let resultPolicy = await sequelize.query(
-        'SELECT * FROM policy JOIN policy_holder ON policy.policy_id = policy_holder.policy_id WHERE first_name=? AND last_name=? AND date_of_birth=? AND address=?;',
+        'SELECT * FROM policy JOIN policy_holder ON policy.policy_id = policy_holder.policy_id WHERE first_name=? AND last_name=? AND date_of_birth=? AND address=? AND start_date <= CONVERT(?, DATE) AND CONVERT(?, DATE) <= end_date;',
         {
             replacements: [
                 payload.patient_first,
                 payload.patient_last,
                 payload.date_of_birth,
                 payload.address,
+                payload.request_date,
+                payload.request_date
             ],
             type: sequelize.QueryTypes.SELECT
         }
@@ -531,20 +536,179 @@ async function getPolicyByPatient(payload, cb) {
 
 module.exports.getPolicyByPatient = getPolicyByPatient;
 
+async function getPolicyByPatientUpdate(payload, cb) {
+    // Get the policy and policy holder
+    let resultPolicy = await sequelize.query(
+        'SELECT * FROM policy JOIN policy_holder ON policy.policy_id = policy_holder.policy_id WHERE first_name=? AND last_name=? AND date_of_birth=? AND address=? AND start_date <= CONVERT(?, DATE) AND CONVERT(?, DATE) <= end_date;',
+        {
+            replacements: [
+                payload.patient_first,
+                payload.patient_last,
+                payload.date_of_birth,
+                payload.address,
+                payload.request_date,
+                payload.request_date
+            ],
+            type: sequelize.QueryTypes.SELECT
+        }
+    ).catch(function(e){
+        console.log('SQL Error:');
+        console.log(e);
+        return null;
+    });
+
+    
+    if (resultPolicy.length > 0) {
+        // A policy and policy holder has been found
+        resultPolicy = resultPolicy[0];
+        let resultProcedure = await sequelize.query(
+            'SELECT * FROM `procedure` JOIN policy_procedure ON `procedure`.procedure_id = policy_procedure.procedure_id WHERE policy_id=?;',
+            {
+                replacements: [
+                    resultPolicy.policy_id
+                ],
+                type: sequelize.QueryTypes.SELECT
+            }
+        ).catch(function(e){
+            console.log('SQL Error:');
+            console.log(e);
+            return null;
+        });
+
+        // For each procedure in the payload
+        for (let i = 0; i < payload.procedures.length; i++) {
+            let procedure = payload.procedures[i];
+
+            if (procedure.procedure_id != payload.procedure_id_hc) {
+                continue;
+            }
+
+            // check to see if procedure of payload is covered
+            let coveredProcedures = resultProcedure;
+
+            // For each covered procedure
+            let flag = false;
+            for (let j = 0; j < coveredProcedures.length; j++) {
+
+                if (procedure.procedure_id == coveredProcedures[j].procedure_id_hc) {
+                    // If the procedure's ID is equal to the covered procedure...
+                    // make a request
+                    payload['procedure'] = procedure;
+                    console.log('Make a 2 request');
+                    flag = true;
+                    let queryRes = await sequelize.query(
+                        'UPDATE request_hc SET request_hc_status = 2 WHERE request_hc_id = ?;',
+                        {
+                            replacements: [
+                                payload.request_hc_id
+                            ],
+                            type: sequelize.QueryTypes.INSERT,
+                            returning: true
+                        }
+                    ).catch(function (e) {
+                        // error handling
+                        console.log('sql error insert (request 2):');
+                        if (e.errors != null) {
+                            console.log('Database error');
+                            return 'Database error';
+                        } else {
+                            console.log('unknown error');
+                            console.log(e);
+                            return 'Unknown error';
+                        }
+                    });
+    
+
+
+                    break;
+                }
+            }
+
+            // Check to see if procedure was covered
+            if (flag) {
+                // procedure is covered and a request was sent
+            } else {
+                // procedure is NOT covered. Send a request to DENY
+                console.log('Make a 4 request');
+                payload['procedure'] = procedure;
+                let queryRes = await sequelize.query(
+                    'UPDATE request_hc SET request_hc_status = 4 WHERE request_hc_id = ?;',
+                    {
+                        replacements: [
+                            payload.request_hc_id
+                        ],
+                        type: sequelize.QueryTypes.INSERT,
+                        returning: true
+                    }
+                ).catch(function (e) {
+                    // error handling
+                    console.log('sql error insert (request 3):');
+                    if (e.errors != null) {
+                        console.log('Database error');
+                        return 'Database error';
+                    } else {
+                        console.log('unknown error');
+                        console.log(e);
+                        return 'Unknown error';
+                    }
+                });
+            }
+        }
+
+    } else {
+        // No policy holder
+        console.log('Make a 3 request');
+        for (let i = 0; i < payload.procedures.length; i++) {
+            let procedure = payload.procedures[i];
+            payload['procedure'] = procedure;
+            let queryRes = await sequelize.query(
+                'UPDATE request_hc SET request_hc_status = 3 WHERE request_hc_id = ?;',
+                {
+                    replacements: [
+                        payload.request_hc_id
+                    ],
+                    type: sequelize.QueryTypes.INSERT,
+                    returning: true
+                }
+            ).catch(function (e) {
+                // error handling
+                console.log('sql error insert (request 3):');
+                if (e.errors != null) {
+                    console.log('Database error');
+                    return 'Database error';
+                } else {
+                    console.log('unknown error');
+                    console.log(e);
+                    return 'Unknown error';
+                }
+            });
+        }
+        
+    }
+    cb('200');    
+}
+
+module.exports.getPolicyByPatientUpdate = getPolicyByPatientUpdate;
+
 async function getPolicyByPatientPharmacy(payload, cb) {
+    let today = new Date();
+
+    payload.request_date = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
     console.log('payload');
     console.log(payload);
     let prescription = payload.prescription;
 
     // Get the policy holder and policy
     let resultPolicy = await sequelize.query(
-        'SELECT * FROM policy JOIN policy_holder ON policy.policy_id = policy_holder.policy_id WHERE first_name=? AND last_name=? AND date_of_birth=? AND address=?;',
+        'SELECT * FROM policy JOIN policy_holder ON policy.policy_id = policy_holder.policy_id WHERE first_name=? AND last_name=? AND date_of_birth=? AND address=? AND start_date <= CONVERT(?, DATE) AND CONVERT(?, DATE) <= end_date;',
         {
             replacements: [
                 prescription.patient_first_name,
                 prescription.patient_last_name,
                 prescription.patient_date_of_birth,
                 prescription.patient_address,
+                payload.request_date,
+                payload.request_date
             ],
             type: sequelize.QueryTypes.SELECT
         }
@@ -676,3 +840,131 @@ async function getPolicyByPatientPharmacy(payload, cb) {
 }
 
 module.exports.getPolicyByPatientPharmacy = getPolicyByPatientPharmacy;
+
+async function getPolicyByPatientPharmacyUpdate(payload, cb) {
+    console.log('payload');
+    console.log(payload);
+    let prescription = payload.prescription;
+
+    // Get the policy holder and policy
+    let resultPolicy = await sequelize.query(
+        'SELECT * FROM policy JOIN policy_holder ON policy.policy_id = policy_holder.policy_id WHERE first_name=? AND last_name=? AND date_of_birth=? AND address=? AND start_date <= CONVERT(?, DATE) AND CONVERT(?, DATE) <= end_date;',
+        {
+            replacements: [
+                prescription.patient_first_name,
+                prescription.patient_last_name,
+                prescription.patient_date_of_birth,
+                prescription.patient_address,
+                payload.request_date,
+                payload.request_date
+            ],
+            type: sequelize.QueryTypes.SELECT
+        }
+    ).catch(function(e){
+        console.log('SQL Error:');
+        console.log(e);
+        return null;
+    });
+    
+    if (resultPolicy.length > 0) {
+        // A policy and policy holder has been found
+        resultPolicy = resultPolicy[0];
+        let resultMedicine = await sequelize.query(
+            'SELECT * FROM drug JOIN policy_drug ON drug.drug_id = policy_drug.drug_id WHERE policy_id=?;',
+            {
+                replacements: [
+                    resultPolicy.policy_id
+                ],
+                type: sequelize.QueryTypes.SELECT
+            }
+        ).catch(function(e){
+            console.log('SQL Error:');
+            console.log(e);
+            return null;
+        });
+
+        // for each drug in the policy
+        let flag = false;
+        for (let i = 0; i < resultMedicine.length; i++) {
+            if (resultMedicine[i].drug_code == payload.medicine.medicine_code) {
+                console.log('Make a 2 request');
+                flag = true;
+                // create drug request
+                queryRes = await sequelize.query(
+                    'UPDATE request SET request_status = 2, drug_id = (SELECT drug_id FROM drug WHERE drug_code=?) WHERE request_id = ?;',
+                    {
+                        replacements: [
+                            payload.medicine.medicine_code,
+                            payload.request_id
+                        ],
+                        type: sequelize.QueryTypes.INSERT,
+                        returning: true
+                    }
+                ).catch(function (e) {
+                    // error handling
+                    console.log('sql error insert (policy_drug):');
+                    if (e.errors != null) {
+                        console.log('some error');
+                    } else {
+                        console.log('unknown error');
+                    }
+                    console.log(e);
+                    return null;
+                });
+                break;
+            }
+        }
+
+        if (flag) {
+            // drug is covered and request already made
+        } else {
+            // drug is NOT covered
+            console.log('Make a 4 request');
+            queryRes = await sequelize.query(
+                'UPDATE request SET request_status = 4 WHERE request_id = ?;',
+                {
+                    replacements: [
+                        payload.request_id
+                    ],
+                    type: sequelize.QueryTypes.INSERT,
+                    returning: true
+                }
+            ).catch(function (e) {
+                // error handling
+                console.log('sql error insert (policy_drug):');
+                if (e.errors != null) {
+                    console.log('some error');
+                    return 'The code must be unique';
+                } else {
+                    console.log('unknown error');
+                    return 'Unknown error';
+                }
+            });
+        }
+    } else {
+        console.log('Make a 3 request');
+        queryRes = await sequelize.query(
+            'UPDATE request SET request_status = 3 WHERE request_id = ?;',
+            {
+                replacements: [
+                    payload.request_id
+                ],
+                type: sequelize.QueryTypes.INSERT,
+                returning: true
+            }
+        ).catch(function (e) {
+            // error handling
+            console.log('sql error insert (policy_drug):');
+            if (e.errors != null) {
+                console.log('some error');
+                return 'The code must be unique';
+            } else {
+                console.log('unknown error');
+                return 'Unknown error';
+            }
+        });
+    }
+    cb('200');    
+}
+
+module.exports.getPolicyByPatientPharmacyUpdate = getPolicyByPatientPharmacyUpdate;

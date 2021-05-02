@@ -18,7 +18,7 @@ module.exports.getAllRequests = getAllRequests;
 
 async function getAllRequestsHC(cb) {
     let result = await sequelize.query(
-        'SELECT * FROM request_hc ORDER BY request_hc_status DESC, other_id;',
+        'SELECT * FROM request_hc JOIN `procedure` ON `procedure`.procedure_id = request_hc.procedure_id ORDER BY request_hc_status DESC, other_id;',
         {
             type: sequelize.QueryTypes.SELECT
         }
@@ -92,7 +92,7 @@ async function requestAction(request, cb) {
 
     if (request.request_status == 1) {
         result = await sequelize.query(
-            'INSERT INTO transaction (transaction_date, request_id, policy_holder_id, amount) VALUES (CURDATE(), ?, ?, ?)',
+            'INSERT INTO transaction (transaction_date, request_id, policy_holder_id, insurance_pays) VALUES (CURDATE(), ?, ?, ?)',
             {
                 replacements: [
                     request.request_id,
@@ -130,7 +130,7 @@ async function requestAction(request, cb) {
             ph_id = request.policy_holder.policy_holder_id;
         }
         result = await sequelize.query(
-            'INSERT INTO transaction (transaction_date, request_id, policy_holder_id, amount) VALUES (CURDATE(), ?, ?, 0)',
+            'INSERT INTO transaction (transaction_date, request_id, policy_holder_id, insurance_pays) VALUES (CURDATE(), ?, ?, 0)',
             {
                 replacements: [
                     request.request_id,
@@ -212,7 +212,7 @@ async function requestActionHC(request, cb) {
 
     if (request.request_hc_status == 1) {
         result = await sequelize.query(
-            'INSERT INTO transaction_hc (transaction_hc_date, request_hc_id, policy_holder_id, amount) VALUES (CURDATE(), ?, ?, ?)',
+            'INSERT INTO transaction_hc (transaction_hc_date, request_hc_id, policy_holder_id, insurance_pays) VALUES (CURDATE(), ?, ?, ?)',
             {
                 replacements: [
                     request.request_hc_id,
@@ -246,10 +246,10 @@ async function requestActionHC(request, cb) {
         let ph_id = null;
 
         if (request.policy_holder != null) {
-            ph_id = policy_holder_id;
+            ph_id = request.policy_holder.policy_holder_id;
         }
         result = await sequelize.query(
-            'INSERT INTO transaction_hc (transaction_hc_date, request_hc_id, policy_holder_id, amount) VALUES (CURDATE(), ?, ?, 0)',
+            'INSERT INTO transaction_hc (transaction_hc_date, request_hc_id, policy_holder_id, insurance_pays) VALUES (CURDATE(), ?, ?, 0)',
             {
                 replacements: [
                     request.request_hc_id,
@@ -344,12 +344,14 @@ async function requestActionHC(request, cb) {
 }
 module.exports.requestActionHC = requestActionHC;
 
-
+/**
+ * DO NOT USE
+ */
 async function applyTransaction(request, cb) {
     console.log('REQUEST');
     console.log(request);
     let result = await sequelize.query(
-        'INSERT INTO transaction (transaction_date, request_id, policy_holder_id, amount) VALUES (CURDATE(), ?, (SELECT policy_holder_id FROM policy_holder WHERE policy_holder.first_name=? AND policy_holder.last_name=? AND policy_holder.address=? AND policy_holder.date_of_birth=? LIMIT 1))',
+        'INSERT INTO transaction (transaction_date, request_id, policy_holder_id, insurance_pays) VALUES (CURDATE(), ?, (SELECT policy_holder_id FROM policy_holder WHERE policy_holder.first_name=? AND policy_holder.last_name=? AND policy_holder.address=? AND policy_holder.date_of_birth=? LIMIT 1))',
         {
             replacements: [
                 request.request_id,
@@ -370,6 +372,9 @@ async function applyTransaction(request, cb) {
 }
 module.exports.applyTransaction = applyTransaction;
 
+/**
+ * DO NOT USE
+ */
 async function applyTransactionHC(request, cb) {
     console.log('REQUEST');
     console.log(request);

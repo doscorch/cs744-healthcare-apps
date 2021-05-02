@@ -72,6 +72,22 @@ export default class EditPolicyHolder extends React.Component {
             return;
         }
 
+        let parts = this.state.date_of_birth.split('-');
+        // January - 0, February - 1, etc.
+        let birthday = new Date(parts[0], parts[1] - 1, parts[2]); 
+
+        let curDate = new Date();
+
+        let diff = new Date(curDate.getTime() - birthday.getTime());
+        // diff is: Thu Jul 05 1973 04:00:00 GMT+0300 (EEST)
+
+        let years = diff.getUTCFullYear() - 1970;
+        
+        if (years > this.state.policy.age_limit) {
+            this.setState({ error: "This policy holder is too old for this policy!" });
+            return;
+        }
+
         if (!this.state.start_date) {
             this.setState({ error: "Please provide a start date" });
             return;

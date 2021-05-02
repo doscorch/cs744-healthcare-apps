@@ -8,7 +8,7 @@ import { Route, Link } from 'react-router-dom';
 import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import {getAllRequestsHC, getProcedure, requestActionHC, applyTransactionHC} from './requestService';
-import {getAllPolicies} from '../policy/policyService';
+import {getAllPolicies, getPolicyByPatientUpdate} from '../policy/policyService';
 import {getAllPolicyHolders} from '../policyHolder/policyHolderService';
 
 
@@ -128,7 +128,26 @@ export default class RequestManagerHC extends React.Component {
         let result = await getAllRequestsHC();
         console.log(result);
 
+        console.log('update requests');
         let requests = result.data;
+
+        // format date
+        for (let i = 0; i < requests.length; i++) {
+            let payload = JSON.parse(requests[i]['payload']);
+            payload.request_hc_id = requests[i].request_hc_id;
+            payload.procedure_id = requests[i].procedure_id;
+            payload.procedure_id_hc = requests[i].procedure_id_hc;
+            if (requests[i].request_status == 2 || requests[i].request_status == 3 || requests[i].request_status == 4) {
+                await getPolicyByPatientUpdate(payload);
+            }
+        }
+        
+        console.log('getting requests (again)');
+
+        result = await getAllRequestsHC();
+        console.log(result);
+
+        requests = result.data;
 
         // format date
         for (let i = 0; i < requests.length; i++) {
@@ -141,13 +160,24 @@ export default class RequestManagerHC extends React.Component {
             
         }
 
+        requests.sort(function(a, b) {
+            let bVal = b.request_status;
+            let aVal = a.request_status;
+            if (bVal == 5 || bVal == 6) {
+                bVal = 0;
+            }
+            if (aVal == 5 || aVal == 6) {
+                aVal = 0;
+            }
+            return bVal - aVal;
+        });
         this.setState({ requests: requests });
 
     }
 
     translateStatus(status) {
         if (status == 2 || status == 3 || status == 4) {
-          return 'Pending';
+          return 'Pending ' + status;
         } else if (status == 1) {
           return 'Accepted';
         } else if (status == 0) {

@@ -48,7 +48,7 @@ export default class ViewTransactions extends React.Component {
                         { title: 'Code', field: 'drug_code' },
                         { title: 'Medical Name', field: 'drug_name' },
                         { title: 'Commercial Name', field: 'commercial_name' },
-                        { title: 'Insurance Covered', field: 'amount', render: t => {return '$' + t.amount } },
+                        { title: 'Insurance Covered', field: 'insurance_pays', render: t => {return '$' + t.insurance_pays } },
                         
                     ]}
                     data={this.state.transactions}
@@ -64,7 +64,7 @@ export default class ViewTransactions extends React.Component {
                     columns={[
                         { title: 'Date', field: 'transaction_hc_date' },
                         { title: 'Procedure', field: 'procedure_name' },
-                        { title: 'Insurance Covered', field: 'amount', render: t => {return '$' + t.amount } },
+                        { title: 'Insurance Covered', field: 'insurance_pays', render: t => {return '$' + t.insurance_pays } },
                         
                     ]}
                     data={this.state.transactions_hc}

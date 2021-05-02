@@ -68,6 +68,21 @@ export default class CreatePolicyHolder extends React.Component {
             this.setState({ error: "Please select a policy" });
             return;
         }
+        let parts = this.state.date_of_birth.split('-');
+        // January - 0, February - 1, etc.
+        let birthday = new Date(parts[0], parts[1] - 1, parts[2]); 
+
+        let curDate = new Date();
+
+        let diff = new Date(curDate.getTime() - birthday.getTime());
+        // diff is: Thu Jul 05 1973 04:00:00 GMT+0300 (EEST)
+
+        let years = diff.getUTCFullYear() - 1970;
+        
+        if (years > this.state.policy.age_limit) {
+            this.setState({ error: "This policy holder is too old for this policy!" });
+            return;
+        }
 
         if (!this.state.start_date) {
             this.setState({ error: "Please provide a start date" });
@@ -139,6 +154,12 @@ export default class CreatePolicyHolder extends React.Component {
         let propValue = e.target.value;
         let state = { ...this.state };
         state[propName] = propValue;
+
+        if (propName == 'policy') {
+            state['amount_paid'] = 0;
+            state['amount_remaining'] = propValue.max_coverage_per_year;
+        }
+
         this.setState(state);
     }
 
