@@ -94,7 +94,12 @@ export default class CreatePolicyHolder extends React.Component {
             return;
         }
         
-        if (!this.state.amount_paid) {
+        console.log('AMOUNT');
+        console.log(this.state.amount_paid);
+        console.log(this.state.amount_remaining);
+        if (this.state.amount_paid === 0) {
+            
+        } else if (!this.state.amount_paid) {
             this.setState({ error: "Please provide an amount paid" });
             return;
         }
@@ -156,7 +161,8 @@ export default class CreatePolicyHolder extends React.Component {
         state[propName] = propValue;
 
         if (propName == 'policy') {
-            state['amount_paid'] = 0;
+            let zero = 0.0;
+            state['amount_paid'] = zero;
             state['amount_remaining'] = propValue.max_coverage_per_year;
         }
 

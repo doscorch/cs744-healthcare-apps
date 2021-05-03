@@ -471,7 +471,7 @@ async function getPolicyByPatient(payload, cb) {
             let procedure = payload.procedures[i];
             payload['procedure'] = procedure;
             let queryRes = await sequelize.query(
-                'INSERT INTO request_hc (request_hc_status, request_hc_date, first_name, last_name, address, date_of_birth, amount, other_id, procedure_id, payload) VALUES (3, CURDATE(), ?, ?, ?, ?, ?, ?, ?, ?);',
+                'INSERT INTO request_hc (request_hc_status, request_hc_date, first_name, last_name, address, date_of_birth, amount, other_id, procedure_id, payload) VALUES (3, CURDATE(), ?, ?, ?, ?, ?, ?, (SELECT procedure_id FROM `procedure` WHERE procedure_id_hc=? LIMIT 1), ?);',
                 {
                     replacements: [
                         payload.patient_first,
@@ -480,7 +480,7 @@ async function getPolicyByPatient(payload, cb) {
                         (new Date(payload.date_of_birth)).toISOString().slice(0, 19).replace('T', ' '),
                         procedure.price,
                         payload.visitation_id,
-                        null,
+                        procedure.procedure_id,
                         JSON.stringify(payload)
                     ],
                     type: sequelize.QueryTypes.INSERT,
@@ -579,10 +579,6 @@ async function getPolicyByPatientUpdate(payload, cb) {
         for (let i = 0; i < payload.procedures.length; i++) {
             let procedure = payload.procedures[i];
 
-            if (procedure.procedure_id != payload.procedure_id_hc) {
-                continue;
-            }
-
             // check to see if procedure of payload is covered
             let coveredProcedures = resultProcedure;
 
@@ -596,11 +592,11 @@ async function getPolicyByPatientUpdate(payload, cb) {
                     payload['procedure'] = procedure;
                     console.log('Make a 2 request');
                     flag = true;
+                    let patient = payload.patient;
                     let queryRes = await sequelize.query(
-                        'UPDATE request_hc SET request_hc_status = 2, procedure_id = ? WHERE request_hc_id = ?;',
+                        'UPDATE request_hc SET request_hc_status = 2 WHERE request_hc_id = ?;',
                         {
                             replacements: [
-                                procedure.procedure_id,
                                 payload.request_hc_id
                             ],
                             type: sequelize.QueryTypes.INSERT,
