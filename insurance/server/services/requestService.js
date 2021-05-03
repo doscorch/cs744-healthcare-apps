@@ -18,7 +18,7 @@ module.exports.getAllRequests = getAllRequests;
 
 async function getAllRequestsHC(cb) {
     let result = await sequelize.query(
-        'SELECT * FROM request_hc JOIN `procedure` ON `procedure`.procedure_id = request_hc.procedure_id ORDER BY request_hc_status DESC, other_id;',
+        'SELECT * FROM request_hc;',
         {
             type: sequelize.QueryTypes.SELECT
         }
