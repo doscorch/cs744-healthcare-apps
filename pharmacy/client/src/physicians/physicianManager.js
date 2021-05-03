@@ -27,7 +27,7 @@ export default class PhysicianManager extends React.Component {
                     options={{
                         sorting: true,
                         search: true,
-                        paging: false,
+                        paging: true,
                     }}
                     title="Physicians"
                     columns={[

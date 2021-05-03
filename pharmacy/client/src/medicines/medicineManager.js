@@ -47,7 +47,7 @@ export default class MedicineManager extends React.Component {
                     options={{
                         sorting: true,
                         search: true,
-                        paging: false,
+                        paging: true,
                         editable: true,
                     }}
                     title="Medicines"
@@ -63,7 +63,7 @@ export default class MedicineManager extends React.Component {
                         { title: 'Type', field: 'medicine_type', validate: u => u.medicine_type == "" ? { isValid: false, helperText: "required" } : { isValid: true }, lookup: { 1: 'capsule', 2: 'tablet', 3: 'liquid' }, },
                         { title: 'Recommended Dosage', field: 'recommended_dosage', validate: u => u.recommended_dosage == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
                         { title: 'Cost', field: 'cost', type: "currency", validate: u => u.cost == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
-                        { title: 'Quantity', field: 'quantity', type: 'numeric', validate: u => u.quantity == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
+                        { title: 'Quantity', field: 'quantity', type: 'numeric' },
                         { title: 'Vendor', field: 'vendor', validate: u => u.vendor == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
                         { title: 'Expiration Date', field: 'expiration_date', type: 'date', validate: u => u.expiration_date == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
                         { title: 'Requires Prescription', field: 'requires_prescription', type: 'boolean' },
