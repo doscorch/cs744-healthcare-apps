@@ -105,7 +105,7 @@ export class OrderBill extends React.Component {
             );
         });
 
-        let subtotal = prescriptions.reduce((a, prescription) => a + (prescription.medicine.cost * prescription.quantity) - (prescription.medicine.cost * prescription.quantity - (prescription.insurance_coverage)), 0);
+        let subtotal = prescriptions.reduce((a, prescription) => a + (prescription.medicine.cost * prescription.quantity) - (prescription.insurance_coverage), 0);
         subtotal += sales.reduce((a, sale) => a + (sale.medicine.cost * sale.quantity), 0)
         const tax = subtotal * .055;
         const total = subtotal * 1.055;

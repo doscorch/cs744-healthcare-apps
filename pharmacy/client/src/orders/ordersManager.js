@@ -68,7 +68,8 @@ export default class OrderManager extends React.Component {
             .then(orders => {
                 const pendingOrders = [];
                 const completeOrders = [];
-                this.setState({ allOrders: orders });
+                const allOrders = orders.map(o => { return { ...o, order_date: new Date(new Date(o.order_date).toDateString()) } })
+                this.setState({ allOrders: allOrders });
                 for (var i = 0; i < orders.length; i++) {
                     const o = orders[i];
                     getPrescriptionsByOrderId(o.order_id).then((prescriptions) => {
