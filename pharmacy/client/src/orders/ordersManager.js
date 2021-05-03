@@ -150,7 +150,7 @@ export default class OrderManager extends React.Component {
                             }}
                             title="Orders"
                             columns={[
-                                { title: 'Order date', field: 'order_date' },
+                                { title: 'Order date', type: "date", field: 'order_date' },
                                 { title: 'Patient First Name', field: 'patient_first_name' },
                                 { title: 'Patient Last Name', field: 'patient_last_name' },
                             ]}
@@ -185,7 +185,7 @@ export default class OrderManager extends React.Component {
                             }}
                             title="Orders"
                             columns={[
-                                { title: 'Order date', field: 'order_date' },
+                                { title: 'Order date', type: "date", field: 'order_date' },
                                 { title: 'Patient First Name', field: 'patient_first_name' },
                                 { title: 'Patient Last Name', field: 'patient_last_name' },
                             ]}

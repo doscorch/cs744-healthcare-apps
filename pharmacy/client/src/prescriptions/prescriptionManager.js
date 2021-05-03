@@ -99,7 +99,7 @@ export default class PrescriptionManager extends React.Component {
                             }}
                             title="Prescriptions"
                             columns={[
-                                { title: 'Order date', field: 'order_date' },
+                                { title: 'Order date', type: "date", field: 'order_date' },
                                 { title: 'Patient name', field: 'name' },
                                 { title: 'Prescription', field: 'prescription' },
                                 { title: 'Status', render: p => (PrescriptionStatus.GetTranslation(p.order_status)) },
@@ -158,7 +158,7 @@ export default class PrescriptionManager extends React.Component {
                             }}
                             title="Prescriptions"
                             columns={[
-                                { title: 'Order date', field: 'order_date' },
+                                { title: 'Order date', type: "date", field: 'order_date' },
                                 { title: 'Patient name', field: 'name' },
                                 { title: 'Prescription', field: 'prescription' },
                                 { title: 'Status', render: p => (PrescriptionStatus.GetTranslation(p.order_status)) },
@@ -194,7 +194,7 @@ export default class PrescriptionManager extends React.Component {
                             }}
                             title="Prescriptions"
                             columns={[
-                                { title: 'Order date', field: 'order_date' },
+                                { title: 'Order date', type: "date", field: 'order_date' },
                                 { title: 'Patient name', field: 'name' },
                                 { title: 'Prescription', field: 'prescription' },
                                 { title: 'Status', render: p => (PrescriptionStatus.GetTranslation(p.order_status)) },
@@ -238,7 +238,7 @@ export default class PrescriptionManager extends React.Component {
                             }}
                             title="Prescriptions"
                             columns={[
-                                { title: 'Order date', field: 'order_date' },
+                                { title: 'Order date', type: "date", field: 'order_date' },
                                 { title: 'Patient name', field: 'name' },
                                 { title: 'Prescription', field: 'prescription' },
                                 { title: 'Status', render: p => (PrescriptionStatus.GetTranslation(p.order_status)) },
