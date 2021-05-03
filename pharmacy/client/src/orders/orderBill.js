@@ -82,8 +82,8 @@ export class OrderBill extends React.Component {
                         <td>{prescription.medicine.commercial_name}</td>
                         <td>{prescription.quantity}</td>
                         <td>{currencyFormatter.format(prescription.medicine.cost * prescription.quantity)}</td>
-                        <td>{currencyFormatter.format(prescription.medicine.cost * prescription.quantity - (prescription.insurance_coverage))}</td>
-                        <td>{currencyFormatter.format((prescription.medicine.cost * prescription.quantity) - (prescription.medicine.cost * prescription.quantity - (prescription.insurance_coverage)))}</td>
+                        <td>{currencyFormatter.format((prescription.insurance_coverage))}</td>
+                        <td>{currencyFormatter.format((prescription.medicine.cost * prescription.quantity) - (prescription.insurance_coverage))}</td>
                     </tr>
                 </Fragment>
             );

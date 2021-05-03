@@ -55,21 +55,22 @@ export default class OrderManager extends React.Component {
         tab: 0
     }
 
-    componentDidMount() {
-        this.getData();
+    async componentDidMount() {
+        await this.getData();
     }
 
     handleChange = (event, newValue) => {
         this.setState({ tab: newValue })
     };
 
-    getData = () => {
-        return getOrders()
+    getData = async () => {
+        return await getOrders()
             .then(orders => {
                 const pendingOrders = [];
                 const completeOrders = [];
-                const allOrders = [];
-                orders.forEach(o => {
+                this.setState({ allOrders: orders });
+                for (var i = 0; i < orders.length; i++) {
+                    const o = orders[i];
                     getPrescriptionsByOrderId(o.order_id).then((prescriptions) => {
                         if (!prescriptions || prescriptions.every(p => p.order_status == PrescriptionStatus.Processed)) {
                             completeOrders.push(o);
@@ -77,10 +78,9 @@ export default class OrderManager extends React.Component {
                         else {
                             pendingOrders.push(o);
                         }
-                        allOrders.push(o);
-                        this.setState({ completeOrders, pendingOrders, allOrders });
                     })
-                })
+                }
+                this.setState({ completeOrders, pendingOrders });
             })
     }
 
@@ -93,13 +93,53 @@ export default class OrderManager extends React.Component {
             <div>
                 <AppBar position="static">
                     <Tabs value={this.state.tab} onChange={this.handleChange} aria-label="order menu" style={{ backgroundColor: "lightslategrey" }}>
-                        <Tab label="Pending" {...a11yProps(0)} />
-                        <Tab label="Processed" {...a11yProps(1)} />
-                        <Tab label="All" {...a11yProps(2)} />
+                        <Tab label="All" {...a11yProps(0)} />
+                        <Tab label="Pending" {...a11yProps(1)} />
+                        <Tab label="Processed" {...a11yProps(2)} />
                     </Tabs>
                 </AppBar>
                 <Container fluid className="card card-body bg-light" style={{ padding: "0" }}>
                     <TabPanel value={this.state.tab} index={0}>
+                        <MaterialTable
+                            tableRef={tableRef3}
+                            options={{
+                                sorting: true,
+                                search: true,
+                                paging: true,
+                            }}
+                            title="Orders"
+                            columns={[
+                                { title: 'Order date', field: 'order_date', type: "date", editable: false },
+                                { title: 'Patient First Name', field: 'patient_first_name', validate: u => u.patient_first_name == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
+                                { title: 'Patient Last Name', field: 'patient_last_name', validate: u => u.patient_last_name == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
+                            ]}
+                            data={this.state.allOrders}
+                            actions={[
+                                {
+                                    icon: 'add',
+                                    tooltip: 'Add Over the Counter Medicine',
+                                    onClick: (event, row) => {
+                                        const medicine_order_id = row.medicine_order_id;
+                                        this.props.history.push("/order-add/" + medicine_order_id);
+                                    }
+                                },
+                                {
+                                    icon: 'info',
+                                    tooltip: 'View Details',
+                                    onClick: (event, row) => {
+                                        const medicine_order_id = row.medicine_order_id;
+                                        this.props.history.push("/order-details/" + medicine_order_id);
+                                    }
+                                },
+                            ]}
+                            editable={{
+                                onRowAdd: newData => {
+                                    return createOrder({ ...newData, order_date: new Date().toDateString(), order_id: -1 }).then(_ => this.getData())
+                                },
+                            }}
+                        />
+                    </TabPanel>
+                    <TabPanel value={this.state.tab} index={1}>
                         <MaterialTable
                             tableRef={tableRef1}
                             options={{
@@ -134,7 +174,7 @@ export default class OrderManager extends React.Component {
                             ]}
                         />
                     </TabPanel>
-                    <TabPanel value={this.state.tab} index={1}>
+                    <TabPanel value={this.state.tab} index={2}>
                         <MaterialTable
                             tableRef={tableRef2}
                             options={{
@@ -175,46 +215,6 @@ export default class OrderManager extends React.Component {
                                     }
                                 },
                             ]}
-                        />
-                    </TabPanel>
-                    <TabPanel value={this.state.tab} index={2}>
-                        <MaterialTable
-                            tableRef={tableRef3}
-                            options={{
-                                sorting: true,
-                                search: true,
-                                paging: true,
-                            }}
-                            title="Orders"
-                            columns={[
-                                { title: 'Order date', field: 'order_date', type: "date", editable: false },
-                                { title: 'Patient First Name', field: 'patient_first_name', validate: u => u.patient_first_name == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
-                                { title: 'Patient Last Name', field: 'patient_last_name', validate: u => u.patient_last_name == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
-                            ]}
-                            data={this.state.allOrders}
-                            actions={[
-                                {
-                                    icon: 'add',
-                                    tooltip: 'Add Over the Counter Medicine',
-                                    onClick: (event, row) => {
-                                        const medicine_order_id = row.medicine_order_id;
-                                        this.props.history.push("/order-add/" + medicine_order_id);
-                                    }
-                                },
-                                {
-                                    icon: 'info',
-                                    tooltip: 'View Details',
-                                    onClick: (event, row) => {
-                                        const medicine_order_id = row.medicine_order_id;
-                                        this.props.history.push("/order-details/" + medicine_order_id);
-                                    }
-                                },
-                            ]}
-                            editable={{
-                                onRowAdd: newData => {
-                                    return createOrder({ ...newData, order_date: new Date().toDateString(), order_id: -1 }).then(_ => this.getData())
-                                },
-                            }}
                         />
                     </TabPanel>
                 </Container>
