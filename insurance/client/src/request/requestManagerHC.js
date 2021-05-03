@@ -136,8 +136,9 @@ export default class RequestManagerHC extends React.Component {
             let payload = JSON.parse(requests[i]['payload']);
             payload.request_hc_id = requests[i].request_hc_id;
             payload.procedure_id = requests[i].procedure_id;
-            payload.procedure_id_hc = requests[i].procedure_id_hc;
-            if (requests[i].request_status == 2 || requests[i].request_status == 3 || requests[i].request_status == 4) {
+            console.log('payload');
+            console.log(payload);
+            if (requests[i].request_hc_status == 2 || requests[i].request_hc_status == 3 || requests[i].request_hc_status == 4) {
                 await getPolicyByPatientUpdate(payload);
             }
         }
