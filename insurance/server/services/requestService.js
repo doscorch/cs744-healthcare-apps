@@ -304,7 +304,6 @@ async function requestActionHC(request, cb) {
         for (let i = 0; i < r.length; i++) {
             r[i].is_approved = r[i].request_hc_status == 1;
             r[i].reason = null;
-            r[i].insurance_pays = r[i].amount;
 
             if (!r[i].is_approved) {
                 r[i].insurance_pays = 0;

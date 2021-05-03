@@ -750,7 +750,7 @@ async function getPolicyByPatientPharmacy(payload, cb) {
                             prescription.patient_last_name,
                             prescription.patient_address,
                             (new Date(prescription.patient_date_of_birth)).toISOString().slice(0, 19).replace('T', ' '),
-                            payload.medicine.cost,
+                            (payload.prescription.quantity * payload.medicine.cost),
                             prescription.prescription_id,
                             payload.medicine.medicine_code,
                             JSON.stringify(payload)
@@ -786,7 +786,7 @@ async function getPolicyByPatientPharmacy(payload, cb) {
                         prescription.patient_last_name,
                         prescription.patient_address,
                         (new Date(prescription.patient_date_of_birth)).toISOString().slice(0, 19).replace('T', ' '),
-                        payload.medicine.cost,
+                        (payload.prescription.quantity * payload.medicine.cost),
                         prescription.prescription_id,
                         payload.medicine.medicine_code,
                         JSON.stringify(payload)
@@ -816,7 +816,7 @@ async function getPolicyByPatientPharmacy(payload, cb) {
                     prescription.patient_last_name,
                     prescription.patient_address,
                     (new Date(prescription.patient_date_of_birth)).toISOString().slice(0, 19).replace('T', ' '),
-                    payload.medicine.cost,
+                    (payload.prescription.quantity * payload.medicine.cost),
                     prescription.prescription_id,
                     payload.medicine.medicine_code,
                     JSON.stringify(payload)
