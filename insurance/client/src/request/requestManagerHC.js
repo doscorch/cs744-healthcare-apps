@@ -177,7 +177,7 @@ export default class RequestManagerHC extends React.Component {
 
     translateStatus(status) {
         if (status == 2 || status == 3 || status == 4) {
-          return 'Pending ' + status;
+          return 'Pending';
         } else if (status == 1) {
           return 'Accepted';
         } else if (status == 0) {

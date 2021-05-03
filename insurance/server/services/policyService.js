@@ -597,9 +597,10 @@ async function getPolicyByPatientUpdate(payload, cb) {
                     console.log('Make a 2 request');
                     flag = true;
                     let queryRes = await sequelize.query(
-                        'UPDATE request_hc SET request_hc_status = 2 WHERE request_hc_id = ?;',
+                        'UPDATE request_hc SET request_hc_status = 2, procedure_id = ? WHERE request_hc_id = ?;',
                         {
                             replacements: [
+                                procedure.procedure_id,
                                 payload.request_hc_id
                             ],
                             type: sequelize.QueryTypes.INSERT,

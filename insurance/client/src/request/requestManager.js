@@ -171,11 +171,11 @@ export default class RequestManager extends React.Component {
 
     translateStatus(status) {
         if (status == 3) {
-            return 'Pending 3';
+            return 'Pending';
         } else if (status == 4) {
-            return 'Pending 4'
+            return 'Pending'
         } else if (status == 2) {
-          return 'Pending 2';
+          return 'Pending';
         } else if (status == 1) {
           return 'Accepted';
         } else if (status == 0) {
