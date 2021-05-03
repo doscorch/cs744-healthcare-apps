@@ -587,11 +587,7 @@ async function getPolicyByPatientUpdate(payload, cb) {
             let flag = false;
             for (let j = 0; j < coveredProcedures.length; j++) {
 
-                if (coveredProcedures[j].procedure_id != payload.procedure_id) {
-                    continue;
-                }
-
-                if (procedure.procedure_id == coveredProcedures[j].procedure_id_hc) {
+                if (procedure.procedure_id == coveredProcedures[j].procedure_id_hc && procedure.procedure_id == payload.procedure_id) {
                     // If the procedure's ID is equal to the covered procedure...
                     // make a request
                     payload['procedure'] = procedure;
