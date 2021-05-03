@@ -575,7 +575,7 @@ async function getPolicyByPatientUpdate(payload, cb) {
             console.log(e);
             return null;
         });
-
+        let flag = false;
         // For each procedure in the payload
         for (let i = 0; i < payload.procedures.length; i++) {
             let procedure = payload.procedures[i];
@@ -584,7 +584,7 @@ async function getPolicyByPatientUpdate(payload, cb) {
             let coveredProcedures = resultProcedure;
 
             // For each covered procedure
-            let flag = false;
+            
             for (let j = 0; j < coveredProcedures.length; j++) {
 
                 if (procedure.procedure_id == coveredProcedures[j].procedure_id_hc && coveredProcedures[j].procedure_id == payload.procedure_id) {
