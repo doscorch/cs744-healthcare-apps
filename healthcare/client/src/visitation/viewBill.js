@@ -138,9 +138,9 @@ export class ViewBill extends React.Component {
                                 return <tr style={currRow}>
                                 <td style={classes.tableEntry}>{element.procedure_id}</td>
                                 <td style={classes.tableEntry}>{element.name}</td>
-                                <td style={classes.tableEntry}>${element.price}</td>
-                                <td style={classes.tableEntry}>{element.insurance_pays? "$"+element.insurance_pays : "$0.00"}</td>
-                                <td style={classes.tableEntry}>${element.price - element.insurance_pays}</td>
+                                <td style={classes.tableEntry}>${parseFloat(element.price).toFixed(2)}</td>
+                                <td style={classes.tableEntry}>{element.insurance_pays? "$"+parseFloat(element.insurance_pays).toFixed(2) : "$0.00"}</td>
+                                <td style={classes.tableEntry}>${parseFloat(element.price - element.insurance_pays).toFixed(2)}</td>
                             </tr>;
                         })}
                     
@@ -149,7 +149,7 @@ export class ViewBill extends React.Component {
                         <td style={classes.tableEntry}></td>
                         <td style={classes.tableEntry}></td>
                         <td style={classes.tableEntry}>Total</td>
-                        <td style={classes.tableEntry}>${this.state.visitation.total}</td>
+                        <td style={classes.tableEntry}>${parseFloat(this.state.visitation.total).toFixed(2)}</td>
                     </tr>
                 </table>
                 

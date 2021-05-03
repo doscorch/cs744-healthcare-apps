@@ -7,7 +7,10 @@ import { UserType, UserStatus } from '../models/user';
 import { Navbar, Nav } from 'react-bootstrap';
 import { Route, Link } from 'react-router-dom';
 
-export default class searchPatients extends React.Component {
+import { connect } from 'react-redux';
+import { app_login } from '../redux/actions/userActions';
+
+export class searchPatients extends React.Component {
     state = {
         users: []
     }
@@ -31,6 +34,62 @@ export default class searchPatients extends React.Component {
             let dateString = d.getMonth()+1+"-"+d.getUTCDate()+"-"+d.getFullYear();
             return dateString;
         }
+
+        const PhysicianList = [
+            {
+                icon: 'medication',
+                tooltip: 'Write Prescription',
+                onClick: (event, row) => {
+                    const patient_id = row.user_id;
+                    this.props.history.push("/write-prescription/"+patient_id);
+                }
+            },
+            {
+                icon: 'list',
+                tooltip: 'View Prescriptions',
+                onClick: (event, row) => {
+                    const patient_id = row.user_id;
+                    this.props.history.push("/patient/"+patient_id+"/prescriptions");
+                }
+            },
+            {
+                icon: 'medical_services',
+                tooltip: 'Write Visitation Record',
+                onClick: (event, row) => {
+                    const patient_id = row.user_id;
+                    this.props.history.push("/write-visitation/"+patient_id);
+                }
+            },
+            {
+                icon: 'insert_chart',
+                tooltip: 'Patient Visits',
+                onClick: (event, row) => {
+                    const patient_id = row.user_id;
+                    this.props.history.push("/visitations/"+patient_id);
+                }
+            }
+        ];
+
+        const StaffList = [
+
+            {
+                icon: 'list',
+                tooltip: 'View Prescriptions',
+                onClick: (event, row) => {
+                    const patient_id = row.user_id;
+                    this.props.history.push("/patient/"+patient_id+"/prescriptions");
+                }
+            },
+            {
+                icon: 'insert_chart',
+                tooltip: 'Patient Visits',
+                onClick: (event, row) => {
+                    const patient_id = row.user_id;
+                    this.props.history.push("/visitations/"+patient_id);
+                }
+            }
+        ];
+
         const tableRef = React.createRef();
         return (
             <div>
@@ -42,42 +101,7 @@ export default class searchPatients extends React.Component {
                         paging: false,
                     }}
                     title="Patients"
-                    actions={
-                        [
-                            {
-                                icon: 'medication',
-                                tooltip: 'Write Prescription',
-                                onClick: (event, row) => {
-                                    const patient_id = row.user_id;
-                                    this.props.history.push("/write-prescription/"+patient_id);
-                                }
-                            },
-                            {
-                                icon: 'list',
-                                tooltip: 'View Prescriptions',
-                                onClick: (event, row) => {
-                                    const patient_id = row.user_id;
-                                    this.props.history.push("/patient/"+patient_id+"/prescriptions");
-                                }
-                            },
-                            {
-                                icon: 'medical_services',
-                                tooltip: 'Write Visitation Record',
-                                onClick: (event, row) => {
-                                    const patient_id = row.user_id;
-                                    this.props.history.push("/write-visitation/"+patient_id);
-                                }
-                            },
-                            {
-                                icon: 'insert_chart',
-                                tooltip: 'Patient Visits',
-                                onClick: (event, row) => {
-                                    const patient_id = row.user_id;
-                                    this.props.history.push("/visitations/"+patient_id);
-                                }
-                            }
-                        ]
-                    }
+                    actions={this.props.user.user_type === UserType.StaffMember?StaffList:PhysicianList}
                     columns={[
                         // { title: 'Id', field: '_id' },
                         { title: 'First Name', field: 'first_name', validate: u => u.first_name == "" ? { isValid: false, helperText: "required" } : { isValid: true } },
@@ -93,3 +117,8 @@ export default class searchPatients extends React.Component {
     }
 
 }
+
+const mapState = (state) => { return { user: state.user } };
+const mapDispatch = { app_login };
+
+export default connect(mapState, mapDispatch)(searchPatients);
