@@ -81,7 +81,7 @@ export default class RequestManager extends React.Component {
             let amount = request.amount;
             let per = policy.percent_coverage / 100;
     
-            let covered = amount * per;
+            let covered = (amount * per).toFixed(2);
     
     
             if (remaining < covered) {

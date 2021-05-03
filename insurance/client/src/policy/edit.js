@@ -29,7 +29,7 @@ const initState = {
     success: '',
     questions: null,
 }
-
+let maxAge = null;
 let allDrugs = [];
 let allProcedures = [];
 let policy = null;
@@ -60,6 +60,11 @@ export default class UpdatePolicy extends React.Component {
 
         if (!Number.isInteger(+this.state.age_limit)) {
             this.setState({ error: "Please provide an integer age limit" });
+            return;
+        }
+
+        if (parseInt(this.state.age_limit) < maxAge) {
+            this.setState({ error: "This policy has a policy holder that is " + maxAge + " years old (too old)!" });
             return;
         }
 
@@ -313,6 +318,27 @@ export default class UpdatePolicy extends React.Component {
 
         let policyHolders = await getPolicyHoldersWithPolicy(policy.policy_id);
         state['num_policy_holders'] = policyHolders.data.length;
+
+        console.log(policyHolders.data);
+        // Get max age
+        maxAge = Math.max(...policyHolders.data.map(ph => {
+            let parts = ph.date_of_birth.split('T');
+            parts = parts[0].split('-');
+            // January - 0, February - 1, etc.
+            let birthday = new Date(parts[0], parts[1] - 1, parts[2]); 
+
+            let curDate = new Date();
+
+            let diff = new Date(curDate.getTime() - birthday.getTime());
+            // diff is: Thu Jul 05 1973 04:00:00 GMT+0300 (EEST)
+
+            return diff.getUTCFullYear() - 1970;
+        }), 0);
+
+        console.log('max age: ' + maxAge);
+
+
+
         this.setState(state);
 
         this.forceUpdate();

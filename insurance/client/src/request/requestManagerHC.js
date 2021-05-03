@@ -83,8 +83,8 @@ export default class RequestManagerHC extends React.Component {
             console.log(paid);
             let amount = request.amount;
             let per = policy.percent_coverage / 100;
-
-            let covered = amount * per;
+            let covered = (amount * per).toFixed(2);
+            
             if (remaining < covered) {
                 covered = remaining;
             }
