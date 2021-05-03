@@ -65,7 +65,7 @@ export default class PrescriptionManager extends React.Component {
     getData = () => {
         return getPrescriptions()
             .then(prescriptions => {
-                prescriptions = prescriptions.map(p => { return { ...p, name: p.patient_first_name + ' ' + p.patient_last_name } })
+                prescriptions = prescriptions.map(p => { return { ...p, name: p.patient_first_name + ' ' + p.patient_last_name, order_date: new Date(new Date(p.order_date).toDateString()) } })
                 const taskPrescriptions = prescriptions.filter(p => p.order_status == PrescriptionStatus.Ready || p.order_status == PrescriptionStatus.Verified_Patient || p.order_status == PrescriptionStatus.Verified_Physician || p.order_status == PrescriptionStatus.Verified_Physician || p.order_status == PrescriptionStatus.Filled);
                 const pendingPrescriptions = prescriptions.filter(p => p.order_status == PrescriptionStatus.Pending_Insurance);
                 const completePrescriptions = prescriptions.filter(p => p.order_status == PrescriptionStatus.Processed);
