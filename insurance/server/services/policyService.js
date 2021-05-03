@@ -1,3 +1,4 @@
+const { request } = require('express');
 const sequelize = require('../db');
 
 async function getAllPolicies(cb) {
@@ -585,6 +586,10 @@ async function getPolicyByPatientUpdate(payload, cb) {
             // For each covered procedure
             let flag = false;
             for (let j = 0; j < coveredProcedures.length; j++) {
+
+                if (coveredProcedures[j].procedure_id != payload.procedure_id) {
+                    continue;
+                }
 
                 if (procedure.procedure_id == coveredProcedures[j].procedure_id_hc) {
                     // If the procedure's ID is equal to the covered procedure...
