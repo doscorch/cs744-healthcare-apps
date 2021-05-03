@@ -32,7 +32,7 @@ export default class PatientManager extends React.Component {
                     options={{
                         sorting: true,
                         search: true,
-                        paging: false,
+                        paging: true,
                         editable: true,
                     }}
                     title="Patients"
